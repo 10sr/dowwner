@@ -26,13 +26,14 @@ class _Content():
 
     Attributes:
         path: Path for content.
+        fullpath: Fullpath for content.
         exists: True if content exists.
         content: Bytes of content.
     """
 
-    def __init__(self, rootdir, rh):
-        self.dir = rootdir
-        self.path = rh.path.lstrip("/")
+    def __init__(self, contents, path_):
+        self.dir = contents.dir
+        self.path = path_
         self.fullpath = path.normpath(path.join(self.dir, self.path))
         # path must be under rootdir for security reason.
         assert self.fullpath.startswith(self.dir)
@@ -50,13 +51,18 @@ class Contents():
         self.dir = rootdir
         return
 
-    def get(self, rh):
+    def get(self, path_):
         """Return content object for request handler.
 
         Args:
-            rh: DowwnerHTTPRH object.
+            path_: Path.
         """
-        return _Content(self.dir, rh)
+        return _Content(self, path_)
+
+    def post(self, path_, content):
+        print(path_)
+        print(content)
+        return
 
     def verify_addr(self, addr):
         return addr == "127.0.0.1"

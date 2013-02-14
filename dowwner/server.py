@@ -2,6 +2,7 @@
 
 import os
 
+from urllib import parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from dowwner.contents import Contents
 
@@ -12,7 +13,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def do_GET(self, head_only=False):
-        c = self.server.dowwner_contents.get(self)
+        c = self.server.dowwner_contents.get(self.path.lstrip("/"))
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
@@ -32,12 +33,14 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
     def do_POST(self):
         length = int(self.headers["Content-Length"])
-        content = self.rfile.read(length)
+        data = parse.parse_qs(self.rfile.read(length), keep_blank_values=True)
+        rt = self.server.dowwner_contents.post(self.path.lstrip("/"),
+                                               data[b"content"][0])
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(b"success!<br />")
-        self.wfile.write(content)
+        self.wfile.write(str(data).encode())
         return
 
 class DowwnerHTTPS(HTTPServer):
@@ -56,7 +59,4 @@ def start(port=2505, rootdir=os.getcwd()):
     except KeyboardInterrupt:
         pass
     print("Server terminated.")
-    return
-
-def stop(rootdir=os.getcwd()):
     return
