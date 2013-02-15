@@ -106,7 +106,17 @@ Move or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
 """
-        return ("dir.<br />" + "<br />".join(os.listdir(fpath)) +
+        items = []
+        for l in os.listdir(fpath):
+            if l.startswith("."):
+                continue
+            elif path.isdir(path.join(fpath, l)):
+                items.append(l + "/")
+            elif l.endswith(".md"):
+                items.append(path.splitext(l)[0])
+
+        return ("dir.<br />" +
+                "<br />".join(items) +
                 inputbox.format(path=rpath))
 
     def __load_file(self, fpath):
