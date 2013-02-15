@@ -39,12 +39,13 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return
 
         if self.path.startswith("/.get/"):
-            rpath = self.path.replace("/.get/", "", 1)
-            data = parse.parse_qs(rpath.partition("?")[2])
+            query = self.path.replace("/.get/", "", 1)
+            rpath, q, data = query.partition("?")
+            data = parse.parse_qs(data)
             print(data)
             self.send_response(302)
             self.send_header("Location",
-                             ("/" + parse.quote(data["pagename"][0])))
+                             ("/" + rpath + parse.quote(data["pagename"][0])))
             self.end_headers()
             return
 

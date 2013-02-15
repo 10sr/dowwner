@@ -6,6 +6,8 @@ from io import StringIO
 
 from markdown import Markdown
 
+from dowwner.exc import PageNameError
+
 FILE_SUFFIX = ".md"
 
 class _Page():
@@ -85,6 +87,7 @@ class Pages():
         return addr == "127.0.0.1"
 
     def gen_fullpath(self, rpath):
+        # normpath always strip last "/"
         fpath = path.normpath(path.join(self.dir, rpath))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.dir)
@@ -100,22 +103,56 @@ class Pages():
 
         Raises:
             OSError: File not found.
+            dowwner.exc.PageNameError: Invalid page name.
         """
-        print(rpath)
         fpath = self.gen_fullpath(rpath)
-        if path.isdir(fpath):
+
+        l = rpath.split("/")
+
+        for i in l[:-1]:
+            # if any item other than last one starts with "."
+            if i.startswith("."):
+                raise PageNameError("Invalid page name: {}".format(rpath))
+
+        if l[-1] == ".list":
+            # if last one is ".list"
+            rpath = "/".join(l[:-1])
+            fpath = self.gen_fullpath(rpath)
+            print(rpath)
+            print(fpath)
             return self.__load_dir(fpath, rpath)
+
+        # if l[-1] == "":
+        #     # if rpath ends with "/" or is empty str
+        #     try:
+        #         print(fpath + "index")
+        #         return self.__load_file(fpath + "index")
+        #     except EnvironmentError as e:
+        #         if e.errno == 2:
+        #             return self.__load_dir(fpath, rpath)
+        #         else:
+        #             raise
+
+        if path.isdir(fpath):
+            indexpath = path.join(fpath, "index")
+            try:
+                return self.__load_file(indexpath)
+            except EnvironmentError as e:
+                return self.__load_dir(fpath, rpath)
         else:
             return self.__load_file(fpath)
 
     def __load_dir(self, fpath, rpath):
         inputbox = """
 <p>
-<form action=".get/{path}" method="get">
+<form action="/.get/{path}" method="get">
 Move or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
 """
+        if not rpath.endswith("/"):
+            rpath = rpath + "/"
+
         items = []
         for l in os.listdir(fpath):
             if l.startswith("."):

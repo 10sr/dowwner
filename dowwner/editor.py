@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
 
+# todo: use stylesheet for scale.
+
 _formstr = """
+<h1>{path}</h1>
 <form action="/.save/{path}" method="post">
-<p>
-name: <input type="text" name="namae" value="10sr" size="20" />
-</p>
-<p>
-OS：
-<input type="radio" name="OS" value="win" checked="checked" /> Windows
-<input type="radio" name="OS" value="mac" /> Machintosh
-<input type="radio" name="OS" value="unix" /> Unix
-</p>
-<p>
-content: <br />
-<textarea type="content" name="content" value="content"></textarea>
-</p>
 <p><input type="submit" name="submit" value="submit" /></p>
+<p>
+<textarea type="content" name="content" value="content" rows="24" cols="80">
+</textarea>
+</p>
 </form>
 """
 
@@ -23,13 +17,13 @@ class Editor():
     """Editor class.
 
     Attributes:
-        path: Relative path.
+        rpath: Relative path.
         content: bytes of editor code.
     """
-    def __init__(self, path_):
+    def __init__(self, rpath):
         """
         Args:
             path_: Relative path."""
-        self.path = path_
-        self.content = _formstr.format(path=path_).encode()
+        self.path = rpath
+        self.content = _formstr.format(path=rpath).encode()
         return
