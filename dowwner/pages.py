@@ -51,7 +51,7 @@ class _Page():
 class Pages():
     def __init__(self, rootdir):
         self.dir = rootdir
-        self.__md = Markdown(extensions=["wikilinks"])
+        self.__md = Markdown(extensions=["wikilinks(base_url=,end_url=)"])
         return
 
     def get(self, rpath):
@@ -134,23 +134,24 @@ class Pages():
         #             raise
 
         if path.isdir(fpath):
-            indexpath = path.join(fpath, "index")
+            ifpath = path.join(fpath, "index")
+            irpath = path.join(rpath, "index")
             try:
-                return self.__load_file(indexpath)
+                return self.__load_file(ifpath, irpath)
             except EnvironmentError as e:
                 return self.__load_dir(fpath, rpath)
         else:
-            return self.__load_file(fpath)
+            return self.__load_file(fpath, rpath)
 
     def __load_dir(self, fpath, rpath):
         inputbox = """
 <p>
 <form action="/.get/{path}" method="get">
-Move or create page: <input type="text" name="pagename" value="" />
+Go or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
 """
-        if not rpath.endswith("/"):
+        if not rpath.endswith("/") and rpath != "":
             rpath = rpath + "/"
 
         items = []
@@ -166,9 +167,15 @@ Move or create page: <input type="text" name="pagename" value="" />
                 "<br />".join(items) +
                 inputbox.format(path=rpath))
 
-    def __load_file(self, fpath):
+    def __load_file(self, fpath, rpath):
         with open(fpath + FILE_SUFFIX, encoding="utf-8") as f:
-            return self.__gen_page(f)
+            return self.__gen_page(f, rpath)
 
-    def __gen_page(self, f):
-        return self.__md.convert(f.read())
+    def __gen_page(self, f, rpath):
+        editlink = """
+<p>
+<a href="/.edit/{path}">Edit</a>
+</p>
+"""
+        conv = self.__md.convert(f.read())
+        return editlink.format(path=rpath) + conv

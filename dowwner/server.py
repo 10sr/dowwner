@@ -114,6 +114,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
                                                     funcname)).encode())
             self.wfile.write(("<br />\n" +
                               e.__class__.__name__ +
+                              " " +
                               str(e)).encode())
         return
 
