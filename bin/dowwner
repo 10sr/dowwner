@@ -22,7 +22,7 @@ def main(argv):
 
     # s = shell(args.archive)
     # s.main()
-    dowwner.main()
+    dowwner.main(rootdir="/tmp/dowwner")
     return
 
 if __name__ == "__main__":
