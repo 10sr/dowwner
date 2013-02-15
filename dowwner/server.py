@@ -14,6 +14,16 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def do_GET(self, head_only=False):
+        try:
+            return self.__try_do_GET(head_only)
+        except Exception as e:
+            self.send_error(500)
+            self.end_headers()
+            if not head_only:
+                self.wfile.write(str(e).encode())
+            return
+
+    def __try_do_GET(self, head_only=False):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
@@ -60,6 +70,15 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def do_POST(self):
+        try:
+            return self.__try_do_POST()
+        except Exception as e:
+            self.send_error(500)
+            self.end_headers()
+            self.wfile.write(str(e).encode())
+            return
+
+    def __try_do_POST(self):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
             self.end_headers()

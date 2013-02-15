@@ -3,6 +3,8 @@
 import os
 path = os.path
 
+FILE_SUFFIX = ".md"
+
 class _Page():
     """Content object for request handler.
 
@@ -63,7 +65,8 @@ class Pages():
         """
         print(rpath)
         print(content)
-        with open(self.gen_fullpath(rpath), mode="w", encoding="utf-8") as f:
+        with open(self.gen_fullpath(rpath + FILE_SUFFIX),
+                  mode="w", encoding="utf-8") as f:
             f.write(content)
             return True
         return False
@@ -73,7 +76,7 @@ class Pages():
 
     def gen_fullpath(self, rpath):
         fpath = path.normpath(path.join(self.dir, rpath))
-        # path_ must be under rootdir for security reason.
+        # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.dir)
         return fpath
 
@@ -107,5 +110,5 @@ Move or create page: <input type="text" name="pagename" value="" />
                 inputbox.format(path=rpath))
 
     def __load_file(self, fpath):
-        with open(fpath) as f:
+        with open(fpath + FILE_SUFFIX) as f:
             return f.read()
