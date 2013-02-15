@@ -65,7 +65,13 @@ class Pages():
         """
         print(rpath)
         print(content)
-        with open(self.gen_fullpath(rpath + FILE_SUFFIX),
+        fullpath = self.gen_fullpath(rpath + FILE_SUFFIX)
+        try:
+            os.makedirs(path.dirname(fullpath))
+        except OSError as e:
+            if e.errno != 17: # 17 means file exists
+                raise
+        with open(fullpath,
                   mode="w", encoding="utf-8") as f:
             f.write(content)
             return True
