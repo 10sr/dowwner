@@ -2,6 +2,9 @@
 
 import os
 path = os.path
+from io import StringIO
+
+from markdown import Markdown
 
 FILE_SUFFIX = ".md"
 
@@ -26,7 +29,7 @@ class _Page():
         self.exists = True
         try:
             self.content = self.pages.get_content(self.path).encode()
-        except OSError as e:
+        except EnvironmentError as e:
             print(e)
             if e.errno == 2:    # No such file or directory
                 self.content = b""
@@ -46,6 +49,7 @@ class _Page():
 class Pages():
     def __init__(self, rootdir):
         self.dir = rootdir
+        self.__md = Markdown(extensions=["wikilinks"])
         return
 
     def get(self, rpath):
@@ -126,5 +130,8 @@ Move or create page: <input type="text" name="pagename" value="" />
                 inputbox.format(path=rpath))
 
     def __load_file(self, fpath):
-        with open(fpath + FILE_SUFFIX) as f:
-            return f.read()
+        with open(fpath + FILE_SUFFIX, encoding="utf-8") as f:
+            return self.__gen_page(f)
+
+    def __gen_page(self, f):
+        return self.__md.convert(f.read())
