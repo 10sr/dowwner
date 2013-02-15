@@ -45,7 +45,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             data = parse.parse_qs(rpath.partition("?")[2])
             print(data)
             self.send_response(302)
-            self.send_header("Location", ("/" + data["pagename"][0]))
+            self.send_header("Location",
+                             ("/" + parse.quote(data["pagename"][0])))
             self.end_headers()
             return
 

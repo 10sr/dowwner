@@ -112,10 +112,10 @@ Move or create page: <input type="text" name="pagename" value="" />
                 continue
             elif path.isdir(path.join(fpath, l)):
                 items.append(l + "/")
-            elif l.endswith(".md"):
+            elif l.endswith(FILE_SUFFIX):
                 items.append(path.splitext(l)[0])
 
-        return ("dir.<br />" +
+        return ("<h1>dir.</h1>" +
                 "<br />".join(items) +
                 inputbox.format(path=rpath))
 
