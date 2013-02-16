@@ -184,7 +184,10 @@ Go or create page: <input type="text" name="pagename" value="" />
         editlink = """
 <p>
 <a href="/.edit/{path}">Edit</a>
+<a href=".list">List</a>
 </p>
+<hr />
 """
         conv = self.__md.convert(f.read())
+        rdir = path.dirname(rpath)
         return editlink.format(path=rpath) + conv
