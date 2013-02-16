@@ -6,10 +6,11 @@ import os
 path = os.path
 from io import StringIO
 
-from markdown import Markdown
+from dowwner.markdown import Markdown
 
 from dowwner.editor import Editor
 from dowwner.exc import PageNameError
+from dowwner.hist import Hist
 
 FILE_SUFFIX = ".md"
 
@@ -26,7 +27,7 @@ class _Page():
         """
         Args:
             pages: Pages object.
-            rpath: Path relative to rootdir.
+            rpath: Path relative to rootdir. Always starts with "/".
         """
         self.pages = pages
         self.dir = pages.dir
@@ -46,6 +47,7 @@ class Pages():
     def __init__(self, rootdir):
         self.dir = rootdir
         self.__md = Markdown(extensions=["wikilinks(base_url=,end_url=)"])
+        self.__hist = Hist(self)
         return
 
     def get(self, rpath):
@@ -91,10 +93,13 @@ class Pages():
 
     def gen_fullpath(self, rpath):
         # normpath always strip last "/"
-        fpath = path.normpath(path.join(self.dir, rpath))
+        fpath = path.normpath(path.join(self.dir, rpath.lstrip("/")))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.dir)
         return fpath
+
+    def get_raw_content(self, rpath):
+        return self.get_content(rpath, True)
 
     def get_content(self, rpath, raw=False):
         """
@@ -121,6 +126,7 @@ class Pages():
             # if last one is ".list"
             rpath = "/".join(l[:-1])
             fpath = self.gen_fullpath(rpath)
+            assert not raw
             return self.__load_dir(fpath, rpath)
 
         if path.isdir(fpath):
@@ -129,6 +135,7 @@ class Pages():
             try:
                 return self.__load_file(ifpath, irpath, raw)
             except EnvironmentError as e:
+                assert not raw
                 return self.__load_dir(fpath, rpath)
         else:
             return self.__load_file(fpath, rpath, raw)
@@ -136,12 +143,12 @@ class Pages():
     def __load_dir(self, fpath, rpath):
         inputbox = """
 <p>
-<form action="/.get/{path}" method="get">
+<form action="/.get{path}" method="get">
 Go or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
 """
-        if not rpath.endswith("/") and rpath != "":
+        if not rpath.endswith("/"):
             rpath = rpath + "/"
 
         items = []
@@ -153,7 +160,7 @@ Go or create page: <input type="text" name="pagename" value="" />
             elif l.endswith(FILE_SUFFIX):
                 items.append(path.splitext(l)[0])
 
-        return ("<h1>{rpath}</h1>\n".format(rpath=(rpath or "/")) +
+        return ("<h1>{rpath}</h1>\n".format(rpath=rpath) +
                 "<br />".join("""<a href="{name}">{name}</a>\n""".format(name=i)
                               for i in items) +
                 inputbox.format(path=rpath))
@@ -166,14 +173,17 @@ Go or create page: <input type="text" name="pagename" value="" />
                 return self.__gen_page(f, rpath)
 
     def __gen_page(self, f, rpath):
+        # list url not works when viewing dir/index in url like dir.
+        # i wonder if it should be fixed.
+        # always redirect accessing dir to dir/?
         editlink = """
-<p>
-<a href="/.edit/{path}">Edit</a>
-<a href=".list">List</a>
-<a href="/.rm/{path}">Delete</a>
-</p>
 <hr />
+<p>
+<a href="/.edit{path}">Edit</a>
+<a href=".list">List</a>
+<a href="/.rm{path}">Delete</a>
+</p>
 """
         conv = self.__md.convert(f.read())
-        rdir = path.dirname(rpath)
-        return editlink.format(path=rpath) + conv
+        # rdir = path.dirname(rpath)
+        return conv + editlink.format(path=rpath)

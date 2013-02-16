@@ -29,7 +29,7 @@ class Editor():
         self.path = rpath
         self.pages = pages
         try:
-            self.origtext = self.pages.get_content(rpath, True)
+            self.origtext = self.pages.get_raw_content(rpath)
         except EnvironmentError as e:
             if e.errno == 2:    # No such file or directory
                 self.origtext = ""
