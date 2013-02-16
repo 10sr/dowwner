@@ -2,11 +2,12 @@
 
 import os
 import sys
+from traceback import format_exception
 
 from urllib import parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
+
 from dowwner.pages import Pages
-from dowwner.editor import Editor
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
@@ -18,8 +19,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         try:
             return self.__try_do_GET(head_only)
         except Exception as e:
-            tb = sys.exc_info()[2]
-            return self.__send_500(e, tb, head_only)
+            return self.__send_500(sys.exc_info(), head_only)
 
     def __try_do_GET(self, head_only=False):
         if not self.server.dowwner_verify(self.client_address[0]):
@@ -86,8 +86,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         try:
             return self.__try_do_POST()
         except Exception as e:
-            tb = sys.exc_info()[2]
-            return self.__send_500(e, tb)
+            return self.__send_500(sys.exc_info())
 
     def __try_do_POST(self):
         if not self.server.dowwner_verify(self.client_address[0]):
@@ -115,21 +114,12 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         # self.wfile.write(str(data).encode())
         return
 
-    def __send_500(self, e, tb, head_only=False):
+    def __send_500(self, exc_info, head_only=False):
         self.send_error(500)
         self.end_headers()
         if not head_only:
-            tb = tb.tb_next.tb_next
-            filename = tb.tb_frame.f_code.co_filename
-            lineno = tb.tb_frame.f_lineno
-            funcname = tb.tb_frame.f_code.co_name
-            self.wfile.write(str("{}:{}:[{}]".format(filename,
-                                                    lineno,
-                                                    funcname)).encode())
-            self.wfile.write(("<br />\n" +
-                              e.__class__.__name__ +
-                              " " +
-                              str(e)).encode())
+            self.wfile.write(
+                "<br />\n".join(format_exception(*exc_info)).encode())
         return
 
 class DowwnerHTTPS(HTTPServer):

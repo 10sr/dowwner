@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# todo: manage history
+
 import os
 path = os.path
 from io import StringIO
