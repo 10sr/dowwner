@@ -29,7 +29,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
         if self.path.startswith("/.edit/"):
             # edit page
-            rpath = self.path.replace("/.edit/", "", 1)
+            qrpath = self.path.replace("/.edit/", "", 1)
+            rpath = parse.unquote(qrpath)
             p = self.server.dowwner_editor(rpath)
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -40,16 +41,21 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
         if self.path.startswith("/.get/"):
             query = self.path.replace("/.get/", "", 1)
-            rpath, q, data = query.partition("?")
+            qrpath, q, data = query.partition("?")
             data = parse.parse_qs(data)
+            qrpath = (qrpath
+                      if qrpath.endswith("/") or qrpath == ""
+                      else qrpath + "/")
+            rpath = parse.unquote(qrpath)
             print(data)
             self.send_response(302)
             self.send_header("Location",
-                             ("/" + rpath + parse.quote(data["pagename"][0])))
+                             ("/" + qrpath + parse.quote(data["pagename"][0])))
             self.end_headers()
             return
 
-        rpath = self.path.lstrip("/")
+        qrpath = self.path.lstrip("/")
+        rpath = parse.unquote(qrpath)
         dirname, basename = os.path.split(rpath)
         p = self.server.dowwner_pages.get(rpath)
         if p.exists:
@@ -63,7 +69,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             # redirect to edit page
             assert self.path != "/"
             self.send_response(302)
-            self.send_header("Location", ("/" + ".edit/" + rpath))
+            self.send_header("Location", ("/" + ".edit/" + qrpath))
             self.end_headers()
             if not head_only:
                 self.wfile.write(p.content)
@@ -83,7 +89,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return
 
         assert self.path.startswith("/.save/")
-        rpath = self.path.replace("/.save/", "", 1)
+        qrpath = self.path.replace("/.save/", "", 1)
+        rpath = parse.unquote(qrpath)
         length = int(self.headers["Content-Length"])
         # cannot use parse_qs without decoding when japanese contained...
         data = parse.parse_qs(self.rfile.read(length).decode(),
@@ -91,7 +98,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         rt = self.server.dowwner_pages.post(rpath, data["content"][0])
         if rt:
             self.send_response(302)
-            self.send_header("Location", "/" + rpath)
+            self.send_header("Location", "/" + qrpath)
             self.end_headers()
             self.wfile.write(str(data).encode())
         # self.send_response(200)

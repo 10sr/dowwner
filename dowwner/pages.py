@@ -167,9 +167,12 @@ Go or create page: <input type="text" name="pagename" value="" />
                 "<br />".join(items) +
                 inputbox.format(path=rpath))
 
-    def __load_file(self, fpath, rpath):
+    def __load_file(self, fpath, rpath, raw=False):
         with open(fpath + FILE_SUFFIX, encoding="utf-8") as f:
-            return self.__gen_page(f, rpath)
+            if raw:
+                return f.read()
+            else:
+                return self.__gen_page(f, rpath)
 
     def __gen_page(self, f, rpath):
         editlink = """
