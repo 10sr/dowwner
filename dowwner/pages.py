@@ -69,6 +69,10 @@ class Pages():
             Path of dirname."""
         return path.dirname(rpath)
 
+    def hist(self, rpath):
+        """Get history file list."""
+        return self.__hist.get_list(rpath)
+
     def post(self, rpath, content):
         """Post data.
 
@@ -180,8 +184,10 @@ Go or create page: <input type="text" name="pagename" value="" />
 <hr />
 <p>
 <a href="/.edit{path}">Edit</a>
-<a href=".list">List</a>
+<a href="/.hist{path}">History</a>
 <a href="/.rm{path}">Delete</a>
+|
+<a href=".list">List</a>
 </p>
 """
         conv = self.__md.convert(f.read())

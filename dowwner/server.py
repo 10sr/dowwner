@@ -62,6 +62,17 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
+        if self.path.startswith("/.hist/"):
+            qrpath = self.path.replace("/.hist", "", 1)
+            rpath = parse.unquote(qrpath)
+            print(rpath)
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            if not head_only:
+                self.wfile.write(self.server.dowwner_pages.hist(rpath).encode())
+            return
+
         qrpath = self.path
         rpath = parse.unquote(qrpath)
         dirname, basename = os.path.split(rpath)
