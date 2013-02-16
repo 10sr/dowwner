@@ -47,7 +47,6 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
                       if qrpath.endswith("/") or qrpath == ""
                       else qrpath + "/")
             rpath = parse.unquote(qrpath)
-            print(data)
             self.send_response(302)
             self.send_header("Location",
                              ("/" + qrpath + parse.quote(data["pagename"][0])))
@@ -71,7 +70,6 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
-            # print(p.content)
             if not head_only:
                 self.wfile.write(p.content)
         else:

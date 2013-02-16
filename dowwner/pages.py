@@ -33,21 +33,12 @@ class _Page():
         try:
             self.content = self.pages.get_content(self.path).encode()
         except EnvironmentError as e:
-            print(e)
             if e.errno == 2:    # No such file or directory
                 self.content = b""
                 self.exists = False
             else:
                 raise
         return
-
-    # @property
-    # def exists(self):
-    #     return self.pages.exists(self.path)
-
-    # @property
-    # def content(self):
-    #     """Return content in bytes."""
 
 class Pages():
     def __init__(self, rootdir):
@@ -81,8 +72,6 @@ class Pages():
             rpath: relative path to save.
             content: string of content.
         """
-        print(rpath)
-        print(content)
         fullpath = self.gen_fullpath(rpath + FILE_SUFFIX)
         try:
             os.makedirs(path.dirname(fullpath))
@@ -130,20 +119,7 @@ class Pages():
             # if last one is ".list"
             rpath = "/".join(l[:-1])
             fpath = self.gen_fullpath(rpath)
-            print(rpath)
-            print(fpath)
             return self.__load_dir(fpath, rpath)
-
-        # if l[-1] == "":
-        #     # if rpath ends with "/" or is empty str
-        #     try:
-        #         print(fpath + "index")
-        #         return self.__load_file(fpath + "index")
-        #     except EnvironmentError as e:
-        #         if e.errno == 2:
-        #             return self.__load_dir(fpath, rpath)
-        #         else:
-        #             raise
 
         if path.isdir(fpath):
             ifpath = path.join(fpath, "index")
