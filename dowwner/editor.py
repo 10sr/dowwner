@@ -4,7 +4,7 @@
 
 _formstr = """
 <h1>{path}</h1>
-<form action="/.save/{path}" method="post">
+<form action="/.save{path}" method="post">
 <p><input type="submit" name="submit" value="submit" /></p>
 <p>
 <textarea type="content" name="content" value="content" rows="24" cols="80">

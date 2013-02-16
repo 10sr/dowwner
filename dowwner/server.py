@@ -115,7 +115,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         rt = self.server.dowwner_pages.post(rpath, data["content"][0])
         if rt:
             self.send_response(302)
-            self.send_header("Location", qrpath)
+            self.send_header("Location", qrpath.lstrip("/"))
             self.end_headers()
             self.wfile.write(str(data).encode())
         # self.send_response(200)
