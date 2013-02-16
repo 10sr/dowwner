@@ -54,6 +54,15 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
+        if self.path.startswith("/.rm/"):
+            qrpath = self.path.replace("/.rm/", "", 1)
+            rpath = parse.unquote(qrpath)
+            rdir = self.server.dowwner_pages.rm(rpath)
+            self.send_response(302)
+            self.send_header("Location", "/" + rdir)
+            self.end_headers()
+            return
+
         qrpath = self.path.lstrip("/")
         rpath = parse.unquote(qrpath)
         dirname, basename = os.path.split(rpath)

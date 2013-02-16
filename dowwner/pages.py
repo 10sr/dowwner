@@ -67,6 +67,13 @@ class Pages():
         """Return editor object for request handler."""
         return Editor(self, rpath)
 
+    def rm(self, rpath):
+        """Remove page.
+
+        Returns:
+            Path of dirname."""
+        return path.dirname(rpath)
+
     def post(self, rpath, content):
         """Post data.
 
@@ -185,6 +192,7 @@ Go or create page: <input type="text" name="pagename" value="" />
 <p>
 <a href="/.edit/{path}">Edit</a>
 <a href=".list">List</a>
+<a href="/.rm/{path}">Delete</a>
 </p>
 <hr />
 """
