@@ -8,7 +8,7 @@ _formstr = """
 <p><input type="submit" name="submit" value="submit" /></p>
 <p>
 <textarea type="content" name="content" value="content" rows="24" cols="80">
-</textarea>
+{origtext}</textarea>
 </p>
 </form>
 """
@@ -20,10 +20,21 @@ class Editor():
         rpath: Relative path.
         content: bytes of editor code.
     """
-    def __init__(self, rpath):
+    def __init__(self, pages, rpath):
         """
         Args:
-            path_: Relative path."""
+            pages: Pages object.
+            rpath: Relative path.
+        """
         self.path = rpath
-        self.content = _formstr.format(path=rpath).encode()
+        self.pages = pages
+        try:
+            self.origtext = self.pages.get_content(rpath, True)
+        except EnvironmentError as e:
+            if e.errno == 2:    # No such file or directory
+                self.origtext = ""
+            else:
+                raise
+        self.content = _formstr.format(path=rpath,
+                                       origtext=self.origtext).encode()
         return

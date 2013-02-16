@@ -6,6 +6,7 @@ from io import StringIO
 
 from markdown import Markdown
 
+from dowwner.editor import Editor
 from dowwner.exc import PageNameError
 
 FILE_SUFFIX = ".md"
@@ -62,6 +63,10 @@ class Pages():
         """
         return _Page(self, rpath)
 
+    def edit(self, rpath):
+        """Return editor object for request handler."""
+        return Editor(self, rpath)
+
     def post(self, rpath, content):
         """Post data.
 
@@ -93,7 +98,7 @@ class Pages():
         assert fpath.startswith(self.dir)
         return fpath
 
-    def get_content(self, rpath):
+    def get_content(self, rpath, raw=False):
         """
         Args:
             rpath: Relative path.
@@ -137,11 +142,11 @@ class Pages():
             ifpath = path.join(fpath, "index")
             irpath = path.join(rpath, "index")
             try:
-                return self.__load_file(ifpath, irpath)
+                return self.__load_file(ifpath, irpath, raw)
             except EnvironmentError as e:
                 return self.__load_dir(fpath, rpath)
         else:
-            return self.__load_file(fpath, rpath)
+            return self.__load_file(fpath, rpath, raw)
 
     def __load_dir(self, fpath, rpath):
         inputbox = """
@@ -163,8 +168,9 @@ Go or create page: <input type="text" name="pagename" value="" />
             elif l.endswith(FILE_SUFFIX):
                 items.append(path.splitext(l)[0])
 
-        return ("<h1>dir.</h1>" +
-                "<br />".join(items) +
+        return ("<h1>{rpath}</h1>\n".format(rpath=(rpath or "/")) +
+                "<br />".join("""<a href="{name}">{name}</a>\n""".format(name=i)
+                              for i in items) +
                 inputbox.format(path=rpath))
 
     def __load_file(self, fpath, rpath, raw=False):

@@ -31,7 +31,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             # edit page
             qrpath = self.path.replace("/.edit/", "", 1)
             rpath = parse.unquote(qrpath)
-            p = self.server.dowwner_editor(rpath)
+            p = self.server.dowwner_pages.edit(rpath)
             self.send_response(200)
             self.send_header("Content-type", "text/html")
             self.end_headers()
@@ -128,7 +128,6 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 class DowwnerHTTPS(HTTPServer):
     def __init__(self, rootdir, *args, **kargs):
         self.dowwner_pages = Pages(rootdir)
-        self.dowwner_editor = Editor
         return HTTPServer.__init__(self, *args, **kargs)
 
     def dowwner_verify(self, addr):
