@@ -136,7 +136,7 @@ class Pages():
     FILE_SUFFIX = ".md"
 
     def __init__(self, rootdir):
-        self.dir = rootdir
+        self.dir = path.realpath(rootdir)
         self.__md = Markdown()
         self.__hist = Hist(self)
         return
