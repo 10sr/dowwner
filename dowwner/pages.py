@@ -32,7 +32,8 @@ class _Page():
             rpath: Path relative to rootdir. Always starts with "/".
         """
         self.pages = pages
-        self.path = urllib.parse.unquote(rpath)
+        rpath = urllib.parse.unquote(rpath)
+        self.path = rpath
         self._redirect = None
 
         elems = rpath.split("/")
@@ -112,7 +113,8 @@ class _Page():
 class _PostPage(_Page):
     def __init__(self, pages, rpath, data):
         self.pages = pages
-        self.path = urllib.parse.unquote(rpath)
+        rpath = urllib.parse.unquote(rpath)
+        self.path = rpath
 
         elems = rpath.split("/")
         for i in elems[:-1]:

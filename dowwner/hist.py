@@ -28,7 +28,7 @@ class _HistList():
 
         l = []
         for f in os.listdir(dpath):
-            if f.startswith(".hist." + fname):
+            if f.startswith(".bak." + fname):
                 l.append(f)
 
         return "<br />\n".join(l)
@@ -36,6 +36,9 @@ class _HistList():
 class Hist():
     def __init__(self, pages):
         self.pages = pages
+        return
+
+    def view_file(self, rpath):
         return
 
     def get_list(self, rpath):
@@ -48,7 +51,7 @@ class Hist():
         """Backup file.
 
         This should be called everytime files are modified or deleted.
-        Backed up files are like .hist.name.20130216_193548
+        Backed up files are like .bak.name.20130216_193548
         """
         # todo: this method should be operated atomic way
         if rpath.endswith("/"):
@@ -58,7 +61,7 @@ class Hist():
         dirname, basename = os.path.split(rpath)
         fulldir = self.pages.gen_fullpath(dirname)
         origpath = os.path.join(fulldir, basename + self.pages.FILE_SUFFIX)
-        newpath = os.path.join(fulldir, ".hist." + basename + "." + timestr)
+        newpath = os.path.join(fulldir, ".bak." + basename + "." + timestr)
         try:
             shutil.copyfile(origpath, newpath)
         except EnvironmentError as e:
