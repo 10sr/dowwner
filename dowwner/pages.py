@@ -44,7 +44,7 @@ class _Page():
         for i in elems[:-1]:
             # if any item other than last one starts with "."
             if i.startswith("."):
-                raise PageNameError("Invalid page name: {}".format(rpath))
+                raise PageNameError("{}: Invalid page name".format(rpath))
 
         if elems[-1].startswith(".edit."):
             realrpath = "/".join(elems[:-1] +
@@ -64,7 +64,6 @@ class _Page():
                                  [elems[-1].replace(".rm.", "", 1)])
             self.pages.rm(realrpath)
             self._redirect = "/".join(elems[:-1]) or "/"
-            print(self._redirect)
             return
         elif elems[-1].startswith(".hist."):
             realrpath = "/".join(elems[:-1] +
@@ -77,6 +76,8 @@ class _Page():
             self._content = self.pages.get_dir_content("/".join(elems[:-1]))
             self._redirect = None
             return
+        elif elems[-1].startswith("."):
+            raise PageNameError("{}: Invalid page name".format(rpath))
 
         self._redirect = None
         try:
@@ -159,6 +160,7 @@ class Pages():
         Returns:
             Path of dirname."""
         self.backup(rpath)
+        os.remove(self.gen_fullpath(rpath) + self.FILE_SUFFIX)
         return path.dirname(rpath)
 
     def hist(self, rpath):
@@ -193,7 +195,8 @@ class Pages():
         return addr == "127.0.0.1"
 
     def gen_fullpath(self, rpath):
-        # normpath always strip last "/"
+        """Return fullpath from relative path. FILE_SUFFIX is not appended."""
+        # note: normpath always strip last "/"
         fpath = path.normpath(path.join(self.dir, rpath.lstrip("/")))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.dir)
