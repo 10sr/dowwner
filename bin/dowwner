@@ -15,14 +15,24 @@ def main(argv):
 
     import dowwner
 
-    # parser = ap.ArgumentParser("archsh")
-    # parser.add_argument("archive", help="archive file name")
+    parser = ap.ArgumentParser("archsh")
+    parser.add_argument("-r", "--root-dir", help="root directory",
+                        default=None)
+    parser.add_argument("-d", "--daemon", help="run as daemon",
+                        action="store_true")
+    parser.add_argument("-p", "--port", help="port number",
+                        default=None)
 
-    # args = parser.parse_args(argv[1:])
+    args = parser.parse_args(argv[1:])
 
-    # s = shell(args.archive)
-    # s.main()
-    dowwner.main(rootdir="/tmp/dowwner")
+    confs = dict()
+    if args.root_dir:
+        confs["rootdir"] = args.root_dir
+    if args.port:
+        confs["port"] = args.port
+
+    print(args)
+    dowwner.main(**confs)
     return
 
 if __name__ == "__main__":
