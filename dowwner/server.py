@@ -2,7 +2,7 @@
 
 import os
 import sys
-from traceback import format_exception
+from traceback import format_exception, print_exception
 
 from urllib import parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -27,67 +27,14 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        if self.path.startswith("/.edit/"):
-            # edit page
-            qrpath = self.path.replace("/.edit", "", 1)
-            rpath = parse.unquote(qrpath)
-            p = self.server.dowwner_pages.edit(rpath)
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            if not head_only:
-                self.wfile.write(p.content)
-            return
-
-        if self.path.startswith("/.get/"):
-            query = self.path.replace("/.get", "", 1)
-            qrpath, q, data = query.partition("?")
-            data = parse.parse_qs(data)
-            qrpath = (qrpath
-                      if qrpath.endswith("/") or qrpath == ""
-                      else qrpath + "/")
-            rpath = parse.unquote(qrpath)
+        p = self.server.dowwner_pages.get(self.path)
+        if p.redirect is not None:
             self.send_response(302)
-            self.send_header("Location",
-                             (qrpath + parse.quote(data["pagename"][0])))
+            self.send_header("Location", p.redirect)
             self.end_headers()
-            return
-
-        if self.path.startswith("/.rm/"):
-            qrpath = self.path.replace("/.rm", "", 1)
-            rpath = parse.unquote(qrpath)
-            rdir = self.server.dowwner_pages.rm(rpath)
-            self.send_response(302)
-            self.send_header("Location", rdir)
-            self.end_headers()
-            return
-
-        if self.path.startswith("/.hist/"):
-            qrpath = self.path.replace("/.hist", "", 1)
-            rpath = parse.unquote(qrpath)
-            print(rpath)
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            if not head_only:
-                self.wfile.write(self.server.dowwner_pages.hist(rpath).encode())
-            return
-
-        qrpath = self.path
-        rpath = parse.unquote(qrpath)
-        dirname, basename = os.path.split(rpath)
-        p = self.server.dowwner_pages.get(rpath)
-        if p.exists:
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            if not head_only:
-                self.wfile.write(p.content)
         else:
-            # redirect to edit page
-            assert self.path != "/"
-            self.send_response(302)
-            self.send_header("Location", ("/" + ".edit" + qrpath))
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
             self.end_headers()
             if not head_only:
                 self.wfile.write(p.content)
@@ -105,17 +52,12 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        assert self.path.startswith("/.save/")
-        qrpath = self.path.replace("/.save", "", 1)
-        rpath = parse.unquote(qrpath)
         length = int(self.headers["Content-Length"])
-        # cannot use parse_qs without decoding when japanese contained...
-        data = parse.parse_qs(self.rfile.read(length).decode(),
-                              keep_blank_values=True)
-        rt = self.server.dowwner_pages.post(rpath, data["content"][0])
+        data = self.rfile.read(length)
+        rt = self.server.dowwner_pages.post(self.path, data)
         if rt:
             self.send_response(302)
-            self.send_header("Location", qrpath.lstrip("/"))
+            self.send_header("Location", rt.redirect)
             self.end_headers()
             self.wfile.write(str(data).encode())
         # self.send_response(200)
@@ -131,6 +73,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         if not head_only:
             self.wfile.write(
                 "<br />\n".join(format_exception(*exc_info)).encode())
+        print_exception(*exc_info)
         return
 
 class DowwnerHTTPS(HTTPServer):

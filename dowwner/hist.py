@@ -7,9 +7,10 @@ path = os.path
 
 from dowwner.exc import PageNameError
 
-class Hist():
-    def __init__(self, pages):
+class _HistList():
+    def __init__(self, pages, rpath):
         self.pages = pages
+        self.content = self.get_list(rpath)
         return
 
     def get_list(self, rpath):
@@ -29,6 +30,14 @@ class Hist():
                 l.append(f)
 
         return "<br />\n".join(l)
+
+class Hist():
+    def __init__(self, pages):
+        self.pages = pages
+        return
+
+    def get_list(self, rpath):
+        return _HistList(self.pages, rpath)
 
     def backup(self, rpath):
         """Backup file.

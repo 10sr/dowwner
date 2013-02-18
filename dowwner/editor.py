@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+from os import path
+
 # todo: use stylesheet for scale.
 
 _formstr = """
 <h1>{path}</h1>
-<form action="/.save{path}" method="post">
+<form action=".save.{name}" method="post">
 <p><input type="submit" name="submit" value="submit" /></p>
 <p>
 <textarea type="content" name="content" value="content" rows="24" cols="80">
@@ -18,7 +20,7 @@ class Editor():
 
     Attributes:
         rpath: Relative path.
-        content: bytes of editor code.
+        content: String of editor code.
     """
     def __init__(self, pages, rpath):
         """
@@ -35,6 +37,8 @@ class Editor():
                 self.origtext = ""
             else:
                 raise
+        name = path.basename(rpath)
         self.content = _formstr.format(path=rpath,
-                                       origtext=self.origtext).encode()
+                                       origtext=self.origtext,
+                                       name=name)
         return
