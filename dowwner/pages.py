@@ -55,11 +55,11 @@ class _Page():
             self._content = self.editor.content
             self._redirect = None
             return
-        elif elems[-1].startswith(".get."):
+        elif elems[-1].startswith(".get"):
             qrpath, sep, data = elems[-1].partition("?")
-            data = parse.parse_qs(data)
+            data = urllib.parse.parse_qs(data)
             self._redirect = ("/".join(elems[:-1]) + "/" +
-                             parse.quote(data["pagename"]))
+                              urllib.parse.quote(data["pagename"][0]))
             return
         elif elems[-1].startswith(".rm."):
             realrpath = "/".join(elems[:-1] +
@@ -133,7 +133,7 @@ class _PostPage(_Page):
 class Pages():
     def __init__(self, rootdir):
         self.dir = rootdir
-        self.__md = Markdown(extensions=["wikilinks(base_url=,end_url=)"])
+        self.__md = Markdown()
         self.__hist = Hist(self)
         return
 
@@ -233,7 +233,7 @@ class Pages():
     def __load_dir(self, fpath, rpath):
         inputbox = """
 <p>
-<form action="/.get" method="get">
+<form action=".get" method="get">
 Go or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
