@@ -12,8 +12,6 @@ from dowwner.editor import Editor
 from dowwner.exc import PageNameError
 from dowwner.hist import Hist
 
-FILE_SUFFIX = ".md"
-
 class _DirWOLastSlash(BaseException):
     """Dir without last slash."""
     pass
@@ -63,9 +61,10 @@ class _Page():
             return
         elif elems[-1].startswith(".rm."):
             realrpath = "/".join(elems[:-1] +
-                                 [elems[-1].replace(".rm", "", 1)])
+                                 [elems[-1].replace(".rm.", "", 1)])
             self.pages.rm(realrpath)
-            self._redirect = "/".join(elems[:-1])
+            self._redirect = "/".join(elems[:-1]) or "/"
+            print(self._redirect)
             return
         elif elems[-1].startswith(".hist."):
             realrpath = "/".join(elems[:-1] +
@@ -131,6 +130,8 @@ class _PostPage(_Page):
         return
 
 class Pages():
+    FILE_SUFFIX = ".md"
+
     def __init__(self, rootdir):
         self.dir = rootdir
         self.__md = Markdown()
@@ -157,11 +158,16 @@ class Pages():
 
         Returns:
             Path of dirname."""
+        self.backup(rpath)
         return path.dirname(rpath)
 
     def hist(self, rpath):
         """Get history file list."""
         return self.__hist.get_list(rpath)
+
+    def backup(self, rpath):
+        """Backup rpath."""
+        return self.__hist.backup(rpath)
 
     def write_data(self, rpath, content):
         """Post data.
@@ -170,12 +176,13 @@ class Pages():
             rpath: relative path to save.
             content: string of content.
         """
-        fullpath = self.gen_fullpath(rpath + FILE_SUFFIX)
+        fullpath = self.gen_fullpath(rpath + self.FILE_SUFFIX)
         try:
             os.makedirs(path.dirname(fullpath))
         except OSError as e:
             if e.errno != 17: # 17 means file exists
                 raise
+        self.backup(rpath)
         with open(fullpath,
                   mode="w", encoding="utf-8") as f:
             f.write(content)
@@ -244,7 +251,7 @@ Go or create page: <input type="text" name="pagename" value="" />
                 continue
             elif path.isdir(path.join(fpath, l)):
                 items.append(l + "/")
-            elif l.endswith(FILE_SUFFIX):
+            elif l.endswith(self.FILE_SUFFIX):
                 items.append(path.splitext(l)[0])
 
         return ("<h1>{path}</h1>\n".format(path=rpath) +
@@ -253,7 +260,7 @@ Go or create page: <input type="text" name="pagename" value="" />
                 inputbox)
 
     def __load_file(self, fpath, rpath, raw=False):
-        with open(fpath + FILE_SUFFIX, encoding="utf-8") as f:
+        with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
             if raw:
                 return f.read()
             else:

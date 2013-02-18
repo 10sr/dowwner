@@ -4,6 +4,8 @@
 
 import os
 path = os.path
+import shutil
+from time import strftime
 
 from dowwner.exc import PageNameError
 
@@ -39,12 +41,29 @@ class Hist():
     def get_list(self, rpath):
         return _HistList(self.pages, rpath)
 
+    def current_time(self):
+        return strftime("%Y%m%d_%H%M%S")
+
     def backup(self, rpath):
         """Backup file.
 
         This should be called everytime files are modified or deleted.
         Backed up files are like .hist.name.20130216_193548
         """
+        # todo: this method should be operated atomic way
+        if rpath.endswith("/"):
+            raise PageNameError("{}: Cannot backup directory".format(rpath))
+
+        timestr = self.current_time()
+        dirname, basename = os.path.split(rpath)
+        fulldir = self.pages.gen_fullpath(dirname)
+        origpath = os.path.join(fulldir, basename + self.pages.FILE_SUFFIX)
+        newpath = os.path.join(fulldir, ".hist." + basename + "." + timestr)
+        try:
+            shutil.copyfile(origpath, newpath)
+        except EnvironmentError as e:
+            if e.errno != 2:
+                raise
         return
 
 if __name__ == "__main__":
