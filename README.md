@@ -26,3 +26,11 @@ Run:
     $ bin/dowwner
 
 and access to `localhost:2505`.
+
+TODO:
+-----
+
+* Confirm when deleting pages
+* Manage history (view, revert, diff, ...)
+* More valuable access control (currently accesses only from 127.0.0.1 are
+allowed)
