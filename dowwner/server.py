@@ -4,7 +4,6 @@ import os
 import sys
 from traceback import format_exception, print_exception
 
-from urllib import parse
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 from dowwner.pages import Pages
@@ -60,11 +59,6 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.send_header("Location", rt.redirect)
             self.end_headers()
             self.wfile.write(str(data).encode())
-        # self.send_response(200)
-        # self.send_header("Content-type", "text/html")
-        # self.end_headers()
-        # self.wfile.write(b"success!<br />")
-        # self.wfile.write(str(data).encode())
         return
 
     def __send_500(self, exc_info, head_only=False):

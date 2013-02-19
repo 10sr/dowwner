@@ -73,6 +73,12 @@ class _Page():
             self._content = self.hist.content
             self._redirect = None
             return
+        elif elems[-1] == ".hist":
+            realrpath = "/".join(elems[:-1]) or "/"
+            self.hist = self.pages.hist(realrpath)
+            self._content = self.hist.content
+            self._redirect = None
+            return
         elif elems[-1] == ".list":
             self._content = self.pages.get_dir_content("/".join(elems[:-1]))
             self._redirect = None
@@ -246,6 +252,8 @@ class Pages():
         inputbox = """
 <p>
 <form action=".get" method="get">
+<a href=".hist">History</a>
+|
 Go or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>

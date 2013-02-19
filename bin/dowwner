@@ -31,7 +31,7 @@ def main(argv):
     if args.port:
         confs["port"] = args.port
 
-    print(args)
+    # print(args)
     dowwner.main(**confs)
     return
 

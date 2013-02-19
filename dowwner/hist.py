@@ -22,14 +22,18 @@ class _HistList():
             String of history file list.
         """
         fpath = self.pages.gen_fullpath(rpath)
-        if path.isdir(rpath):
-            raise PageNameError("Directory name: {}".format(rpath))
-        dpath, fname = path.split(fpath)
+        if path.isdir(fpath):
+            dpath = fpath
+            fname = ""
+        else:
+            dpath, fname = path.split(fpath)
 
         l = []
         for f in os.listdir(dpath):
-            if f.startswith(".bak." + fname):
+            if f.startswith(".bak.") and f.endswith(fname):
                 l.append(f)
+
+        l.sort(reverse=True)
 
         return "<br />\n".join(l)
 
@@ -51,7 +55,7 @@ class Hist():
         """Backup file.
 
         This should be called everytime files are modified or deleted.
-        Backed up files are like .bak.name.20130216_193548
+        Backed up files are like .bak.20130216_193548.name
         """
         # todo: this method should be operated atomic way
         if rpath.endswith("/"):
@@ -61,7 +65,7 @@ class Hist():
         dirname, basename = os.path.split(rpath)
         fulldir = self.pages.gen_fullpath(dirname)
         origpath = os.path.join(fulldir, basename + self.pages.FILE_SUFFIX)
-        newpath = os.path.join(fulldir, ".bak." + basename + "." + timestr)
+        newpath = os.path.join(fulldir, ".bak." + timestr + "." + basename)
         try:
             shutil.copyfile(origpath, newpath)
         except EnvironmentError as e:
