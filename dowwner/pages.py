@@ -211,9 +211,10 @@ class Pages():
         return fpath
 
     def get_raw_content(self, rpath):
-        return self.get_content(rpath, True)
+        fpath = self.gen_fullpath(rpath)
+        return self.__read_file(fpath)
 
-    def get_content(self, rpath, raw=False):
+    def get_content(self, rpath):
         """
         Args:
             rpath: Relative path.
@@ -231,24 +232,22 @@ class Pages():
         if path.isdir(fpath):
             if not rpath.endswith("/"):
                 raise _DirWOLastSlash()
-            ifpath = path.join(fpath, "index")
             irpath = path.join(rpath, "index")
             try:
-                return self.__load_file(ifpath, irpath, raw)
+                return self.__gen_page_html(irpath)
             except EnvironmentError as e:
                 if e.errno == 2:
-                    assert not raw
-                    return self.__load_dir(fpath, rpath)
+                    return self.__gen_dir_html(fpath, rpath)
                 else:
                     raise
         else:
-            return self.__load_file(fpath, rpath, raw)
+            return self.__gen_page_html(rpath)
 
     def get_dir_content(self, rpath):
         fpath = self.gen_fullpath(rpath)
-        return self.__load_dir(fpath, rpath)
+        return self.__gen_dir_html(fpath, rpath)
 
-    def __load_dir(self, fpath, rpath):
+    def __gen_dir_html(self, fpath, rpath):
         inputbox = """
 <p>
 <form action=".get" method="get">
@@ -258,7 +257,7 @@ Go or create page: <input type="text" name="pagename" value="" />
 </form>
 </p>
 """
-        items = []
+        items = ["./", "../"]
         for l in os.listdir(fpath):
             if l.startswith("."):
                 continue
@@ -272,17 +271,7 @@ Go or create page: <input type="text" name="pagename" value="" />
                               for i in items) +
                 inputbox)
 
-    def __load_file(self, fpath, rpath, raw=False):
-        with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
-            if raw:
-                return f.read()
-            else:
-                return self.__gen_page(f, rpath)
-
-    def __gen_page(self, f, rpath):
-        # list url not works when viewing dir/index in url like dir.
-        # i wonder if it should be fixed.
-        # always redirect accessing dir to dir/?
+    def __gen_page_html(self, rpath):
         editlink = """
 <hr />
 <p>
@@ -294,6 +283,17 @@ Go or create page: <input type="text" name="pagename" value="" />
 </p>
 """
         name = path.basename(rpath)
-        conv = self.__md.convert(f.read())
+        conv = self.get_page_html(rpath)
         # rdir = path.dirname(rpath)
         return conv + editlink.format(name=name)
+        return
+
+    def get_page_html(self, rpath):
+        """Get html converted content."""
+        fpath = self.gen_fullpath(rpath)
+        text = self.__read_file(fpath)
+        return self.__md.convert(text)
+
+    def __read_file(self, fpath):
+        with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
+            return f.read()
