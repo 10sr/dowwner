@@ -45,6 +45,7 @@ class _Page():
         for i in elems[:-1]:
             # if any item other than last one starts with "."
             if i.startswith("."):
+                # not work when pagename of get contains slashes
                 raise PageNameError("{}: Invalid page name".format(rpath))
 
         if elems[-1].startswith(".edit."):
@@ -59,12 +60,6 @@ class _Page():
             data = urllib.parse.parse_qs(data)
             self._redirect = ("/".join(elems[:-1]) + "/" +
                               urllib.parse.quote(data["pagename"][0]))
-            return
-        elif elems[-1].startswith(".rm."):
-            realrpath = "/".join(elems[:-1] +
-                                 [elems[-1].replace(".rm.", "", 1)])
-            self.pages.rm(realrpath)
-            self._redirect = "/".join(elems[:-1]) or "/"
             return
         elif elems[-1].startswith(".hist."):
             realrpath = "/".join(elems[:-1] +
@@ -133,9 +128,13 @@ class _PostPage(_Page):
 
         data2 = urllib.parse.parse_qs(data.decode(), keep_blank_values=True)
         content = data2["content"][0]
-        self.pages.write_data(realrpath, content)
+        if content == "":
+            self.pages.rm(realrpath)
+            self._redirect = path.dirname(realrpath)
+        else:
+            self.pages.write_data(realrpath, content)
+            self._redirect = realrpath
 
-        self._redirect = realrpath
         return
 
 class Pages():
@@ -277,7 +276,6 @@ Go or create page: <input type="text" name="pagename" value="" />
 <p>
 <a href=".edit.{name}">Edit</a>
 <a href=".hist.{name}">History</a>
-<a href=".rm.{name}">Delete</a>
 |
 <a href=".list">List</a>
 </p>
