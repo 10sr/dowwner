@@ -46,3 +46,9 @@ TODO:
 * Manage history (view, revert, diff, ...)
 * More usable access control (currently accesses only from 127.0.0.1 are
 allowed)
+
+
+License
+-------
+
+All code licensed under CC0: <http://creativecommons.org/publicdomain/zero/1.0/>
