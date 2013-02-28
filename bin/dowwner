@@ -18,7 +18,8 @@ def main(argv):
     parser = ap.ArgumentParser("archsh")
     parser.add_argument("-r", "--root-dir", help="root directory",
                         default=None)
-    parser.add_argument("-d", "--daemon", help="run as daemon",
+    parser.add_argument("-d", "--daemon",
+                        help="run as daemon (currently not works)",
                         action="store_true")
     parser.add_argument("-p", "--port", help="port number",
                         default=None)

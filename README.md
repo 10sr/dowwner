@@ -18,6 +18,18 @@ Dependencies
 * Python3 (Tested under python3.2)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
 
+
+Installation
+------------
+
+Run:
+
+    ./setup.py install
+
+or just create simlink of bin/dowwner and put it into your prefered directory
+like "$HOME/bin" or "$HOME/.local/bin".
+
+
 Usage
 -----
 
@@ -25,12 +37,12 @@ Run:
 
     $ bin/dowwner
 
-and access to `localhost:2505`.
+and access to `localhost:2505`. `bin/dowwner -h` for additional help.
+
 
 TODO:
 -----
 
-* Confirm when deleting pages
 * Manage history (view, revert, diff, ...)
-* More valuable access control (currently accesses only from 127.0.0.1 are
+* More usable access control (currently accesses only from 127.0.0.1 are
 allowed)
