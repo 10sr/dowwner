@@ -43,9 +43,13 @@ and access to `localhost:2505`. `bin/dowwner -h` for additional help.
 TODO:
 -----
 
-* Manage history (view, revert, diff, ...)
+* Stylesheet support
+* Generate true html
+* Menu
+* Works as cgi
 * More usable access control (currently accesses only from 127.0.0.1 are
 allowed)
+* Refucturing
 
 
 License
