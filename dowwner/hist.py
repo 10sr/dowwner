@@ -41,13 +41,27 @@ class _HistList():
                                for f in l)
 
 class _BakContent():
+    footer = """
+<hr />
+<p>
+<a href="{name}">Current</a>
+<a href="{revert}">Revert</a>
+|
+<a href=".list">List</a>
+</p>
+"""
+
     def __init__(self, pages, rpath):
         self.pages = pages
         self.content = self.gen_content(rpath)
         return
 
     def gen_content(self, rpath):
-        return self.pages.get_page_html(rpath)
+        basename = rpath.rpartition("/")[2]
+        revert = ".revert." + ".".join(basename.split(".")[2:])
+        pagename = rpath.rpartition(".")[2]
+        return (self.pages.get_page_html(rpath) +
+                self.footer.format(name=pagename, revert=revert))
 
 class Hist():
     def __init__(self, pages):

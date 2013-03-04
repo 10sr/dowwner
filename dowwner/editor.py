@@ -22,7 +22,7 @@ class Editor():
         rpath: Relative path.
         content: String of editor code.
     """
-    def __init__(self, pages, rpath):
+    def __init__(self, pages, rpath, orig=None):
         """
         Args:
             pages: Pages object.
@@ -30,13 +30,16 @@ class Editor():
         """
         self.path = rpath
         self.pages = pages
-        try:
-            self.origtext = self.pages.get_raw_content(rpath)
-        except EnvironmentError as e:
-            if e.errno == 2:    # No such file or directory
-                self.origtext = ""
-            else:
-                raise
+        if orig is None:
+            try:
+                self.origtext = self.pages.get_raw_content(rpath)
+            except EnvironmentError as e:
+                if e.errno == 2:    # No such file or directory
+                    self.origtext = ""
+                else:
+                    raise
+        else:
+            self.origtext = orig
         name = path.basename(rpath)
         self.content = _formstr.format(path=rpath,
                                        origtext=self.origtext,

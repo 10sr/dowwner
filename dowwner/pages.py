@@ -56,6 +56,15 @@ class _Page():
             self._content = self.editor.content
             self._redirect = None
             return
+        elif elems[-1].startswith(".revert."):
+            dirname, slash, basename = rpath.rpartition("/")
+            bakpath = dirname + "/" + basename.replace(".revert", ".bak", 1)
+            realrpath = (dirname + "/" + ".".join(basename.split(".")[3:]))
+            self.editor = Editor(pages, realrpath,
+                                 self.pages.get_raw_content(bakpath))
+            self._content = self.editor.content
+            self._redirect = None
+            return
         elif elems[-1].startswith(".get"):
             # qrpath, sep, data = elems[-1].partition("?")
             data = urllib.parse.parse_qs(data)
@@ -86,20 +95,21 @@ class _Page():
             return
         elif elems[-1].startswith("."):
             raise PageNameError("{}: Invalid page name".format(rpath))
-
-        self._redirect = None
-        try:
-            self._content = self.pages.get_content(self.path)
-        except (_DirWOLastSlash, EnvironmentError) as e:
-            if isinstance(e, _DirWOLastSlash):
-                self._content = None
-                self._redirect = rpath + "/"
-            elif e.errno == 2:    # No such file or directory
-                self._content = None
-                self._redirect = "/".join(elems[:-1] + [".edit." + elems[-1]])
-            else:
-                raise
-        return
+        else:
+            self._redirect = None
+            try:
+                self._content = self.pages.get_content(self.path)
+            except (_DirWOLastSlash, EnvironmentError) as e:
+                if isinstance(e, _DirWOLastSlash):
+                    self._content = None
+                    self._redirect = rpath + "/"
+                elif e.errno == 2:    # No such file or directory
+                    self._content = None
+                    self._redirect = "/".join(elems[:-1] +
+                                              [".edit." + elems[-1]])
+                else:
+                    raise
+            return
 
     # todo: use quote for redirect url
 
