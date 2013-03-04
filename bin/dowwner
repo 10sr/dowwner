@@ -16,13 +16,14 @@ def main(argv):
     import dowwner
 
     parser = ap.ArgumentParser("archsh")
-    parser.add_argument("-r", "--root-dir", help="root directory",
+    parser.add_argument("-r", "--root-dir",
+                        help="root directory, default to current directory",
                         default=None)
     parser.add_argument("-d", "--daemon",
-                        help="run as daemon (currently not works)",
-                        action="store_true")
-    parser.add_argument("-p", "--port", help="port number",
-                        default=None)
+                        help="run as daemon",
+                        choices=("start", "status", "stop", "restart"))
+    parser.add_argument("-p", "--port", help="port number, default to 2505",
+                        default=0, type=int)
 
     args = parser.parse_args(argv[1:])
 
@@ -31,8 +32,11 @@ def main(argv):
         confs["rootdir"] = args.root_dir
     if args.port:
         confs["port"] = args.port
+    if args.daemon:
+        confs["daemon"] = args.daemon
 
     # print(args)
+    # print(confs)
     dowwner.main(**confs)
     return
 

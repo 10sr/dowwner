@@ -15,5 +15,7 @@ setup(name = "dowwner",
       packages = ["dowwner", "dowwner/markdown"],
       scripts = ["bin/dowwner"],
       keywords = "wiki",
-      classifiers=['License :: Public Domain']
+      classifiers=[
+        'License :: OSI Approved :: Python Software Foundation License'
+        ]
       )
