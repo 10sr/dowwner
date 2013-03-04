@@ -75,6 +75,11 @@ class _Page():
             self._content = self.hist.content
             self._redirect = None
             return
+        elif elems[-1].startswith(".bak."):
+            self.hist = self.pages.hist(rpath)
+            self._content = self.hist.content
+            self._redirect = None
+            return
         elif elems[-1] == ".list":
             self._content = self.pages.get_dir_content("/".join(elems[:-1]))
             self._redirect = None
@@ -173,7 +178,7 @@ class Pages():
 
     def hist(self, rpath):
         """Get history file list."""
-        return self.__hist.get_list(rpath)
+        return self.__hist.get(rpath)
 
     def backup(self, rpath):
         """Backup rpath."""
