@@ -143,7 +143,7 @@ class _PostPage(_Page):
         realrpath ="/".join(elems[:-1] + [elems[-1].replace(".save.", "", 1)])
 
         data2 = urllib.parse.parse_qs(data.decode(), keep_blank_values=True)
-        content = data2["content"][0]
+        content = data2["content"][0].replace("\r", "")
         if content == "":
             self.pages.rm(realrpath)
             self._redirect = path.dirname(realrpath)
