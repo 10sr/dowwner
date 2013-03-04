@@ -45,10 +45,9 @@ def start(pidfile, logfile, func):
 
     # start the daemon main loop
 
-    # Redirect standard file descriptors
-    sys.stdin = open('/dev/null', 'r')
-    sys.stdout = open('/dev/null', 'w')
-    sys.stderr = open('/dev/null', 'w')
+    sys.stdin = open(os.devnull, 'r')
+    sys.stdout = open(os.devnull, 'w')
+    sys.stderr = open(os.devnull, 'w')
     func()
     return
 
