@@ -51,4 +51,4 @@ allowed)
 License
 -------
 
-All code licensed under CC0: <http://creativecommons.org/publicdomain/zero/1.0/>
+All code licensed under PSF License: <http://docs.python.org/2/license.html>
