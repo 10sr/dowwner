@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# from http://code.activestate.com/recipes/66012/
+
 import os
 import sys
 
@@ -42,6 +44,11 @@ def start(pidfile, logfile, func):
         sys.exit(1)
 
     # start the daemon main loop
+
+    # Redirect standard file descriptors
+    sys.stdin = open('/dev/null', 'r')
+    sys.stdout = open('/dev/null', 'w')
+    sys.stderr = open('/dev/null', 'w')
     func()
     return
 
