@@ -12,6 +12,9 @@ def start(pidfile, logfile, func):
         print("Exit.")
         sys.exit(0)
 
+    print("Starting server...", end="")
+    sys.stdout.flush()
+
     try:
         pid = os.fork()
         if pid > 0:
@@ -27,7 +30,6 @@ def start(pidfile, logfile, func):
     os.setsid()
     os.umask(0)
 
-    print("Starting server...", end="")
     # do second fork
     try:
         pid = os.fork()
@@ -45,6 +47,8 @@ def start(pidfile, logfile, func):
 
     # start the daemon main loop
 
+    sys.stdout.flush()
+    sys.stderr.flush()
     sys.stdin = open(os.devnull, 'r')
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w')
