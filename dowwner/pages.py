@@ -33,6 +33,7 @@ class _Page():
         """
         self.pages = pages
         rpath = urllib.parse.unquote(rpath)
+        rpath, getsep, data = rpath.partition("?")
         self.path = rpath
         self._redirect = None
 
@@ -56,7 +57,7 @@ class _Page():
             self._redirect = None
             return
         elif elems[-1].startswith(".get"):
-            qrpath, sep, data = elems[-1].partition("?")
+            # qrpath, sep, data = elems[-1].partition("?")
             data = urllib.parse.parse_qs(data)
             self._redirect = ("/".join(elems[:-1]) + "/" +
                               urllib.parse.quote(data["pagename"][0]))
