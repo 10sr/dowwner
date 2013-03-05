@@ -100,6 +100,6 @@ cmds = {"start" : start,
         "status" : status,
         "restart" : restart}
 
-def daemon(cmd, pidfile, logfile, func):
+def main(cmd, pidfile, logfile, func):
     cmds[cmd](pidfile, logfile, func)
     return

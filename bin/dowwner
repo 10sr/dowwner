@@ -24,10 +24,12 @@ def main(argv):
                         choices=("start", "status", "stop", "restart"))
     parser.add_argument("-p", "--port", help="port number, default to 2505",
                         default=0, type=int)
+    parser.add_argument("-c", "--cgi", help="works as cgi", action="store_true")
 
     args = parser.parse_args(argv[1:])
 
     confs = dict()
+    confs["cgi"] = args.cgi
     if args.root_dir:
         confs["rootdir"] = args.root_dir
     if args.port:
