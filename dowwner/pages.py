@@ -290,10 +290,13 @@ Go or create page: <input type="text" name="pagename" value="" />
         editlink = """
 <hr />
 <p>
+<form action=".get" method="get">
 <a href=".edit.{name}">Edit</a>
 <a href=".hist.{name}">History</a>
 |
+<input type="text" name="pagename" value="" size="10"/>
 <a href=".list">List</a>
+</form>
 </p>
 """
         name = path.basename(rpath)
