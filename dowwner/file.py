@@ -106,6 +106,8 @@ class File():
         os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
         return path_.dir
 
+    # methods for history handling
+
     @staticmethod
     def __current_time():
         return strftime("%Y%m%d_%H%M%S")
@@ -140,9 +142,11 @@ class File():
                 raise
         return
 
-    # methods for history handling
-
     def lshist(self, path_):
+        """Return list of history files.
+
+        Each element must starts with ".bak.".
+        """
         l = []
         prefix = ".bak."
         suffix = ("." + path_.base + self.FILE_SUFFIX) if path_.base else ""
