@@ -15,7 +15,7 @@ def main(argv):
 
     import dowwner
 
-    parser = ap.ArgumentParser("archsh")
+    parser = ap.ArgumentParser("dowwner")
     parser.add_argument("-r", "--root-dir",
                         help="root directory, default to current directory",
                         default=None)
