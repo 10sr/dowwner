@@ -7,7 +7,7 @@ class OP_GET(dowwner.op.OP):
 
     bakfooter = """<hr />
 <p>
-<a href="{name}">Current</a>
+<a href="{basename}">Current</a>
 <a href=".revert.{name}">Revert</a>
 |
 <a href=".list">List</a>
@@ -23,6 +23,7 @@ class OP_GET(dowwner.op.OP):
         dowwner.op.OP.__init__(self, file, path_)
 
         c = (file.load_bak(path_) +
-             self.bakfooter.format(name=path_.base.rpartition(".")[2]))
+             self.bakfooter.format(basename=path_.base.rpartition(".")[2],
+                                   name=path_.base))
         self.body = "\n".join(("<body>", c, "</body>"))
         return

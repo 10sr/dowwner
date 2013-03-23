@@ -84,7 +84,7 @@ class File():
             path_: Path object.
             data: String of data.
         """
-        fullpath = self.__gen_fullpath(path_ + self.FILE_SUFFIX)
+        fullpath = self.__gen_fullpath(path_) + self.FILE_SUFFIX
         try:
             os.makedirs(os.path.dirname(fullpath))
         except OSError as e:
@@ -148,11 +148,12 @@ class File():
     def lshist(self, path_):
         l = []
         prefix = ".bak."
-        suffix = (path_.base + self.FILE_SUFFIX) if path_.base else ""
+        suffix = ("." + path_.base + self.FILE_SUFFIX) if path_.base else ""
         neg_suffix_len = len(self.FILE_SUFFIX) * (-1)
         for f in os.listdir(self.__gen_fullpath(path_, dir=True)):
             if (f.startswith(prefix) and f.endswith(suffix)):
                 l.append(f[:neg_suffix_len])
+        l.sort(reverse=True)
         return l
 
     def load_bak(self, path_, raw=False):

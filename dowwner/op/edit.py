@@ -21,7 +21,7 @@ _body = """
 
 class OP_GET(dowwner.op.OP):
     """Editor class."""
-    def __init__(self, file, path_, orig=None):
+    def __init__(self, file, path_, orig=None, target=None):
         """
         Args:
             file: File object.
@@ -38,7 +38,10 @@ class OP_GET(dowwner.op.OP):
                 else:
                     raise
 
+        if target is None:
+            target = path_.base
+
         self.body = _body.format(path=path_.path,
-                                       origtext=orig,
-                                       name=path_.base)
+                                 origtext=orig,
+                                 name=target)
         return

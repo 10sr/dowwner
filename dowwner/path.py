@@ -37,7 +37,6 @@ class Path():
 
         query_r = o.query
         self.query = urllib.parse.parse_qs(query_r)
-        print(self.query)
 
         elems = path_.split("/")
         # "/" -> ["", ""]
