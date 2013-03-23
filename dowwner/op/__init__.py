@@ -34,6 +34,26 @@ class OP():
 
     redirect_r = None
 
+    dirfooter = """
+<p>
+<form action=".get" method="get">
+<a href=".hist">History</a>
+|
+Go or create page: <input type="text" name="pagename" value="" />
+</form>
+</p>
+"""
+
+    pagefooter = """
+<hr />
+<p>
+<a href=".edit.{name}">Edit</a>
+<a href=".hist.{name}">History</a>
+|
+<a href=".list">List</a>
+</p>
+"""
+
     def __init__(self, file, path_):
         """Initialize.
 
@@ -63,26 +83,6 @@ class OP():
 
 class NO_OP(OP):
     """Class used when path has no operator."""
-
-    dirfooter = """
-<p>
-<form action=".get" method="get">
-<a href=".hist">History</a>
-|
-Go or create page: <input type="text" name="pagename" value="" />
-</form>
-</p>
-"""
-
-    pagefooter = """
-<hr />
-<p>
-<a href=".edit.{name}">Edit</a>
-<a href=".hist.{name}">History</a>
-|
-<a href=".list">List</a>
-</p>
-"""
 
     def __init__(self, file, path_):
         OP.__init__(self, file, path_)
