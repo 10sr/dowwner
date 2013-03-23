@@ -6,7 +6,7 @@ from traceback import format_exception, print_exception
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from dowwner.pages import Pages
+from dowwner.dowwner import Dowwner
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
@@ -26,7 +26,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        p = self.server.dowwner_pages.get(self.path)
+        p = self.server.dowwner.get(self.path)
         if p.redirect is not None:
             self.send_response(302)
             self.send_header("Location", p.redirect)
@@ -53,7 +53,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
         length = int(self.headers["Content-Length"])
         data = self.rfile.read(length)
-        rt = self.server.dowwner_pages.post(self.path, data)
+        rt = self.server.dowwner.post(self.path, data)
         if rt:
             self.send_response(302)
             self.send_header("Location", rt.redirect)
@@ -72,11 +72,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
 class DowwnerHTTPS(HTTPServer):
     def __init__(self, rootdir, *args, **kargs):
-        self.dowwner_pages = Pages(rootdir)
+        self.dowwner = Dowwner(rootdir)
         return HTTPServer.__init__(self, *args, **kargs)
 
     def dowwner_verify(self, addr):
-        return self.dowwner_pages.verify_addr(addr)
+        return self.dowwner.verify_addr(addr)
 
 def start(port=2505, rootdir=os.getcwd()):
     host = ""

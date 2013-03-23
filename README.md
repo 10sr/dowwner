@@ -44,13 +44,11 @@ TODO:
 -----
 
 * Stylesheet support
-* Generate true html
 * Menu
 * Works as cgi
 * More usable access control (currently accesses only from 127.0.0.1 are
 allowed)
 * Use cache (both http cache and local cache)
-* Refucturing
 
 
 License
