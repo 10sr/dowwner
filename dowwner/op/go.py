@@ -12,5 +12,8 @@ class OP_GET(dowwner.op.OP):
         """
         dowwner.op.OP.__init__(self, file, path_)
 
-        self.redirect_r = path_.query["name"][0]
+        try:
+            self.redirect_r = path_.query["name"][0]
+        except KeyError:
+            self.redirect_r = None
         return

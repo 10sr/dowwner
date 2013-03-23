@@ -9,6 +9,7 @@ import urllib
 from dowwner.path import Path
 from dowwner.file import File
 from dowwner import op as dop
+from dowwner.exc import PageNameError
 
 class Dowwner():
     """Dowwner main class."""
@@ -20,24 +21,24 @@ class Dowwner():
         """Return OP object for request handler.
 
         Args:
-            rpath: Path object.
+            rpath: Path queried.
         """
         p = Path(rpath)
         try:
             return dop.get(self.file, p)
-        except KeyError:
+        except ImportError:
             raise PageNameError("Invalid page naem: {}".format(rpath))
 
     def post(self, rpath, data):
         """Return OP object for request handler.
 
         Args:
-            rpath: Path object.
+            rpath: Path queried.
         """
         p = Path(rpath)
         try:
             return dop.post(self.file, p, data)
-        except KeyError:
+        except ImportError:
             raise PageNameError("Invalid page naem: {}".format(rpath))
 
     def verify_addr(self, addr):
