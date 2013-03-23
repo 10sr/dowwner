@@ -17,30 +17,26 @@ class File():
         self.rootdir = os.path.realpath(rootdir)
         return
 
-    def __gen_fullpath(self, path_, dir=False):
-        """Return fullpath from path object. FILE_SUFFIX is not appended.
+    def __gen_fullpath(self, pathstr):
+        """Return fullpath from path string. FILE_SUFFIX is not appended.
 
         Args:
             dir: True to return dir of path_."""
         # note: normpath always strip last "/"
-        if dir:
-            fpath = os.path.normpath(os.path.join(self.rootdir,
-                                                  path_.dir.lstrip("/")))
-        else:
-            fpath = os.path.normpath(os.path.join(self.rootdir,
-                                                  path_.path.lstrip("/")))
+        fpath = os.path.normpath(os.path.join(self.rootdir,
+                                              pathstr.lstrip("/")))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.rootdir)
         return fpath
 
     def isdir(self, path_):
         "Return True if path_ is dir."
-        return os.path.isdir(self.__gen_fullpath(path_))
+        return os.path.isdir(self.__gen_fullpath(path_.path))
 
     def listdir(self, path_):
         "Return list of files in path_. Do not check if path_ is dir."
         items = ["./", "../"]
-        fullpath = self.__gen_fullpath(path_)
+        fullpath = self.__gen_fullpath(path_.path)
         for l in os.listdir(fullpath):
             if l.startswith("."):
                 continue
@@ -51,8 +47,12 @@ class File():
         return items
 
     def __read_file(self, path_):
-        with open(self.__gen_fullpath(path_) + self.FILE_SUFFIX,
-                  encoding="utf-8") as f:
+        if self.isdir(path_):
+            p = os.path.join(self.__gen_fullpath(path_.path),
+                             "index" + self.FILE_SUFFIX)
+        else:
+            p = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
+        with open(p, encoding="utf-8") as f:
             return f.read()
 
     def md2html(self, s):
@@ -63,6 +63,8 @@ class File():
 
     def load(self, path_, raw=False):
         """Load file.
+
+        if path_ is dir, try to load "index" file.
 
         Args:
             path_: Path object.
@@ -84,7 +86,7 @@ class File():
             path_: Path object.
             data: String of data.
         """
-        fullpath = self.__gen_fullpath(path_) + self.FILE_SUFFIX
+        fullpath = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
         try:
             os.makedirs(os.path.dirname(fullpath))
         except OSError as e:
@@ -104,7 +106,7 @@ class File():
             Path of dirname.
         """
         self.backup(path_)
-        os.remove(self.__gen_fullpath(path_) + self.FILE_SUFFIX)
+        os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
         return path_.dir
 
     @staticmethod
@@ -134,7 +136,7 @@ class File():
         if path_.base == "":
             raise PageNameError("{}: Cannot backup directory".format(rpath))
 
-        origpath = self.__gen_fullpath(path_) + self.FILE_SUFFIX
+        origpath = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
         newpath = self.__backup_gen_fullpath(path_)
         try:
             shutil.copyfile(origpath, newpath)
@@ -150,7 +152,7 @@ class File():
         prefix = ".bak."
         suffix = ("." + path_.base + self.FILE_SUFFIX) if path_.base else ""
         neg_suffix_len = len(self.FILE_SUFFIX) * (-1)
-        for f in os.listdir(self.__gen_fullpath(path_, dir=True)):
+        for f in os.listdir(self.__gen_fullpath(path_.dir)):
             if (f.startswith(prefix) and f.endswith(suffix)):
                 l.append(f[:neg_suffix_len])
         l.sort(reverse=True)
@@ -158,7 +160,7 @@ class File():
 
     def load_bak(self, path_, raw=False):
         """Load backed up file."""
-        fulldir = self.__gen_fullpath(path_, dir=True)
+        fulldir = self.__gen_fullpath(path_.dir)
         fullpath = os.path.join(fulldir,
                                 ".bak." + path_.base + self.FILE_SUFFIX)
         with open(fullpath, encoding="utf-8") as f:

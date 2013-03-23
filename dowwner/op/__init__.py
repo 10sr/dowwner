@@ -91,12 +91,17 @@ class NO_OP(OP):
             if not path_.path.endswith("/"):
                 self.redirect_r = path_.base + "/"
                 return
-            ls = file.listdir(path_)
-            c = ("<h1>{path}</h1>\n".format(path=path_.path) +
-                 "".join(
-                    """<a href="{name}">{name}</a><br />\n""".format(name=i)
-                    for i in ls) +
-                 self.dirfooter)
+            try:
+                c = file.load(path_) + self.pagefooter.format(name="index")
+            except EnvironmentError as e:
+                if e.errno != 2:
+                    raise
+                ls = file.listdir(path_)
+                c = ("<h1>{path}</h1>\n".format(path=path_.path) +
+                     "".join(
+                        """<a href="{name}">{name}</a><br />\n""".format(name=i)
+                        for i in ls) +
+                     self.dirfooter)
         else:
             try:
                 c = file.load(path_) + self.pagefooter.format(name=path_.base)
