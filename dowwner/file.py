@@ -5,10 +5,7 @@ import shutil
 from time import strftime
 
 class File():
-    """File and directory handler.
-
-    Attributes:
-        hist: History object."""
+    """File and directory handler."""
 
     FILE_SUFFIX = ".md"
     __md = None
@@ -55,7 +52,7 @@ class File():
         with open(p, encoding="utf-8") as f:
             return f.read()
 
-    def md2html(self, s):
+    def __md2html(self, s):
         if self.__md is None:
             from dowwner.markdown import Markdown
             self.__md = Markdown()
@@ -77,7 +74,7 @@ class File():
         if raw:
             return s
         else:
-            return self.md2html(s)
+            return self.__md2html(s)
 
     def save(self, path_, data):
         """Save file with data.
@@ -118,12 +115,10 @@ class File():
         which is like /full/path/.bak.20130216_193548.name.md .
         """
         timestr = self.__current_time()
-        fpath = os.path.join(self.rootdir, path_.dir.lstrip("/"),
-                             (".bak." +
-                              timestr +
-                              "." +
-                              path_.base + self.FILE_SUFFIX))
-        assert fpath.startswith(self.rootdir)
+        fpath = self.__gen_fullpath(os.path.join(path_.dir,
+                                                 (".bak." + timestr + "." +
+                                                  path_.base +
+                                                  self.FILE_SUFFIX)))
         return fpath
 
     def backup(self, path_):
@@ -169,5 +164,5 @@ class File():
         if raw:
             return s
         else:
-            return self.md2html(s)
+            return self.__md2html(s)
         return
