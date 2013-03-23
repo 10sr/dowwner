@@ -11,10 +11,11 @@ class OP_POST(dowwner.op.OP):
         data2 = urllib.parse.parse_qs(data.decode(), keep_blank_values=True)
         content = data2["content"][0].replace("\r", "")
         if content == "":
-            file.rm(realrpath)
-            self.redirect_r = path_.dir
+            file.rm(path_)
+            print(path_)
+            self.redirect_r = ".list"
         else:
             file.save(path_, content)
-            self.redirect_r = path_.path
+            self.redirect_r = path_.base
 
         return

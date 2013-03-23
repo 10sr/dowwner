@@ -36,10 +36,10 @@ class OP():
 
     dirfooter = """
 <p>
-<form action=".get" method="get">
+<form action=".go" method="get">
 <a href=".hist">History</a>
 |
-Go or create page: <input type="text" name="pagename" value="" />
+Go or create page: <input type="text" name="name" value="" />
 </form>
 </p>
 """
@@ -89,7 +89,7 @@ class NO_OP(OP):
 
         if file.isdir(path_):
             if not path_.path.endswith("/"):
-                self.redirect_r = path_.path + "/"
+                self.redirect_r = path_.base + "/"
                 return
             ls = file.listdir(path_)
             c = ("<h1>{path}</h1>\n".format(path=path_.path) +
@@ -98,7 +98,14 @@ class NO_OP(OP):
                     for i in ls) +
                  self.dirfooter)
         else:
-            c = file.load(path_) + self.pagefooter.format(name=path_.base)
+            try:
+                c = file.load(path_) + self.pagefooter.format(name=path_.base)
+            except EnvironmentError as e:
+                if e.errno == 2:
+                    self.redirect_r = ".edit." + path_.base
+                    return
+                else:
+                    raise
         self.body = "\n".join(("<body>", c, "</body>"))
         return
 
@@ -112,7 +119,7 @@ def get(file, path_):
             raise
         try:
             return op.OP_GET(file, path_)
-        except:
+        except AttributeError:
             raise
 
 def post(file, path_, data):
@@ -126,5 +133,5 @@ def post(file, path_, data):
         raise
     try:
         return op.OP_POST(file, path_, data)
-    except:
+    except AttributeError:
         raise
