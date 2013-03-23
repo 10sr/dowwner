@@ -9,6 +9,8 @@ from time import strftime
 
 from dowwner.exc import PageNameError
 
+from dowwner.op import OP
+
 class _HistList():
     def __init__(self, pages, rpath):
         self.pages = pages
@@ -63,9 +65,9 @@ class _BakContent():
         return (self.pages.get_page_html(rpath) +
                 self.footer.format(name=pagename, revert=revert))
 
-class Hist():
-    def __init__(self, pages):
-        self.pages = pages
+class Hist(OP):
+    def __init__(self, file, path_):
+        OP.__init__(self, file, path_
         return
 
     def view_file(self, rpath):
@@ -84,32 +86,6 @@ class Hist():
 
     def get_bak(self, rpath):
         return _BakContent(self.pages, rpath)
-
-    def current_time(self):
-        return strftime("%Y%m%d_%H%M%S")
-
-    def backup(self, rpath):
-        """Backup file.
-
-        This should be called everytime files are modified or deleted.
-        Backed up files are like .bak.20130216_193548.name
-        """
-        # todo: this method should be operated atomic way
-        if rpath.endswith("/"):
-            raise PageNameError("{}: Cannot backup directory".format(rpath))
-
-        timestr = self.current_time()
-        dirname, basename = os.path.split(rpath)
-        fulldir = self.pages.gen_fullpath(dirname)
-        origpath = os.path.join(fulldir, basename + self.pages.FILE_SUFFIX)
-        newpath = os.path.join(fulldir, ".bak." + timestr + "." +
-                               basename + self.pages.FILE_SUFFIX)
-        try:
-            shutil.copyfile(origpath, newpath)
-        except EnvironmentError as e:
-            if e.errno != 2:
-                raise
-        return
 
 if __name__ == "__main__":
     pass
