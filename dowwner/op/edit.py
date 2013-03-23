@@ -6,7 +6,8 @@ import dowwner.op
 
 # todo: use stylesheet for scale.
 
-_formstr = """
+_body = """
+<body>
 <h1>{path}</h1>
 <form action=".save.{name}" method="post">
 <p><input type="submit" name="submit" value="submit" /></p>
@@ -15,9 +16,10 @@ _formstr = """
 {origtext}</textarea>
 </p>
 </form>
+</body>
 """
 
-class Editor(dowwner.op.OP):
+class OP_GET(dowwner.op.OP):
     """Editor class."""
     def __init__(self, file, path_, orig=None):
         """
@@ -36,7 +38,7 @@ class Editor(dowwner.op.OP):
                 else:
                     raise
 
-        self.content_s = _formstr.format(path=path_.path,
-                                       origtext=origtext,
+        self.body = _body.format(path=path_.path,
+                                       origtext=orig,
                                        name=path_.base)
         return
