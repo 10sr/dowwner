@@ -9,7 +9,7 @@ from time import strftime
 
 from dowwner.exc import PageNameError
 
-from dowwner.op import OP
+import dowwner.op
 
 class _HistList():
     def __init__(self, pages, rpath):
@@ -65,9 +65,16 @@ class _BakContent():
         return (self.pages.get_page_html(rpath) +
                 self.footer.format(name=pagename, revert=revert))
 
-class Hist(OP):
+class OP_GET(dowwner.op.OP):
     def __init__(self, file, path_):
-        OP.__init__(self, file, path_
+        dowwner.op.OP.__init__(self, file, path_)
+        ls = file.lshist(path_)
+        c = ("<h1>{path}</h1>\n".format(path=path_.path) +
+             "".join("""<a href="{name}">{name}</a><br />\n""".format(name=i)
+                     for i in ls) +
+             self.dirfooter)
+
+        self.body = "\n".join(("<body>", c, "</body>"))
         return
 
     def view_file(self, rpath):

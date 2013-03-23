@@ -5,7 +5,10 @@ import shutil
 from time import strftime
 
 class File():
-    """File and directory handler."""
+    """File and directory handler.
+
+    Attributes:
+        hist: History object."""
 
     FILE_SUFFIX = ".md"
     __md = None
@@ -14,11 +17,18 @@ class File():
         self.rootdir = os.path.realpath(rootdir)
         return
 
-    def __gen_fullpath(self, path_):
-        """Return fullpath from path object. FILE_SUFFIX is not appended."""
+    def __gen_fullpath(self, path_, dir=False):
+        """Return fullpath from path object. FILE_SUFFIX is not appended.
+
+        Args:
+            dir: True to return dir of path_."""
         # note: normpath always strip last "/"
-        fpath = os.path.normpath(os.path.join(self.rootdir,
-                                              path_.path.lstrip("/")))
+        if dir:
+            fpath = os.path.normpath(os.path.join(self.rootdir,
+                                                  path_.dir.lstrip("/")))
+        else:
+            fpath = os.path.normpath(os.path.join(self.rootdir,
+                                                  path_.path.lstrip("/")))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.rootdir)
         return fpath
@@ -45,6 +55,12 @@ class File():
                   encoding="utf-8") as f:
             return f.read()
 
+    def md2html(self, s):
+        if self.__md is None:
+            from dowwner.markdown import Markdown
+            self.__md = Markdown()
+        return self.__md.convert(s)
+
     def load(self, path_, raw=False):
         """Load file.
 
@@ -58,11 +74,8 @@ class File():
         s = self.__read_file(path_)
         if raw:
             return s
-
-        if self.__md is None:
-            from dowwner.markdown import Markdown
-            self.__md = Markdown()
-        return self.__md.convert(s)
+        else:
+            return self.md2html(s)
 
     def save(self, path_, data):
         """Save file with data.
@@ -71,11 +84,18 @@ class File():
             path_: Path object.
             data: String of data.
         """
+        fullpath = self.__gen_fullpath(path_ + self.FILE_SUFFIX)
+        try:
+            os.makedirs(os.path.dirname(fullpath))
+        except OSError as e:
+            if e.errno != 17: # 17 means file exists
+                raise
         self.backup(path_)
-        with open(self.__gen_fullpath(path_) + self.FILE_SUFFIX,
-                  encoding="utf-8", mode="w") as f:
+        with open(fullpath,
+                  mode="w", encoding="utf-8") as f:
             f.write(data)
-        return
+            return True
+        return False
 
     def rm(self, path_):
         """Remove page.
@@ -123,45 +143,33 @@ class File():
                 raise
         return
 
+    # methods for history handling
+
+    def lshist(self, path_):
+        l = []
+        prefix = ".bak."
+        suffix = (path_.base + self.FILE_SUFFIX) if path_.base else ""
+        neg_suffix_len = len(self.FILE_SUFFIX) * (-1)
+        for f in os.listdir(self.__gen_fullpath(path_, dir=True)):
+            if (f.startswith(prefix) and f.endswith(suffix)):
+                l.append(f[:neg_suffix_len])
+        return l
+
+    def load_bak(self, path_, raw=False):
+        """Load backed up file."""
+        fulldir = self.__gen_fullpath(path_, dir=True)
+        fullpath = os.path.join(fulldir,
+                                ".bak." + path_.base + self.FILE_SUFFIX)
+        with open(fullpath, encoding="utf-8") as f:
+            s = f.read()
+
+        if raw:
+            return s
+        else:
+            return self.md2html(s)
+        return
+
     # codes below are saved just for memo
-
-    def read_file(self, path_):
-        return
-
-    def write_file(self, path_):
-        return
-
-    def edit(self, rpath):
-        """Return editor object for request handler."""
-        return Editor(self, rpath)
-
-    def hist(self, rpath):
-        """Get history file list."""
-        return self.__hist.get(rpath)
-
-    def write_data(self, rpath, content):
-        """Post data.
-
-        Args:
-            rpath: relative path to save.
-            content: string of content.
-        """
-        fullpath = self.gen_fullpath(rpath + self.FILE_SUFFIX)
-        try:
-            os.makedirs(path.dirname(fullpath))
-        except OSError as e:
-            if e.errno != 17: # 17 means file exists
-                raise
-        self.backup(rpath)
-        with open(fullpath,
-                  mode="w", encoding="utf-8") as f:
-            f.write(content)
-            return True
-        return False
-
-    def get_raw_content(self, rpath):
-        fpath = self.gen_fullpath(rpath)
-        return self.__read_file(fpath)
 
     def get_content(self, rpath):
         """
@@ -241,4 +249,3 @@ Go or create page: <input type="text" name="pagename" value="" />
         fpath = self.gen_fullpath(rpath)
         text = self.__read_file(fpath)
         return self.__md.convert(text)
-
