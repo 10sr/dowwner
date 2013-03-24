@@ -20,39 +20,40 @@ class OP():
         content_s: String of content. By default, it joins html_header,
             html_footer, head, and body.
         redirect_r: URL unencoded path to redirect or None.
+        name: Pagename. Used for title.
     """
+
+    redirect_r = None
 
     html_header = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-"""
+<html xmlns="http://www.w3.org/1999/xhtml">"""
     html_footer = "</html>"
 
-    head = "<head></head>"
+    head_base = """<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>{name}</title>
+</head>"""
     body = "<body></body>"
 
-    redirect_r = None
+    pagename = ""
 
-    dirfooter = """
-<p>
+    dirfooter = """<p>
 <form action=".go" method="get">
 <a href=".hist">History</a>
 |
 Go or create page: <input type="text" name="name" value="" />
 </form>
-</p>
-"""
+</p>"""
 
-    pagefooter = """
-<hr />
+    pagefooter = """<hr />
 <p>
 <a href=".edit.{name}">Edit</a>
 <a href=".hist.{name}">History</a>
 |
 <a href=".list">List</a>
-</p>
-"""
+</p>"""
 
     def __init__(self, file, path_):
         """Initialize.
@@ -63,6 +64,7 @@ Go or create page: <input type="text" name="name" value="" />
         """
         self.path = path_
         self.file = file
+        self.pagename = path_.path
         return
 
     @property
@@ -78,8 +80,12 @@ Go or create page: <input type="text" name="name" value="" />
 
     @property
     def content_s(self):
-        return "".join((self.html_header, self.head,
+        return "\n".join((self.html_header, self.head,
                         self.body, self.html_footer))
+
+    @property
+    def head(self):
+        return self.head_base.format(name=self.pagename)
 
 class NO_OP(OP):
     """Class used when path has no operator."""
