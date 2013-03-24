@@ -22,7 +22,7 @@ Run:
 
 and command `dowwner` is installed. Or you can just create simlink of
 `bin/dowwner` and put it into your prefered directory like `$HOME/bin` or
-`$HOME/.local/bin`. When you want to just try dowwner, running `bin/dowwner`
+`$HOME/.local/bin`. When you just want to try dowwner, running `bin/dowwner`
 directly also works.
 
 
@@ -95,4 +95,4 @@ TODOs
 License
 -------
 
-All code licensed under PSF License: <http://docs.python.org/2/license.html>
+All code licensed under PSF License: <http://docs.python.org/3/license.html>

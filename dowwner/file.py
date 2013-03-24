@@ -51,7 +51,7 @@ class File():
 
     @staticmethod
     def is_file_newer(f1, f2):
-        """Return True if f1 exists and newer than f2."""
+        """Return True if f1 exists and is newer than f2."""
         t2 = os.path.getmtime(f2)
         try:
             t1 = os.path.getmtime(f1)
