@@ -15,10 +15,7 @@ class File():
         return
 
     def __gen_fullpath(self, pathstr):
-        """Return fullpath from path string. FILE_SUFFIX is not appended.
-
-        Args:
-            dir: True to return dir of path_."""
+        """Return fullpath from path string. FILE_SUFFIX is not appended."""
         # note: normpath always strip last "/"
         fpath = os.path.normpath(os.path.join(self.rootdir,
                                               pathstr.lstrip("/")))
