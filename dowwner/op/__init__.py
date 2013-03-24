@@ -72,7 +72,7 @@ Go or create page: <input type="text" name="name" value="" />
         if self.redirect_r is None:
             return None
         else:
-            return urllib.parse.quote(self.redirect_r)
+            return urllib.parse.quote(self.redirect_r, encoding="utf-8")
 
     @property
     def content(self):

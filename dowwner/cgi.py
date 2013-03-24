@@ -56,7 +56,7 @@ def main(rootdir):
     if met != "HEAD":
         # print(c.content_s)
         sys.stdout.buffer.write(c.content)
-        #_main(rootdir)
+        # _main(rootdir)
     return
 
 # for debugging

@@ -33,7 +33,7 @@ class Path():
         o = urllib.parse.urlparse(path_)
         path_ = o.path
         self.origpath_quoted = path_
-        self.origpath = urllib.parse.unquote(path_)
+        self.origpath = urllib.parse.unquote(path_, encoding="utf-8")
 
         query_r = o.query
         self.query = urllib.parse.parse_qs(query_r)
