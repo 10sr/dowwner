@@ -30,7 +30,7 @@ directly also works.
 Basic Usage
 -----------
 
-### Use as Server
+### Run as Server
 
 Run:
 
@@ -39,7 +39,7 @@ Run:
 and access to `localhost:2505`.
 
 
-### Use as CGI
+### Run as CGI
 
 Configure to run:
 
