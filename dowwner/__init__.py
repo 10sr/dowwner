@@ -2,8 +2,7 @@
 
 """dowwner - Very simple wiki program using markdown
 
-Uses [Markdown](http://daringfireball.net/projects/markdown/) for markup and
-pages are stored as plain markdown files.
+Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 """
 

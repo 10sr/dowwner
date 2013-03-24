@@ -2,8 +2,7 @@ Dowwner
 =======
 
 Very simple wiki program.
-Uses [Markdown](http://daringfireball.net/projects/markdown/) for markup and
-pages are stored as plain markdown files.
+Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 
 
@@ -46,6 +45,15 @@ Configure to run:
     $ dowwner --cgi
 
 
+Wiki Syntax
+-----------
+
+Dowwner uses [Markdown](http://daringfireball.net/projects/markdown/) for wiki
+syntax with one extension: wiki link.
+This extension convert `[[newpage]]` into `<a href="newpage">newpage</a>`.
+It works with spaces and/or slashes so you can write links like `[[dir/page]]`.
+
+
 Commandline Options
 -------------------
 
@@ -76,6 +84,7 @@ are ignored.
 TODOs
 -----
 
+* Search support
 * Stylesheet support
 * Menu
 * More usable access control for server mode (currently accesses only from
