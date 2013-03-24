@@ -9,6 +9,7 @@ class File():
 
     FILE_SUFFIX = ".md"
     BAK_SUFFIX = ".bak"
+    CONV_SUFFIX = ".html"
     __md = None
 
     def __init__(self, rootdir):
@@ -41,20 +42,24 @@ class File():
                 items.append(os.path.splitext(l)[0])
         return items
 
-    def __read_file(self, path_):
-        if self.isdir(path_):
-            p = os.path.join(self.__gen_fullpath(path_.path),
-                             "index" + self.FILE_SUFFIX)
-        else:
-            p = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
-        with open(p, encoding="utf-8") as f:
-            return f.read()
-
     def __md2html(self, s):
         if self.__md is None:
             from dowwner.markdown import Markdown
             self.__md = Markdown()
         return self.__md.convert(s)
+
+    @staticmethod
+    def is_file_newer(f1, f2):
+        """Return true if f1 exists and newer than f2."""
+        try:
+            t1 = os.path.getmtime(f1)
+        except OSError as e:
+            if e.errno == 2:
+                return False
+            else:
+                raise
+        t2 = os.path.getmtime(f2)
+        return t1 > t2
 
     def load(self, path_, raw=False):
         """Load file.
@@ -66,13 +71,37 @@ class File():
             raw: False to convert to html.
 
         Raises:
-            EnvironmentError
+            EnvironmentError: e.errno == 2 when file not exists.
         """
-        s = self.__read_file(path_)
-        if raw:
-            return s
+        if self.isdir(path_):
+            fpath = os.path.join(self.__gen_fullpath(path_.path),
+                                 "index")
         else:
-            return self.__md2html(s)
+            fpath = self.__gen_fullpath(path_.path)
+
+        if raw:
+            with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
+                s = f.read()
+            return s
+
+        mdpath = fpath + self.FILE_SUFFIX
+        htmlpath = fpath + self.CONV_SUFFIX
+        if self.is_file_newer(htmlpath, mdpath):
+            with open(htmlpath, encoding="utf-8") as f:
+                html = f.read()
+            return html
+
+        with open(mdpath, encoding="utf-8") as f:
+            md = f.read()
+        html = self.__md2html(md)
+        pid = os.fork()
+        if pid == 0:        # child
+            # cache html
+            with open(htmlpath, encoding="utf-8", mode="w") as f:
+                f.write(html)
+            os._exit(0)
+        else:
+            return html
 
     def save(self, path_, data):
         """Save file with data.
