@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import os.path
 import shutil
 from time import strftime
 
@@ -17,7 +18,7 @@ class File():
         return
 
     def __gen_fullpath(self, pathstr):
-        """Return fullpath from path string. FILE_SUFFIX is not appended."""
+        """Return fullpath from path string."""
         # note: normpath always strip last "/"
         fpath = os.path.normpath(os.path.join(self.rootdir,
                                               pathstr.lstrip("/")))
@@ -50,7 +51,8 @@ class File():
 
     @staticmethod
     def is_file_newer(f1, f2):
-        """Return true if f1 exists and newer than f2."""
+        """Return True if f1 exists and newer than f2."""
+        t2 = os.path.getmtime(f2)
         try:
             t1 = os.path.getmtime(f1)
         except OSError as e:
@@ -58,8 +60,7 @@ class File():
                 return False
             else:
                 raise
-        t2 = os.path.getmtime(f2)
-        return t1 > t2
+        return t1 >= t2
 
     def load(self, path_, raw=False):
         """Load file.
@@ -87,6 +88,7 @@ class File():
         mdpath = fpath + self.FILE_SUFFIX
         htmlpath = fpath + self.CONV_SUFFIX
         if self.is_file_newer(htmlpath, mdpath):
+            # if cache exists use that.
             with open(htmlpath, encoding="utf-8") as f:
                 html = f.read()
             return html
@@ -171,7 +173,10 @@ class File():
         return
 
     def lshist(self, path_):
-        """Return list of history files."""
+        """Return list of history files.
+
+        Values returned are used for self.load_bak().
+        """
         l = []
 
         suffix = self.FILE_SUFFIX + self.BAK_SUFFIX

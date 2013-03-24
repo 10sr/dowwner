@@ -3,7 +3,7 @@
 import dowwner.op
 
 class OP_GET(dowwner.op.OP):
-    """Editor class."""
+    """Go class."""
     def __init__(self, file, path_):
         """
         Args:

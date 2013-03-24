@@ -3,7 +3,7 @@
 import dowwner.op.edit
 
 class OP_GET(dowwner.op.edit.OP_GET):
-    """Editor class."""
+    """Revert class."""
     def __init__(self, file, path_):
         """
         Args:

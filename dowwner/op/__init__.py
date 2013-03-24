@@ -137,7 +137,8 @@ def post(file, path_, data):
     """Post data.
 
     Args:
-        data: Data to post. Directly passed from server."""
+        data: Data to post. Directly passed from server.
+    """
     try:
         op = importlib.import_module("dowwner.op." + path_.op)
     except ImportError:

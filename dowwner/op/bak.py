@@ -3,7 +3,7 @@
 import dowwner.op
 
 class OP_GET(dowwner.op.OP):
-    """Editor class."""
+    """bak class."""
 
     bakfooter = """<hr />
 <p>

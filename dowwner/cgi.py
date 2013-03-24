@@ -4,7 +4,7 @@ import sys
 import os
 # from pprint import pprint
 
-import cgi, cgitb
+import cgi
 
 from dowwner.dowwner import Dowwner
 
@@ -12,8 +12,10 @@ def print_redirect(p):
     print("Location: http://{}{}".format(os.environ["SERVER_NAME"], p))
     return
 
-def main(rootdir):
-    cgitb.enable()
+def main(rootdir, tb=False):
+    if tb:
+        import cgitb
+        cgitb.enable()
 
     try:
         path_ = os.environ["PATH_INFO"]
@@ -54,16 +56,12 @@ def main(rootdir):
     print("Content-Type: text/html")
     print("", flush=True)
     if met != "HEAD":
-        # print(c.content_s)
         sys.stdout.buffer.write(c.content)
-        # _main(rootdir)
+        # _debug()
     return
 
-# for debugging
-def _main(rootdir):
-    # print(argv)
+def _debug():
     cgi.print_environ()
     cgi.print_environ_usage()
     cgi.print_directory()
-
     return

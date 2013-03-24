@@ -27,7 +27,7 @@ class Dowwner():
         try:
             return dop.get(self.file, p)
         except ImportError:
-            raise PageNameError("Invalid page naem: {}".format(rpath))
+            raise PageNameError("Invalid page name: {}".format(rpath))
 
     def post(self, rpath, data):
         """Return OP object for request handler.
@@ -39,7 +39,7 @@ class Dowwner():
         try:
             return dop.post(self.file, p, data)
         except ImportError:
-            raise PageNameError("Invalid page naem: {}".format(rpath))
+            raise PageNameError("Invalid page name: {}".format(rpath))
 
     def verify_addr(self, addr):
         return addr == "127.0.0.1"
