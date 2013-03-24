@@ -6,7 +6,6 @@ import os
 
 import cgi
 
-from dowwner.dowwner import Dowwner
 
 def print_redirect(p):
     print("Location: http://{}{}".format(os.environ["SERVER_NAME"], p))
@@ -37,7 +36,7 @@ def main(rootdir, tb=False):
 
     met = os.environ["REQUEST_METHOD"]
 
-
+    from dowwner.dowwner import Dowwner
     d = Dowwner(rootdir)
 
     if met == "GET" or met == "HEAD":

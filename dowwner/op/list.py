@@ -19,4 +19,5 @@ class OP_GET(dowwner.op.OP):
              self.dirfooter)
 
         self.body = "\n".join(("<body>", c, "</body>"))
+        self.pagename = "list: " + path_.path
         return

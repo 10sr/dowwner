@@ -20,4 +20,5 @@ class OP_GET(dowwner.op.OP):
         f = self.histfooter.format(name=(path_.base or "./"))
 
         self.body = "\n".join(("<body>", c, f, "</body>"))
+        self.pagename = "hist: " + path_.path
         return

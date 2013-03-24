@@ -44,4 +44,5 @@ class OP_GET(dowwner.op.OP):
         self.body = _body.format(path=path_.path,
                                  origtext=orig,
                                  name=target)
+        self.pagename = "edit: " + path_.path
         return

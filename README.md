@@ -1,7 +1,7 @@
 Dowwner
 =======
 
-Very simple wiki program.
+Very simple wiki clone.
 Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 

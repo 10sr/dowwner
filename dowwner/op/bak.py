@@ -26,4 +26,5 @@ class OP_GET(dowwner.op.OP):
              self.bakfooter.format(basename=path_.base.rpartition(".")[2],
                                    name=path_.base))
         self.body = "\n".join(("<body>", c, "</body>"))
+        self.pagename = "bak: " + path_.path
         return

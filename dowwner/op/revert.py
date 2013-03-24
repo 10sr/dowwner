@@ -13,4 +13,5 @@ class OP_GET(dowwner.op.edit.OP_GET):
         orig = file.load_bak(path_, raw=True)
         dowwner.op.edit.OP_GET.__init__(self, file, path_, orig,
                                         target=path_.base.partition(".")[2])
+        self.pagename = "revert: " + path_.path
         return
