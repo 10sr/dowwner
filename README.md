@@ -21,7 +21,7 @@ Run:
 
     ./setup.py install
 
-and command `dowwner` is installed. Or you can also just create simlink of
+and command `dowwner` is installed. Or you can just create simlink of
 `bin/dowwner` and put it into your prefered directory like `$HOME/bin` or
 `$HOME/.local/bin`. When you want to just try dowwner, running `bin/dowwner`
 directly also works.
@@ -69,8 +69,8 @@ is used by default.
 
 ### `-c`, `--cgi`
 
-Run dowwner as a cgi program. When this option is used options `-d` and `-p` are
-ignored.
+Run dowwner as a cgi program. When this option is used, options `-d` and `-p`
+are ignored.
 
 
 TODOs
