@@ -52,9 +52,10 @@ def main(rootdir):
         return
 
     print("Content-Type: text/html")
-    print()
+    print("", flush=True)
     if met != "HEAD":
-        print(c.content_s)
+        # print(c.content_s)
+        sys.stdout.buffer.write(c.content)
         #_main(rootdir)
     return
 

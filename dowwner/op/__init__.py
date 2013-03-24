@@ -74,7 +74,7 @@ Go or create page: <input type="text" name="name" value="" />
 
     @property
     def content(self):
-        return self.content_s.encode()
+        return self.content_s.encode("utf-8")
 
     @property
     def content_s(self):
