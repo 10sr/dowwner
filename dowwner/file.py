@@ -8,6 +8,7 @@ class File():
     """File and directory handler."""
 
     FILE_SUFFIX = ".md"
+    BAK_SUFFIX = ".bak"
     __md = None
 
     def __init__(self, rootdir):
@@ -111,13 +112,14 @@ class File():
 
     def __backup_gen_fullpath(self, path_):
         """Generate and return fullpath of target for backup,
-        which is like /full/path/.bak.20130216_193548.name.md .
+        which is like /full/path/.20130216_193548.name.md.bak .
         """
         timestr = self.__current_time()
         fpath = self.__gen_fullpath(os.path.join(path_.dir,
-                                                 (".bak." + timestr + "." +
+                                                 ("." + timestr + "." +
                                                   path_.base +
-                                                  self.FILE_SUFFIX)))
+                                                  self.FILE_SUFFIX +
+                                                  self.BAK_SUFFIX)))
         return fpath
 
     def backup(self, path_):
@@ -140,25 +142,27 @@ class File():
         return
 
     def lshist(self, path_):
-        """Return list of history files.
-
-        Each element must starts with ".bak.".
-        """
+        """Return list of history files."""
         l = []
-        prefix = ".bak."
-        suffix = ("." + path_.base + self.FILE_SUFFIX) if path_.base else ""
-        neg_suffix_len = len(self.FILE_SUFFIX) * (-1)
+
+        suffix = self.FILE_SUFFIX + self.BAK_SUFFIX
+        neg_suffix_len = len(suffix) * (-1)
+        if path_.base:
+            suffix = "." + path_.base + suffix
+
         for f in os.listdir(self.__gen_fullpath(path_.dir)):
-            if (f.startswith(prefix) and f.endswith(suffix)):
-                l.append(f[:neg_suffix_len])
+            if f.endswith(suffix):
+                l.append(f[1:neg_suffix_len]) # remove first dot and suffixes
         l.sort(reverse=True)
+
         return l
 
     def load_bak(self, path_, raw=False):
         """Load backed up file."""
         fulldir = self.__gen_fullpath(path_.dir)
         fullpath = os.path.join(fulldir,
-                                ".bak." + path_.base + self.FILE_SUFFIX)
+                                ("." + path_.base +
+                                 self.FILE_SUFFIX + self.BAK_SUFFIX))
         with open(fullpath, encoding="utf-8") as f:
             s = f.read()
 

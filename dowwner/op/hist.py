@@ -12,8 +12,9 @@ class OP_GET(dowwner.op.OP):
         dowwner.op.OP.__init__(self, file, path_)
 
         ls = file.lshist(path_)
-        c = ("<h1>{path}</h1>\n".format(path=path_.path) +
-             "".join("""<a href="{name}">{name}</a><br />\n""".format(name=i)
+        c = ("<h1>hist: {path}</h1>\n".format(path=path_.path) +
+             "".join("""<a href=".bak.{name}">{name}</a><br />\n""".format(
+                    name=i)
                      for i in ls))
 
         f = self.histfooter.format(name=(path_.base or "./"))
