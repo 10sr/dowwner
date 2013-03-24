@@ -2,8 +2,9 @@
 
 """dowwner - Very simple wiki program using markdown
 
-Wiki program working without external http server.
-Uses markdown for markup.
+Uses [Markdown](http://daringfireball.net/projects/markdown/) for markup and
+pages are stored as plain markdown files.
+Works both as a cgi program and as a server.
 """
 
 import os

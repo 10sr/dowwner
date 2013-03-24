@@ -27,18 +27,19 @@ and command `dowwner` is installed. Or you can also just create simlink of
 directly also works.
 
 
-Use as Server
--------------
+Basic Usage
+-----------
+
+### Use as Server
 
 Run:
 
     $ dowwner
 
-and access to `localhost:2505`. `dowwner -h` for additional help.
+and access to `localhost:2505`.
 
 
-Use as CGI
-----------
+### Use as CGI
 
 Configure to run:
 
