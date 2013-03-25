@@ -35,6 +35,8 @@ class OP():
 
     __head_base = """<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!-- <link href="/~yuk/markdown.css" rel="stylesheet" type="text/css" /> -->
 <title>{name}</title>
 </head>"""
 
