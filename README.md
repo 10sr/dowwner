@@ -66,7 +66,7 @@ To remove pages, access edit pages and submit empty contents.
 
 You cannot create directories or pages that start with `.`. These names are all
 reserved for special porpose. For example, if a page name is prefixed by
-`.hist.`, dowwner shows the list of backup files of the page.
+`.edit.`, dowwner shows the edit page.
 
 ### Page Hierarchy
 
@@ -79,6 +79,12 @@ If the page named `index` exists in a directory, dowwner use that when only the
 directory name is specified.
 Otherwise, dowwner shows the list of pages in the directory. This list can be
 accessed explicitly by `.list`.
+
+### Page History
+
+When modifying or removing pages, old contents are backed up. It is possible to
+revert pages using these backups.
+
 
 
 Commandline Options
