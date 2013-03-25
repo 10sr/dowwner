@@ -89,7 +89,8 @@ TODOs
 * Menu
 * More usable access control for server mode (currently accesses only from
 127.0.0.1 are allowed)
-* Fix header if needed
+* Fix http headers if needed
+* Handle errors properly and return correct http status
 
 
 License
