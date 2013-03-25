@@ -26,8 +26,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        p = self.server.dowwner.get(self.path)
-        if p.redirect is not None:
+        c = self.server.dowwner.get(self.path)
+        if c.redirect is not None:
             self.send_response(302)
             self.send_header("Location", p.redirect)
             self.end_headers()
@@ -36,7 +36,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             if not head_only:
-                self.wfile.write(p.content)
+                self.wfile.write(bytes(c))
         return
 
     def do_POST(self):
@@ -58,7 +58,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.send_response(302)
             self.send_header("Location", rt.redirect)
             self.end_headers()
-            self.wfile.write(str(data).encode())
+            #self.wfile.write(str(data).encode())
         return
 
     def __send_500(self, exc_info, head_only=False):

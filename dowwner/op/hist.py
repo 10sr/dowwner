@@ -5,20 +5,16 @@
 import dowwner.op
 
 class OP_GET(dowwner.op.OP):
-    histfooter = """<hr />
-<a href="{name}">{name}</a>"""
+    histfooter = """<a href="{name}">{name}</a>"""
+    baklink = """<a href=".bak.{name}">{name}</a><br />\n"""
 
     def __init__(self, file, path_):
         dowwner.op.OP.__init__(self, file, path_)
 
         ls = file.lshist(path_)
-        c = ("<h1>hist: {path}</h1>\n".format(path=path_.path) +
-             "".join("""<a href=".bak.{name}">{name}</a><br />\n""".format(
-                    name=i)
-                     for i in ls))
+        self.content = ("<h1>hist: {path}</h1>\n".format(path=path_.path) +
+                        "".join(self.baklink.format(name=i) for i in ls))
 
-        f = self.histfooter.format(name=(path_.base or "./"))
-
-        self.body = "\n".join(("<body>", c, f, "</body>"))
+        self.navigation = self.histfooter.format(name=(path_.base or "./"))
         self.pagename = "hist: " + path_.path
         return

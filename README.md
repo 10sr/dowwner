@@ -119,6 +119,7 @@ TODOs
 127.0.0.1 are allowed)
 * Fix http headers if needed
 * Handle errors properly and return correct http status
+* Use logger when -d option used
 
 
 License

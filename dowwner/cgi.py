@@ -11,7 +11,7 @@ def print_redirect(p):
     print("Location: http://{}{}".format(os.environ["SERVER_NAME"], p))
     return
 
-def main(rootdir, tb=False):
+def main(rootdir, tb=True):
     if tb:
         import cgitb
         cgitb.enable()
@@ -55,7 +55,7 @@ def main(rootdir, tb=False):
     print("Content-Type: text/html")
     print("", flush=True)
     if met != "HEAD":
-        sys.stdout.buffer.write(c.content)
+        sys.stdout.buffer.write(bytes(c))
         # _debug()
     return
 
