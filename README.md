@@ -26,7 +26,7 @@ and command `dowwner` is installed. Or you can just create simlink of
 directly also works.
 
 
-Basic Usage
+Quick Start
 -----------
 
 ### Run as Server
@@ -45,13 +45,40 @@ Configure to run:
     $ dowwner --cgi
 
 
-Wiki Syntax
------------
+Wiki Usage
+----------
+
+### Syntax
 
 Dowwner uses [Markdown](http://daringfireball.net/projects/markdown/) for wiki
 syntax with one extension: wiki link.
 This extension convert `[[newpage]]` into `<a href="newpage">newpage</a>`.
-It works with spaces and/or slashes so you can write links like `[[dir/page]]`.
+It works with spaces and/or slashes so you can use links like `[[dir/page]]`.
+
+### Creating and Removing Pages
+
+There is no special step for creating new pages. When you access pages that does
+not exist yet, edit pages appear and you can write newly. That all.
+
+To remove pages, access edit pages and submit empty contents.
+
+### Page Name
+
+You cannot create directories or pages that start with `.`. These names are all
+reserved for special porpose. For example, if a page name is prefixed by
+`.hist.`, dowwner shows the list of backup files of the page.
+
+### Page Hierarchy
+
+Wiki pages are not flat. When creating pages like `dir/page`, directory named
+`dir` is created automatically.
+
+### Index Page
+
+If the page named `index` exists in a directory, dowwner use that when only the
+directory name is specified.
+Otherwise, dowwner shows the list of pages in the directory. This list can be
+accessed explicitly by `.list`.
 
 
 Commandline Options
@@ -84,6 +111,7 @@ are ignored.
 TODOs
 -----
 
+* Provide way to remove directory
 * Search support
 * Stylesheet support
 * Menu
