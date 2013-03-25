@@ -52,12 +52,12 @@ Wiki Usage
 
 Dowwner uses [Markdown](http://daringfireball.net/projects/markdown/) for wiki
 syntax with one extension: wiki link.
-This extension convert `[[newpage]]` into `<a href="newpage">newpage</a>`.
+This extension converts `[[newpage]]` into `<a href="newpage">newpage</a>`.
 It works with spaces and/or slashes so you can use links like `[[dir/page]]`.
 
 ### Creating and Removing Pages
 
-There is no special step for creating new pages. When you access pages that does
+There is no special step for creating new pages. When you access pages that do
 not exist yet, edit pages appear and you can write newly. That all.
 
 To remove pages, access edit pages and submit empty contents.
