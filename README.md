@@ -71,19 +71,19 @@ reserved for special porpose. For example, if a page name is prefixed by
 ### Page Hierarchy
 
 Wiki pages are not flat. When creating pages like `dir/page`, directory named
-`dir` is created automatically.
+`dir` is created automatically and `page` is placed under `dir`.
 
 ### Index Page
 
 If the page named `index` exists in a directory, dowwner use that when only the
 directory name is specified.
 Otherwise, dowwner shows the list of pages in the directory. This list can be
-accessed explicitly by `.list`.
+accessed explicitly with `.list`.
 
 ### Page History
 
 When modifying or removing pages, old contents are backed up. It is possible to
-revert pages using these backups.
+revert to these backups.
 
 
 

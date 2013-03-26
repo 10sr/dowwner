@@ -6,10 +6,14 @@ from traceback import format_exception, print_exception
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
+from dowwner import __version__
 from dowwner.dowwner import Dowwner
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
+
+    server_version = "Dowwner/" + __version__
+
     def do_HEAD(self):
         self.do_GET(True)
         return
