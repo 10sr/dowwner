@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import os
-import urllib
+try:
+    from urllib import parse as urlparse
+except ImportError:
+    import urlparse
 
 class Path():
     """
@@ -25,13 +28,13 @@ class Path():
             path_: Path relative to root directory. Starts with "/" and quoted
                 with parse.quote().
         """
-        o = urllib.parse.urlparse(path_)
+        o = urlparse.urlparse(path_)
         path_ = o.path
         self.origpath_quoted = path_
-        self.origpath = urllib.parse.unquote(path_, encoding="utf-8")
+        self.origpath = urlparse.unquote(path_, encoding="utf-8")
 
         query_r = o.query
-        self.query = urllib.parse.parse_qs(query_r)
+        self.query = urlparse.parse_qs(query_r)
 
         self.dir, self.base_orig = os.path.split(path_)
 

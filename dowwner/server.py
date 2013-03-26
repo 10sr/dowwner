@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
+from __future__ import absolute_import
+
 import os
 import sys
 from traceback import format_exception, print_exception
 
-from http.server import HTTPServer, BaseHTTPRequestHandler
+try:
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+except ImportError:
+    from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 from dowwner import __version__
 from dowwner.dowwner import Dowwner

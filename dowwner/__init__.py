@@ -6,6 +6,8 @@ Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 """
 
+from __future__ import absolute_import
+
 import os
 
 __version__ = "0.2"
