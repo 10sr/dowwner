@@ -118,7 +118,7 @@ class File():
         except OSError as e:
             if e.errno != 17: # 17 means file exists
                 raise
-        self.backup(path_)
+        self.__backup(path_)
         with open(fullpath,
                   mode="w", encoding="utf-8") as f:
             f.write(data)
@@ -131,7 +131,7 @@ class File():
         Returns:
             Path of dirname.
         """
-        self.backup(path_)
+        self.__backup(path_)
         os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
         return path_.dir
 
@@ -153,7 +153,7 @@ class File():
                                                   self.BAK_SUFFIX)))
         return fpath
 
-    def backup(self, path_):
+    def __backup(self, path_):
         """Backup file.
 
         This should be called everytime files are modified or deleted.
