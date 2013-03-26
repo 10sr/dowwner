@@ -8,6 +8,7 @@ import cgi
 
 
 def print_redirect(p):
+    print("Status: 302 Found")
     print("Location: http://{}{}".format(os.environ["SERVER_NAME"], p))
     return
 
@@ -52,7 +53,8 @@ def main(rootdir, tb=True):
         print()
         return
 
-    print("Content-Type: text/html")
+    print("Status: 200 OK")
+    print("Content-Type: text/html") # ;charset=utf-8
     print("", flush=True)
     if met != "HEAD":
         sys.stdout.buffer.write(bytes(c))
