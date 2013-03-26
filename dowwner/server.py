@@ -38,7 +38,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         c = self.server.dowwner.get(self.path)
         if c.redirect is not None:
             self.send_response(302)
-            self.send_header("Location", p.redirect)
+            self.send_header("Location", c.redirect)
             self.end_headers()
         else:
             self.send_response(200)
