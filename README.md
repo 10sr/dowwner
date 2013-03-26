@@ -40,9 +40,10 @@ and access to `localhost:2505`.
 
 ### Run as CGI
 
-Configure to run:
-
-    $ dowwner --cgi
+Install dowwner, copy `bin/cgi.py` to where you want to access as a cgi,
+modify the file so that `rootdir` points to your wiki directory, and configure
+http server to run the file as a cgi. You can limit `POST` method to make wiki
+read-only for anonymous access.
 
 
 Wiki Usage

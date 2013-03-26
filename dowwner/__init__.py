@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 import os
 
-__version__ = "0.2"
+__version__ = "0.2.1"
 
 def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
     def f():
