@@ -1,4 +1,4 @@
-#!/home/yuk/.local/bin/python3
+#!/usr/bin/python3
 
 rootdir = "/path/to/your/wiki"
 
