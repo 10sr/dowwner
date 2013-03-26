@@ -16,7 +16,9 @@ def main(argv):
 
     import dowwner
 
-    parser = ap.ArgumentParser("dowwner")
+    parser = ap.ArgumentParser()
+    parser.add_argument("-v", "--version", action="version",
+                        version=("%(prog)s " + dowwner.__version__))
     parser.add_argument("-r", "--root-dir",
                         help="root directory, default to current directory",
                         default=None)
