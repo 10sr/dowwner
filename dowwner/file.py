@@ -5,6 +5,8 @@ import os.path
 import shutil
 from time import strftime
 
+from dowwner import exc
+
 class File():
     """File and directory handler."""
 
@@ -52,6 +54,11 @@ class File():
                 items.append(os.path.splitext(l)[0])
         return items
 
+    def ispage(self, path_):
+        "Return true if path_ exists as a page."
+        return os.path.isfile(self.__gen_fullpath(path_.path) +
+                              self.FILE_SUFFIX)
+
     def __md2html(self, s):
         if self.__md is None:
             from dowwner.markdown import Markdown
@@ -61,10 +68,14 @@ class File():
     @staticmethod
     def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
-        t2 = os.path.getmtime(f2)
+        try:
+            t2 = os.path.getmtime(f2)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise exc.PageNotFoundError("Invalid file name: {}".format(f2))
         try:
             t1 = os.path.getmtime(f1)
-        except OSError as e:
+        except EnvironmentError as e:
             if e.errno == 2:
                 return False
             else:
@@ -78,20 +89,26 @@ class File():
 
         Args:
             path_: Path object.
-            raw: False to convert to html.
+            raw: False to convert to html. Used as original text of edit page.
 
         Raises:
-            EnvironmentError: e.errno == 2 when file not exists.
+             exc.PageNotFoundError
         """
-        if self.isdir(path_):
+        if not self.ispage(path_) and self.isdir(path_):
             fpath = os.path.join(self.__gen_fullpath(path_.path),
                                  "index")
         else:
             fpath = self.__gen_fullpath(path_.path)
 
         if raw:
-            with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
-                s = f.read()
+            try:
+                with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
+                    s = f.read()
+            except EnvironmentError as e:
+                if e.errno == 2:
+                    raise exc.PageNotFoundError
+                else:
+                    raise
             return s
 
         mdpath = fpath + self.FILE_SUFFIX
@@ -102,8 +119,14 @@ class File():
                 html = f.read()
             return html
 
-        with open(mdpath, encoding="utf-8") as f:
-            md = f.read()
+        try:
+            with open(mdpath, encoding="utf-8") as f:
+                md = f.read()
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise exc.PageNotFoundError
+            else:
+                raise
         html = self.__md2html(md)
         pid = os.fork()
         if pid == 0:        # child
@@ -139,9 +162,18 @@ class File():
 
         Returns:
             Path of dirname.
+
+        Raises:
+            exc.PageNameError
         """
-        self.__backup(path_)
-        os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
+        try:
+            self.__backup(path_)
+            os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise PageNameError
+            else:
+                raise
         return path_.dir
 
     # methods for history handling
@@ -201,14 +233,23 @@ class File():
         return l
 
     def load_bak(self, path_, raw=False):
-        """Load backed up file."""
+        """Load backed up file.
+
+        Raises:
+            PageNameError
+        """
         fulldir = self.__gen_fullpath(path_.dir)
         fullpath = os.path.join(fulldir,
                                 ("." + path_.base +
                                  self.FILE_SUFFIX + self.BAK_SUFFIX))
-        with open(fullpath, encoding="utf-8") as f:
-            s = f.read()
-
+        try:
+            with open(fullpath, encoding="utf-8") as f:
+                s = f.read()
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise PageNameError
+            else:
+                raise
         if raw:
             return s
         else:

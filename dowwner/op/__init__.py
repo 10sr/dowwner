@@ -9,6 +9,8 @@ import sys
 import importlib
 import urllib
 
+from dowwner import exc
+
 class OP():
     """OP Base class.
 
@@ -115,26 +117,25 @@ Go <input type="text" name="name" value="" />
 
         if path_.path.endswith("/"):
             file.mkdir(path_)
-            self.init_as_list()
+            try:
+                self.init_as_page("index")
+            except exc.PageNameError:
+                self.init_as_list()
+        elif file.ispage(path_):
+            self.init_as_page(path_.base)
         elif file.isdir(path_):
             if not path_.path.endswith("/"):
                 self.redirect_r = path_.base + "/"
                 return
             try:
                 self.init_as_page("index")
-            except EnvironmentError as e:
-                if e.errno != 2:
-                    raise
+            except exc.PageNameError:
                 self.init_as_list()
         else:
             try:
                 self.init_as_page(path_.base)
-            except EnvironmentError as e:
-                if e.errno == 2:
-                    self.redirect_r = ".edit." + path_.base
-                    return
-                else:
-                    raise
+            except exc.PageNameError:
+                self.redirect_r = ".edit." + path_.base
         return
 
     def init_as_page(self, name):
@@ -161,11 +162,11 @@ def get(file, path_):
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
-            raise
+            raise exc.OperatorError
         try:
             return op.OP_GET(file, path_)
         except AttributeError:
-            raise
+            raise exc.OperatorError
 
 def post(file, path_, data):
     """Post data.
@@ -176,8 +177,8 @@ def post(file, path_, data):
     try:
         op = importlib.import_module("dowwner.op." + path_.op)
     except ImportError:
-        raise
+        raise exc.OperatorError
     try:
         return op.OP_POST(file, path_, data)
     except AttributeError:
-        raise
+        raise exc.OperatorError

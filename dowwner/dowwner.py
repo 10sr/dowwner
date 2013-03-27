@@ -11,7 +11,7 @@ import urllib
 from dowwner.path import Path
 from dowwner.file import File
 from dowwner import op as dop
-from dowwner.exc import PageNameError
+from dowwner import exc
 
 class Dowwner():
     """Dowwner main class."""
@@ -29,7 +29,7 @@ class Dowwner():
         try:
             return dop.get(self.file, p)
         except ImportError:
-            raise PageNameError("Invalid page name: {}".format(rpath))
+            raise OperatorError("Invalid operator: {}".format(rpath))
 
     def post(self, rpath, data):
         """Return OP object for request handler.
@@ -41,7 +41,7 @@ class Dowwner():
         try:
             return dop.post(self.file, p, data)
         except ImportError:
-            raise PageNameError("Invalid page name: {}".format(rpath))
+            raise OperatorError("Invalid operator: {}".format(rpath))
 
     def verify_addr(self, addr):
         return addr == "127.0.0.1"
