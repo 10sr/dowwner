@@ -59,7 +59,7 @@ class File():
         return self.__md.convert(s)
 
     @staticmethod
-    def is_file_newer(f1, f2):
+    def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
         t2 = os.path.getmtime(f2)
         try:
@@ -96,7 +96,7 @@ class File():
 
         mdpath = fpath + self.FILE_SUFFIX
         htmlpath = fpath + self.CONV_SUFFIX
-        if self.is_file_newer(htmlpath, mdpath):
+        if self.__is_file_newer(htmlpath, mdpath):
             # if cache exists use that.
             with open(htmlpath, encoding="utf-8") as f:
                 html = f.read()
