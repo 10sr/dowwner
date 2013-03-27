@@ -5,6 +5,8 @@ import os.path
 import shutil
 from time import strftime
 
+from dowwner.exc import PageNameError
+
 class File():
     """File and directory handler."""
 
