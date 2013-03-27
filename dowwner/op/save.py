@@ -17,7 +17,6 @@ class OP_POST(dowwner.op.OP):
             content = data2["content"][0].replace("\r", "")
             target = data2["target"][0]
 
-        print(target)
         if content == "":
             file.rm(path_)
             self.redirect_r = ".list"
