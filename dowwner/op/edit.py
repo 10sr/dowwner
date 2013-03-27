@@ -2,6 +2,7 @@
 
 from os import path
 
+from dowwner import exc
 import dowwner.op
 
 # todo: use stylesheet for scale.
@@ -32,11 +33,8 @@ Page: <input type="text" name="target" value="{name}" />
         if orig is None:
             try:
                 orig = file.load(path_, True)
-            except EnvironmentError as e:
-                if e.errno == 2:    # No such file or directory
-                    orig = ""
-                else:
-                    raise
+            except exc.PageNotFoundError:
+                orig = ""
 
         if target is None:
             target = path_.base

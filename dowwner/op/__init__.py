@@ -116,25 +116,19 @@ Go <input type="text" name="name" value="" />
         OP.__init__(self, file, path_)
 
         if path_.path.endswith("/"):
-            file.mkdir(path_)
             try:
                 self.init_as_page("index")
             except exc.PageNameError:
                 self.init_as_list()
-        elif file.ispage(path_):
+            return
+
+        try:
             self.init_as_page(path_.base)
-        elif file.isdir(path_):
-            if not path_.path.endswith("/"):
+        except exc.PageNameError:
+            if file.isdir(path_):
                 self.redirect_r = path_.base + "/"
                 return
-            try:
-                self.init_as_page("index")
-            except exc.PageNameError:
-                self.init_as_list()
-        else:
-            try:
-                self.init_as_page(path_.base)
-            except exc.PageNameError:
+            else:
                 self.redirect_r = ".edit." + path_.base
         return
 
@@ -149,7 +143,7 @@ Go <input type="text" name="name" value="" />
             "<h1>{path}</h1>\n".format(path=self.path.path) +
             "".join(
                 """<a href="{name}">{name}</a><br />\n""".format(name=i)
-                for i in ls))
+                for i in ["./", "../"] + ls))
 
         self.navigation = self.dirnav
         self.pagename = "list: " + self.path.path

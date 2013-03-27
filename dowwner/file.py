@@ -28,7 +28,7 @@ class File():
         assert fpath.startswith(self.rootdir)
         return fpath
 
-    def mkdir(self, path_):
+    def __mkdirs(self, path_):
         "Make directories. Do nothing if path_ already exists."
         try:
             os.makedirs(self.__gen_fullpath(path_.path))
@@ -42,10 +42,24 @@ class File():
         return os.path.isdir(self.__gen_fullpath(path_.path))
 
     def listdir(self, path_):
-        "Return list of files in path_. Do not check if path_ is dir."
-        items = ["./", "../"]
+        """Return list of files in path_. When dir not found, return [].
+
+        Raises:
+        """
+        items = []
         fullpath = self.__gen_fullpath(path_.path)
-        for l in os.listdir(fullpath):
+
+        try:
+            ls = os.listdir(fullpath)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                return items
+            elif e.errno == 20:   # Not a directory
+                raise
+            else:
+                raise
+
+        for l in ls:
             if l.startswith("."):
                 continue
             elif os.path.isdir(os.path.join(fullpath, l)):
@@ -85,7 +99,7 @@ class File():
     def load(self, path_, raw=False):
         """Load file.
 
-        if path_ is dir, try to load "index" file.
+        If path_.path ends with slash, try to load "index" page.
 
         Args:
             path_: Path object.
@@ -94,7 +108,7 @@ class File():
         Raises:
              exc.PageNotFoundError
         """
-        if not self.ispage(path_) and self.isdir(path_):
+        if path_.path.endswith("/"):
             fpath = os.path.join(self.__gen_fullpath(path_.path),
                                  "index")
         else:
@@ -163,20 +177,17 @@ class File():
         return False
 
     def rm(self, path_):
-        """Remove page.
+        """Remove page. Do nothing if path_ not exists.
 
         Returns:
             Path of dirname.
-
-        Raises:
-            exc.PageNameError
         """
         try:
             self.__backup(path_)
             os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
         except EnvironmentError as e:
             if e.errno == 2:
-                raise PageNameError
+                pass
             else:
                 raise
         return path_.dir
@@ -230,6 +241,14 @@ class File():
         if path_.base:
             suffix = "." + path_.base + suffix
 
+        try:
+            ls = os.listdir(self.__gen_fullpath(path_.dir))
+        except EnvironmentError as e:
+            if e.errno == 20:
+                return []
+            else:
+                raise
+
         for f in os.listdir(self.__gen_fullpath(path_.dir)):
             if f.endswith(suffix):
                 l.append(f[1:neg_suffix_len]) # remove first dot and suffixes
@@ -252,7 +271,7 @@ class File():
                 s = f.read()
         except EnvironmentError as e:
             if e.errno == 2:
-                raise PageNameError
+                raise exc.PageNameError
             else:
                 raise
         if raw:
