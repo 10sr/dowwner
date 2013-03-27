@@ -11,7 +11,10 @@ class OP_GET(dowwner.op.OP):
 
     _content = """<h1>{path}</h1>
 <form action=".save.{name}" method="post">
-<p><input type="submit" name="submit" value="submit" /></p>
+<p>
+Page: <input type="text" name="target" value="{name}" />
+<input type="submit" name="submit" value="submit" />
+</p>
 <p>
 <textarea type="content" name="content" value="content" rows="24" cols="80">
 {origtext}</textarea>

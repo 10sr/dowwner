@@ -35,7 +35,7 @@ class OP():
 
     __head_base = """<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--<meta http-equiv="Content-Style-Type" content="text/css" /> -->
 <!-- <link href="/~yuk/markdown.css" rel="stylesheet" type="text/css" /> -->
 <title>{name}</title>
 </head>"""
@@ -113,7 +113,10 @@ Go <input type="text" name="name" value="" />
     def __init__(self, file, path_):
         OP.__init__(self, file, path_)
 
-        if file.isdir(path_):
+        if path_.path.endswith("/"):
+            file.mkdir(path_)
+            self.init_as_list()
+        elif file.isdir(path_):
             if not path_.path.endswith("/"):
                 self.redirect_r = path_.base + "/"
                 return

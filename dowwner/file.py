@@ -26,6 +26,15 @@ class File():
         assert fpath.startswith(self.rootdir)
         return fpath
 
+    def mkdir(self, path_):
+        "Make directories. Do nothing if path_ already exists."
+        try:
+            os.makedirs(self.__gen_fullpath(path_.path))
+        except OSError as e:
+            if e.errno != 17:
+                raise
+        return
+
     def isdir(self, path_):
         "Return True if path_ is dir."
         return os.path.isdir(self.__gen_fullpath(path_.path))
