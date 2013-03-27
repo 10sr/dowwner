@@ -20,7 +20,6 @@ class OP_POST(dowwner.op.OP):
         print(target)
         if content == "":
             file.rm(path_)
-            print(path_)
             self.redirect_r = ".list"
         else:
             file.save(path_, content)

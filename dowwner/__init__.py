@@ -9,6 +9,7 @@ Works both as a cgi program and as a server.
 from __future__ import absolute_import
 
 import os
+# import locale
 
 __version__ = "0.2.1"
 
@@ -18,6 +19,7 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
         return start(port=port, rootdir=rootdir)
 
     rootdir = os.path.realpath(rootdir)
+    # locale.setlocale(locale.LC_ALL, "ja_JP.UTF-8")
 
     if cgi:
         from dowwner.cgi import main
