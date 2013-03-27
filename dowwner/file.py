@@ -28,24 +28,12 @@ class File():
         assert fpath.startswith(self.rootdir)
         return fpath
 
-    def __mkdirs(self, path_):
-        "Make directories. Do nothing if path_ already exists."
-        try:
-            os.makedirs(self.__gen_fullpath(path_.path))
-        except OSError as e:
-            if e.errno != 17:
-                raise
-        return
-
     def isdir(self, path_):
-        "Return True if path_ is dir."
+        "Return True if directory named path exists."
         return os.path.isdir(self.__gen_fullpath(path_.path))
 
     def listdir(self, path_):
-        """Return list of files in path_. When dir not found, return [].
-
-        Raises:
-        """
+        """Return list of files in path_. When dir not found, return []."""
         items = []
         fullpath = self.__gen_fullpath(path_.path)
 
@@ -67,11 +55,6 @@ class File():
             elif l.endswith(self.FILE_SUFFIX):
                 items.append(os.path.splitext(l)[0])
         return items
-
-    def ispage(self, path_):
-        "Return true if path_ exists as a page."
-        return os.path.isfile(self.__gen_fullpath(path_.path) +
-                              self.FILE_SUFFIX)
 
     def __md2html(self, s):
         if self.__md is None:
@@ -106,7 +89,7 @@ class File():
             raw: False to convert to html. Used as original text of edit page.
 
         Raises:
-             exc.PageNotFoundError
+             dowwner.exc.PageNotFoundError
         """
         if path_.path.endswith("/"):
             fpath = os.path.join(self.__gen_fullpath(path_.path),
@@ -153,6 +136,8 @@ class File():
 
     def save(self, path_, data):
         """Save file with data.
+
+        This method creates all subdirectories if needed to save files.
 
         Args:
             path_: Path object.
@@ -260,7 +245,7 @@ class File():
         """Load backed up file.
 
         Raises:
-            PageNameError
+            dowwner.exc.PageNameError
         """
         fulldir = self.__gen_fullpath(path_.dir)
         fullpath = os.path.join(fulldir,
