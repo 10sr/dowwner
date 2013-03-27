@@ -112,7 +112,12 @@ class File():
             path_: Path object.
             data: String of data.
         """
-        fullpath = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
+        if self.isdir(path_):
+            pathstr = os.path.join(path_.path, "index" + self.FILE_SUFFIX)
+        else:
+            pathstr = path_.path + self.FILE_SUFFIX
+        fullpath = self.__gen_fullpath(pathstr)
+
         try:
             os.makedirs(os.path.dirname(fullpath))
         except OSError as e:
