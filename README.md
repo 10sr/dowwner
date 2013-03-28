@@ -125,7 +125,6 @@ TODOs
 
 * Provide way to remove directory
 * Search support
-* Stylesheet support
 * Menu
 * More usable access control for server mode (currently accesses only from
 127.0.0.1 are allowed)
