@@ -42,7 +42,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
         else:
             self.send_response(200)
-            self.send_header("Content-type", "text/html")
+            self.send_header("Content-type", c.type)
             self.end_headers()
             if not head_only:
                 self.wfile.write(bytes(c))

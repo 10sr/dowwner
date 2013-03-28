@@ -15,6 +15,7 @@ class OP():
     """OP Base class.
 
     str(op) and bytes(op) can be used to get contents as html.
+    Path ends with ".css" is treated specially.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -23,6 +24,8 @@ class OP():
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
         content: Content of page.
+        content_raw: If not None, string of raw content.
+        type: MIME Type of content. Default to "text/html".
         navigation: Navigation menu.
     """
 
@@ -37,8 +40,10 @@ class OP():
 
     __head_base = """<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<!-- <link href=".style.css" rel="stylesheet" type="text/css" /> -->
+<!-- <meta http-equiv="Content-Style-Type" content="text/css" />
+Not needed when only <link> is used for stylesheets. -->
+<link href="common.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 <title>{name}</title>
 </head>"""
 
@@ -55,6 +60,11 @@ class OP():
 </div>"""
 
     navigation = ""
+
+    STYLE_SUFFIX = ".css"
+
+    content_raw = None
+    type = "text/html"
 
     def __init__(self, file, path_):
         """Initialize.
@@ -79,8 +89,11 @@ class OP():
         return str(self).encode("utf-8")
 
     def __str__(self):
-        return "\n".join((self.__html_header, self.__head,
-                          self.__body, self.__html_footer))
+        if self.content_raw is None:
+            return "\n".join((self.__html_header, self.__head,
+                              self.__body, self.__html_footer))
+        else:
+            return self.content_raw
 
     @property
     def __head(self):
@@ -107,6 +120,7 @@ class NO_OP(OP):
     dirnav = """<p>
 <form action=".go" method="get">
 <a href=".hist">History</a>
+<a href=".edit.style.css">EditStyle</a>
 |
 Go <input type="text" name="name" value="" />
 </form>
@@ -114,6 +128,10 @@ Go <input type="text" name="name" value="" />
 
     def __init__(self, file, path_):
         OP.__init__(self, file, path_)
+
+        if path_.base.endswith(self.STYLE_SUFFIX):
+            self.init_as_style()
+            return
 
         if path_.path.endswith("/"):
             try:
@@ -130,6 +148,11 @@ Go <input type="text" name="name" value="" />
                 return
             else:
                 self.redirect_r = ".edit." + path_.base
+        return
+
+    def init_as_style(self):
+        self.content_raw = self.file.load_style(self.path)
+        self.type = "text/css"
         return
 
     def init_as_page(self, name):

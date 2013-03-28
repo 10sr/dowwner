@@ -11,13 +11,14 @@ class OP_POST(dowwner.op.OP):
 
         if isinstance(data, FieldStorage):
             content = data.getfirst("content").replace("\r", "")
-            target = data.getfirst("target")
         else:
             data2 = urllib.parse.parse_qs(data.decode(), keep_blank_values=True)
             content = data2["content"][0].replace("\r", "")
-            target = data2["target"][0]
 
-        if content == "":
+        if path_.base.endswith(self.STYLE_SUFFIX):
+            file.save_style(path_, content)
+            self.redirect_r = "./"
+        elif content == "":
             file.rm(path_)
             self.redirect_r = ".list"
         else:

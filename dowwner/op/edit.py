@@ -13,7 +13,6 @@ class OP_GET(dowwner.op.OP):
     _content = """<h1>{path}</h1>
 <form action=".save.{name}" method="post">
 <p>
-Page: <input type="text" name="target" value="{name}" />
 <input type="submit" name="submit" value="submit" />
 </p>
 <p>
@@ -30,7 +29,9 @@ Page: <input type="text" name="target" value="{name}" />
         """
         dowwner.op.OP.__init__(self, file, path_)
 
-        if orig is None:
+        if path_.base.endswith(self.STYLE_SUFFIX):
+            orig = file.load_style(path_)
+        elif orig is None:
             try:
                 orig = file.load(path_, True)
             except exc.PageNotFoundError:

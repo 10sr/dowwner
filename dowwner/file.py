@@ -62,6 +62,37 @@ class File():
             self.__md = Markdown()
         return self.__md.convert(s)
 
+    def load_style(self, path_):
+        """Load css file and return as string.
+
+        If css file not found, return empty string.
+        If path_.base == "common.css", always return same content regardless of
+        path_.dir .
+        """
+        if path_.base == "common.css":
+            fpath = self.__gen_fullpath("common.css")
+        else:
+            fpath = self.__gen_fullpath(path_.path)
+
+        try:
+            with open(fpath, encoding="utf-8") as f:
+                c = f.read()
+        except EnvironmentError as e:
+            if e.errno == 2:
+                c = ""
+            else:
+                raise
+
+        return c
+
+    def save_style(self, path_, data):
+        """Save stylesheet."""
+        fpath = self.__gen_fullpath(path_.path)
+        # todo: backup previous content
+        with open(fpath, encoding="utf-8", mode="w") as f:
+            f.write(data)
+        return
+
     @staticmethod
     def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
