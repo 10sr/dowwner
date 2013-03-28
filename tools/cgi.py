@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-rootdir = "/path/to/your/wiki"
+rootdir = "/path/to/your/wiki/dir"
 
 import dowwner
 

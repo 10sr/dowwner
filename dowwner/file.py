@@ -86,7 +86,8 @@ class File():
 
         Args:
             path_: Path object.
-            raw: False to convert to html. Used as original text of edit page.
+            raw: False to convert to html. Used to get original text for edit
+                page.
 
         Raises:
              dowwner.exc.PageNotFoundError
@@ -243,6 +244,8 @@ class File():
 
     def load_bak(self, path_, raw=False):
         """Load backed up file.
+
+        Basename of path_ is decided by the return of self.lshist().
 
         Raises:
             dowwner.exc.PageNameError
