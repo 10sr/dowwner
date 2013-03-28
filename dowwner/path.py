@@ -6,6 +6,8 @@ try:
 except ImportError:
     import urlparse
 
+# todo: prohibit any directory name ends with ".css"
+
 class Path():
     """
     Path object.

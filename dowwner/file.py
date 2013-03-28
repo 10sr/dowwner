@@ -96,11 +96,8 @@ class File():
     @staticmethod
     def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
-        try:
-            t2 = os.path.getmtime(f2)
-        except EnvironmentError as e:
-            if e.errno == 2:
-                raise exc.PageNotFoundError("Invalid file name: {}".format(f2))
+        t2 = os.path.getmtime(f2)
+
         try:
             t1 = os.path.getmtime(f1)
         except EnvironmentError as e:
@@ -122,6 +119,7 @@ class File():
 
         Raises:
              dowwner.exc.PageNotFoundError
+             dowwner.exc.NotADirectoryError
         """
         if path_.path.endswith("/"):
             fpath = os.path.join(self.__gen_fullpath(path_.path),
@@ -136,14 +134,26 @@ class File():
             except EnvironmentError as e:
                 if e.errno == 2:
                     raise exc.PageNotFoundError
+                elif e.errno == 20:
+                    raise exc.NotADirectoryError
                 else:
                     raise
             return s
 
         mdpath = fpath + self.FILE_SUFFIX
         htmlpath = fpath + self.CONV_SUFFIX
-        if self.__is_file_newer(htmlpath, mdpath):
-            # if cache exists use that.
+
+        try:
+            cache_exists = self.__is_file_newer(htmlpath, mdpath)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise exc.PageNotFoundError
+            elif e.errno == 20:
+                raise exc.NotADirectoryError
+            else:
+                raise
+
+        if cache_exists:
             with open(htmlpath, encoding="utf-8") as f:
                 html = f.read()
             return html

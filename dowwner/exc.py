@@ -6,7 +6,7 @@ class PageNameError(ValueError):
 class PageNotFoundError(PageNameError):
     pass
 
-class DirNotFoundError(PageNameError):
+class NotADirectoryError(PageNameError):
     pass
 
 class OperatorError(PageNameError):
