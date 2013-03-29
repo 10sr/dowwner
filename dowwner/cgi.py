@@ -54,7 +54,7 @@ def main(rootdir, tb=True):
         return
 
     print("Status: 200 OK")
-    print("Content-Type: text/html") # ;charset=utf-8
+    print("Content-Type: " + c.type) # ;charset=utf-8
     print("", flush=True)
     if met != "HEAD":
         sys.stdout.buffer.write(bytes(c))
