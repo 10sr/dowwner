@@ -8,8 +8,8 @@ class OP_GET(dowwner.op.OP):
     histfooter = """<a href="{name}">{name}</a>"""
     baklink = """<a href=".bak.{name}">{name}</a><br />\n"""
 
-    def __init__(self, file, path_):
-        dowwner.op.OP.__init__(self, file, path_)
+    def __init__(self, file, path_, wikiname):
+        dowwner.op.OP.__init__(self, file, path_, wikiname)
 
         ls = file.lshist(path_)
         self.content = ("<h1>hist: {path}</h1>\n".format(path=path_.path) +

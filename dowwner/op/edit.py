@@ -21,13 +21,13 @@ class OP_GET(dowwner.op.OP):
 </p>
 </form>"""
 
-    def __init__(self, file, path_, orig=None, target=None):
+    def __init__(self, file, path_, wikiname, orig=None, target=None):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.OP.__init__(self, file, path_)
+        dowwner.op.OP.__init__(self, file, path_, wikiname)
 
         if path_.base.endswith(self.STYLE_SUFFIX):
             orig = file.load_style(path_)

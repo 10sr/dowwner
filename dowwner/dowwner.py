@@ -17,6 +17,7 @@ class Dowwner():
     """Dowwner main class."""
     def __init__(self, rootdir):
         self.file = File(rootdir)
+        self.name = os.path.basename(rootdir)
         return
 
     def get(self, rpath):
@@ -27,7 +28,7 @@ class Dowwner():
         """
         p = Path(rpath)
         try:
-            return dop.get(self.file, p)
+            return dop.get(self.file, p, self.name)
         except ImportError:
             raise OperatorError("Invalid operator: {}".format(rpath))
 
@@ -39,7 +40,7 @@ class Dowwner():
         """
         p = Path(rpath)
         try:
-            return dop.post(self.file, p, data)
+            return dop.post(self.file, p, self.name, data)
         except ImportError:
             raise OperatorError("Invalid operator: {}".format(rpath))
 
