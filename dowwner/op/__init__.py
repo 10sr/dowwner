@@ -61,12 +61,13 @@ Not needed when only <link> is used for stylesheets. -->
 
     navigation = ""
 
-    STYLE_SUFFIX = ".css"
-
     content_raw = None
     type = "text/html"
 
-    def __init__(self, file, path_):
+    # todo: where this const should be set?
+    STYLE_SUFFIX = ".css"
+
+    def __init__(self, file, path_, wikiname):
         """Initialize.
 
         Args:
@@ -76,6 +77,7 @@ Not needed when only <link> is used for stylesheets. -->
         self.path = path_
         self.file = file
         self.pagename = path_.path
+        self.wikiname = wikiname
         return
 
     @property
@@ -97,7 +99,7 @@ Not needed when only <link> is used for stylesheets. -->
 
     @property
     def __head(self):
-        return self.__head_base.format(name=self.pagename)
+        return self.__head_base.format(name=self.wikiname + ":" + self.pagename)
 
     @property
     def __body(self):
@@ -126,8 +128,8 @@ Go <input type="text" name="name" value="" />
 </form>
 </p>"""
 
-    def __init__(self, file, path_):
-        OP.__init__(self, file, path_)
+    def __init__(self, file, path_, wikiname):
+        OP.__init__(self, file, path_, wikiname)
 
         if path_.base.endswith(self.STYLE_SUFFIX):
             self.init_as_style()
@@ -172,20 +174,20 @@ Go <input type="text" name="name" value="" />
         self.pagename = "list: " + self.path.path
         return
 
-def get(file, path_):
+def get(file, path_, wikiname):
     if path_.op == "":
-        return NO_OP(file, path_)
+        return NO_OP(file, path_, wikiname)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError
         try:
-            return op.OP_GET(file, path_)
+            return op.OP_GET(file, path_, wikiname)
         except AttributeError:
             raise exc.OperatorError
 
-def post(file, path_, data):
+def post(file, path_, wikiname, data):
     """Post data.
 
     Args:
@@ -196,6 +198,6 @@ def post(file, path_, data):
     except ImportError:
         raise exc.OperatorError
     try:
-        return op.OP_POST(file, path_, data)
+        return op.OP_POST(file, path_, wikiname, data)
     except AttributeError:
         raise exc.OperatorError

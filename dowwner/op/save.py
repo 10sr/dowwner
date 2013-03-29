@@ -6,8 +6,8 @@ from cgi import FieldStorage
 import dowwner.op
 
 class OP_POST(dowwner.op.OP):
-    def __init__(self, file, path_, data):
-        dowwner.op.OP.__init__(self, file, path_)
+    def __init__(self, file, path_, wikiname, data):
+        dowwner.op.OP.__init__(self, file, path_, wikiname)
 
         if isinstance(data, FieldStorage):
             content = data.getfirst("content").replace("\r", "")
