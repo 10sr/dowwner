@@ -76,6 +76,12 @@ accessed explicitly with `.list`.
 When modifying or removing pages, old contents are backed up. It is possible to
 revert to these backups.
 
+### StyleSheet
+
+Currently stylesheet support in under development, and may not work correctly.
+Do not create directories or pages ending with `".css"` (this will return error
+in the future).
+
 
 Commandline Options
 -------------------

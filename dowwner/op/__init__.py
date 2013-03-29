@@ -61,10 +61,11 @@ Not needed when only <link> is used for stylesheets. -->
 
     navigation = ""
 
-    STYLE_SUFFIX = ".css"
-
     content_raw = None
     type = "text/html"
+
+    # todo: where this const should be set?
+    STYLE_SUFFIX = ".css"
 
     def __init__(self, file, path_):
         """Initialize.
