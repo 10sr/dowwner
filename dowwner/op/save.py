@@ -15,7 +15,7 @@ class OP_POST(dowwner.op.OP):
             data2 = urllib.parse.parse_qs(data.decode(), keep_blank_values=True)
             content = data2["content"][0].replace("\r", "")
 
-        if path_.base.endswith(self.STYLE_SUFFIX):
+        if path_.isstyle:
             file.save_style(path_, content)
             self.redirect_r = "./"
         elif content == "":

@@ -13,7 +13,6 @@ class File():
     FILE_SUFFIX = ".md"
     BAK_SUFFIX = ".bak"
     CONV_SUFFIX = ".html"
-    STYLE_SUFFIX = ".css"
     __md = None
 
     def __init__(self, rootdir):
@@ -66,13 +65,12 @@ class File():
     def load_style(self, path_):
         """Load css file and return as string.
 
-        path_.base must end with self.STYLE_SUFFIX .
         If css file not found, return empty string.
         If path_.base == "common.css", always return same content regardless of
         path_.dir .
         """
 
-        assert path_.base.endswith(self.STYLE_SUFFIX)
+        assert path_.isstyle
 
         if path_.base == "common.css":
             fpath = self.__gen_fullpath("common.css")
@@ -92,6 +90,7 @@ class File():
 
     def save_style(self, path_, data):
         """Save stylesheet."""
+        assert path_.isstyle
         fpath = self.__gen_fullpath(path_.path)
         # todo: backup previous content
         with open(fpath, encoding="utf-8", mode="w") as f:

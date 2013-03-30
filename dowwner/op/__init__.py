@@ -64,9 +64,6 @@ Not needed when only <link> is used for stylesheets. -->
     content_raw = None
     type = "text/html"
 
-    # todo: where this const should be set?
-    STYLE_SUFFIX = ".css"
-
     def __init__(self, file, path_, wikiname):
         """Initialize.
 
@@ -131,7 +128,7 @@ Go <input type="text" name="name" value="" />
     def __init__(self, file, path_, wikiname):
         OP.__init__(self, file, path_, wikiname)
 
-        if path_.base.endswith(self.STYLE_SUFFIX):
+        if path_.isstyle:
             self.init_as_style()
             return
 

@@ -29,7 +29,7 @@ class OP_GET(dowwner.op.OP):
         """
         dowwner.op.OP.__init__(self, file, path_, wikiname)
 
-        if path_.base.endswith(self.STYLE_SUFFIX):
+        if path_.isstyle:
             orig = file.load_style(path_)
         elif orig is None:
             try:

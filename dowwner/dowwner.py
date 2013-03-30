@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# todo: manage history
-
 from __future__ import absolute_import
 
 import os
