@@ -57,7 +57,9 @@ To remove pages, access edit pages and submit empty contents.
 
 You cannot create directories or pages that start with `.`. These names are all
 reserved for special porpose. For example, if a page name is prefixed by
-`.edit.`, dowwner shows the edit page.
+`.edit.`, dowwner shows the edit page. Additionally, all pages with suffix
+`.css` are treated as stylesheet files, and you cannot create directories with
+suffix `.css`.
 
 ### Page Hierarchy
 
@@ -78,9 +80,10 @@ revert to these backups.
 
 ### StyleSheet
 
-Currently stylesheet support in under development, and may not work correctly.
-Do not create directories or pages ending with `".css"` (this will return error
-in the future).
+You can create and edit `style.css` from `.list` page. Additionally, you can
+create `common.css` in the root directory. `common.css` is used for all pages,
+whereas `style.css`s are different for each directory. You cannot create or edit
+`common.css` from the web interface.
 
 
 Commandline Options
