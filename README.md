@@ -81,9 +81,9 @@ revert to these backups.
 ### StyleSheet
 
 You can create and edit `style.css` from `.list` page. Additionally, you can
-create `common.css` in the root directory. `common.css` is used for all pages,
-whereas `style.css`s are different for each directory. You cannot create or edit
-`common.css` from the web interface.
+create `common.css` in the root directory. `common.css` is same for all
+directories, whereas `style.css`s are different for each directory. You cannot
+create or edit `common.css` from the web interface.
 
 
 Commandline Options

@@ -13,6 +13,7 @@ class File():
     FILE_SUFFIX = ".md"
     BAK_SUFFIX = ".bak"
     CONV_SUFFIX = ".html"
+    CACHE_PREFIX = ".cache."
     __md = None
 
     def __init__(self, rootdir):
@@ -128,14 +129,16 @@ class File():
              dowwner.exc.PageNotFoundError
         """
         if path_.path.endswith("/"):
-            fpath = os.path.join(self.__gen_fullpath(path_.path),
-                                 "index")
+            fdir = self.__gen_fullpath(path_.dir)
+            base = "index"
         else:
-            fpath = self.__gen_fullpath(path_.path)
+            fdir = self.__gen_fullpath(path_.dir)
+            base = path_.base
 
+        mdpath = os.path.join(fdir, base + self.FILE_SUFFIX)
         if raw:
             try:
-                with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
+                with open(mdpath, encoding="utf-8") as f:
                     s = f.read()
             except EnvironmentError as e:
                 if e.errno == 2:
@@ -144,8 +147,8 @@ class File():
                     raise
             return s
 
-        mdpath = fpath + self.FILE_SUFFIX
-        htmlpath = fpath + self.CONV_SUFFIX
+        htmlpath = os.path.join(fdir,
+                                self.CACHE_PREFIX + base + self.CONV_SUFFIX)
         if self.__is_file_newer(htmlpath, mdpath):
             # if cache exists use that.
             with open(htmlpath, encoding="utf-8") as f:
