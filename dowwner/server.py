@@ -13,6 +13,7 @@ except ImportError:
 
 from dowwner import __version__
 from dowwner.dowwner import Dowwner
+from dowwner import exc
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
@@ -43,9 +44,12 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         else:
             self.send_response(200)
             self.send_header("Content-type", c.type)
+            body = bytes(c)
+            length = len(body)
+            self.send_header("Content-Length", str(length))
             self.end_headers()
             if not head_only:
-                self.wfile.write(bytes(c))
+                self.wfile.write(body)
         return
 
     def do_POST(self):
