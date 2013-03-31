@@ -35,6 +35,12 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         # for e in encodings:
         return (b, None)
 
+    def __send_location(self, s):
+        newpath = os.path.join(os.path.dirname(self.path), s)
+        self.send_header("Location",
+                         "http://{}{}".format(self.headers["Host"], newpath))
+        return
+
     def __try_do_GET(self, head_only=False):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
@@ -44,7 +50,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         c = self.server.dowwner.get(self.path)
         if c.redirect is not None:
             self.send_response(302)
-            self.send_header("Location", c.redirect)
+            self.__send_location(c.redirect)
             self.end_headers()
         else:
             self.send_response(200)
@@ -75,7 +81,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         rt = self.server.dowwner.post(self.path, data)
         if rt:
             self.send_response(302)
-            self.send_header("Location", rt.redirect)
+            self.__send_location(rt.redirect)
             self.end_headers()
             #self.wfile.write(str(data).encode())
         return
