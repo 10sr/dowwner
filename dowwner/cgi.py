@@ -6,6 +6,7 @@ import os
 
 import cgi
 
+from dowwner import exc
 
 def print_redirect(p):
     print("Status: 302 Found")
@@ -40,12 +41,18 @@ def main(rootdir, tb=True):
     from dowwner.dowwner import Dowwner
     d = Dowwner(rootdir)
 
-    if met == "GET" or met == "HEAD":
-        c = d.get(path_)
-        pass
-    elif met == "POST":
-        form = cgi.FieldStorage(keep_blank_values=True)
-        c = d.post(path_, form)
+    try:
+        if met == "GET" or met == "HEAD":
+            c = d.get(path_)
+            pass
+        elif met == "POST":
+            form = cgi.FieldStorage(keep_blank_values=True)
+            c = d.post(path_, form)
+    except exc.PageNameError as e:
+        print("Status: 403 Forbidden")
+        print("")
+        print(str(e))
+        return
 
     if c.redirect_r:
         print_redirect(os.path.join(os.path.dirname(os.environ["REQUEST_URI"]),
