@@ -28,7 +28,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         try:
             return self.__try_do_GET(head_only)
         except Exception as e:
-            return self.__send_500(sys.exc_info(), head_only)
+            if isinstance(e, exc.PageNameError):
+                return self.__send_err(403, sys.exc_info(), head_only)
+            else:
+                return self.__send_err(500, sys.exc_info(), head_only)
 
     def __compress_body(self, b):
         # encodings = self.headers["Accept-Encoding"].split(",")
@@ -68,7 +71,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         try:
             return self.__try_do_POST()
         except Exception as e:
-            return self.__send_500(sys.exc_info())
+            if isinstance(e, exc.PageNameError):
+                return self.__send_err(403, sys.exc_info())
+            else:
+                return self.__send_err(500, sys.exc_info())
 
     def __try_do_POST(self):
         if not self.server.dowwner_verify(self.client_address[0]):
@@ -86,8 +92,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             #self.wfile.write(str(data).encode())
         return
 
-    def __send_500(self, exc_info, head_only=False):
-        self.send_error(500)
+    def __send_err(self, num, exc_info, head_only=False):
+        self.send_error(num)
         self.end_headers()
         if not head_only:
             self.wfile.write(
