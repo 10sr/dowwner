@@ -30,6 +30,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         except Exception as e:
             return self.__send_500(sys.exc_info(), head_only)
 
+    def __compress_body(self, b):
+        # encodings = self.headers["Accept-Encoding"].split(",")
+        # for e in encodings:
+        return (b, None)
+
     def __try_do_GET(self, head_only=False):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
@@ -44,9 +49,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         else:
             self.send_response(200)
             self.send_header("Content-type", c.type)
-            body = bytes(c)
-            length = len(body)
-            self.send_header("Content-Length", str(length))
+            body, encoding = self.__compress_body(bytes(c))
+            self.send_header("Content-Length", str(len(body)))
+            if encoding:
+                self.send_header("Content-Encoding", encoding)
             self.end_headers()
             if not head_only:
                 self.wfile.write(body)
