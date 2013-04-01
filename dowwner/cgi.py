@@ -31,7 +31,8 @@ def main(rootdir, tb=True):
 
     try:
         query = os.environ["QUERY_STRING"]
-        path_ = "?".join((path_, query))
+        if query:
+            path_ = "?".join((path_, query))
     except KeyError:
         pass
 
