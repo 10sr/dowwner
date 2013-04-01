@@ -29,21 +29,11 @@ directly also works.
 Quick Start
 -----------
 
-### Run as Server
-
 Run:
 
     $ dowwner
 
 and access to `localhost:2505`.
-
-
-### Run as CGI
-
-Install dowwner, copy `tools/cgi.py` to where you want to access as a cgi,
-modify the file so that `rootdir` points to your wiki directory, and configure
-http server to run the file as a cgi. You can limit `POST` method to make wiki
-read-only for anonymous access.
 
 
 Wiki Usage
@@ -67,7 +57,9 @@ To remove pages, access edit pages and submit empty contents.
 
 You cannot create directories or pages that start with `.`. These names are all
 reserved for special porpose. For example, if a page name is prefixed by
-`.edit.`, dowwner shows the edit page.
+`.edit.`, dowwner shows the edit page. Additionally, all pages with suffix
+`.css` are treated as stylesheet files, and you cannot create directories with
+suffix `.css`.
 
 ### Page Hierarchy
 
@@ -86,10 +78,20 @@ accessed explicitly with `.list`.
 When modifying or removing pages, old contents are backed up. It is possible to
 revert to these backups.
 
+### StyleSheet
+
+You can create and edit `style.css` from `.list` page. Additionally, you can
+create `common.css` in the root directory. `common.css` is same for all
+directories, whereas `style.css`s are different for each directory. You cannot
+create or edit `common.css` from the web interface.
 
 
 Commandline Options
 -------------------
+
+Without `-d` or `-c` option, dowwner run in "server" mode and you can
+terminate dowwner with `C-c`. With `-d start` option, dowwner run in "daemon"
+mode. With `-c` option, dowwner run in "cgi" mode.
 
 ### `-h`, `--help`
 
@@ -101,8 +103,11 @@ Change root directory. If omitted current directory is used.
 
 ### `-d|--daemon start|status|stop|restart`
 
-Fork to background and make server run as daemon. When this option is used, only
-one instance of dowwner can be run per root directory.
+Fork to background and make server run as daemon when `-d start` is given.
+This means that dowwner does not stick to your tty and you can safely exit after
+starting dowwner program.
+When this option is used, only one instance of dowwner can be run per root
+directory.
 
 ### `-p|--port <num>`
 
@@ -112,7 +117,16 @@ is used by default.
 ### `-c`, `--cgi`
 
 Run dowwner as a cgi program. When this option is used, options `-d` and `-p`
-are ignored.
+are ignored. Normally using `tools/cgi.py` is more recommended (see below).
+
+
+Run as CGI
+----------
+
+Copy `tools/cgi.py` to where you want to access as a cgi,
+modify the file so that `rootdir` points to your wiki directory, and configure
+http server to run the file as a cgi. You can set auth for `POST` method to make
+wiki read-only for anonymous access.
 
 
 TODOs
@@ -120,7 +134,6 @@ TODOs
 
 * Provide way to remove directory
 * Search support
-* Stylesheet support
 * Menu
 * More usable access control for server mode (currently accesses only from
 127.0.0.1 are allowed)

@@ -15,6 +15,7 @@ class OP():
     """OP Base class.
 
     str(op) and bytes(op) can be used to get contents as html.
+    Path ends with ".css" is treated specially.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -23,6 +24,8 @@ class OP():
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
         content: Content of page.
+        content_raw: If not None, string of raw content.
+        type: MIME Type of content. Default to "text/html".
         navigation: Navigation menu.
     """
 
@@ -37,8 +40,10 @@ class OP():
 
     __head_base = """<head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta http-equiv="Content-Style-Type" content="text/css" />
-<!-- <link href=".style.css" rel="stylesheet" type="text/css" /> -->
+<!-- <meta http-equiv="Content-Style-Type" content="text/css" />
+Not needed when only <link> is used for stylesheets. -->
+<link href="common.css" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" />
 <title>{name}</title>
 </head>"""
 
@@ -56,7 +61,10 @@ class OP():
 
     navigation = ""
 
-    def __init__(self, file, path_):
+    content_raw = None
+    type = "text/html"
+
+    def __init__(self, file, path_, wikiname):
         """Initialize.
 
         Args:
@@ -66,6 +74,7 @@ class OP():
         self.path = path_
         self.file = file
         self.pagename = path_.path
+        self.wikiname = wikiname
         return
 
     @property
@@ -79,12 +88,15 @@ class OP():
         return str(self).encode("utf-8")
 
     def __str__(self):
-        return "\n".join((self.__html_header, self.__head,
-                          self.__body, self.__html_footer))
+        if self.content_raw is None:
+            return "\n".join((self.__html_header, self.__head,
+                              self.__body, self.__html_footer))
+        else:
+            return self.content_raw
 
     @property
     def __head(self):
-        return self.__head_base.format(name=self.pagename)
+        return self.__head_base.format(name=self.wikiname + ":" + self.pagename)
 
     @property
     def __body(self):
@@ -107,13 +119,18 @@ class NO_OP(OP):
     dirnav = """<p>
 <form action=".go" method="get">
 <a href=".hist">History</a>
+<a href=".edit.style.css">EditStyle</a>
 |
 Go <input type="text" name="name" value="" />
 </form>
 </p>"""
 
-    def __init__(self, file, path_):
-        OP.__init__(self, file, path_)
+    def __init__(self, file, path_, wikiname):
+        OP.__init__(self, file, path_, wikiname)
+
+        if path_.isstyle:
+            self.init_as_style()
+            return
 
         if path_.path.endswith("/"):
             try:
@@ -130,6 +147,11 @@ Go <input type="text" name="name" value="" />
                 return
             else:
                 self.redirect_r = ".edit." + path_.base
+        return
+
+    def init_as_style(self):
+        self.content_raw = self.file.load_style(self.path)
+        self.type = "text/css"
         return
 
     def init_as_page(self, name):
@@ -149,20 +171,20 @@ Go <input type="text" name="name" value="" />
         self.pagename = "list: " + self.path.path
         return
 
-def get(file, path_):
+def get(file, path_, wikiname):
     if path_.op == "":
-        return NO_OP(file, path_)
+        return NO_OP(file, path_, wikiname)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError
         try:
-            return op.OP_GET(file, path_)
+            return op.OP_GET(file, path_, wikiname)
         except AttributeError:
             raise exc.OperatorError
 
-def post(file, path_, data):
+def post(file, path_, wikiname, data):
     """Post data.
 
     Args:
@@ -173,6 +195,6 @@ def post(file, path_, data):
     except ImportError:
         raise exc.OperatorError
     try:
-        return op.OP_POST(file, path_, data)
+        return op.OP_POST(file, path_, wikiname, data)
     except AttributeError:
         raise exc.OperatorError

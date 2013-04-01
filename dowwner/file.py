@@ -13,6 +13,7 @@ class File():
     FILE_SUFFIX = ".md"
     BAK_SUFFIX = ".bak"
     CONV_SUFFIX = ".html"
+    CACHE_PREFIX = ".cache."
     __md = None
 
     def __init__(self, rootdir):
@@ -62,6 +63,41 @@ class File():
             self.__md = Markdown()
         return self.__md.convert(s)
 
+    def load_style(self, path_):
+        """Load css file and return as string.
+
+        If css file not found, return empty string.
+        If path_.base == "common.css", always return same content regardless of
+        path_.dir .
+        """
+
+        assert path_.isstyle
+
+        if path_.base == "common.css":
+            fpath = self.__gen_fullpath("common.css")
+        else:
+            fpath = self.__gen_fullpath(path_.path)
+
+        try:
+            with open(fpath, encoding="utf-8") as f:
+                c = f.read()
+        except EnvironmentError as e:
+            if e.errno == 2:
+                c = ""
+            else:
+                raise
+
+        return c
+
+    def save_style(self, path_, data):
+        """Save stylesheet."""
+        assert path_.isstyle
+        fpath = self.__gen_fullpath(path_.path)
+        # todo: backup previous content
+        with open(fpath, encoding="utf-8", mode="w") as f:
+            f.write(data)
+        return
+
     @staticmethod
     def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
@@ -86,20 +122,23 @@ class File():
 
         Args:
             path_: Path object.
-            raw: False to convert to html. Used as original text of edit page.
+            raw: False to convert to html. Used to get original text for edit
+                page.
 
         Raises:
              dowwner.exc.PageNotFoundError
         """
         if path_.path.endswith("/"):
-            fpath = os.path.join(self.__gen_fullpath(path_.path),
-                                 "index")
+            fdir = self.__gen_fullpath(path_.dir)
+            base = "index"
         else:
-            fpath = self.__gen_fullpath(path_.path)
+            fdir = self.__gen_fullpath(path_.dir)
+            base = path_.base
 
+        mdpath = os.path.join(fdir, base + self.FILE_SUFFIX)
         if raw:
             try:
-                with open(fpath + self.FILE_SUFFIX, encoding="utf-8") as f:
+                with open(mdpath, encoding="utf-8") as f:
                     s = f.read()
             except EnvironmentError as e:
                 if e.errno == 2:
@@ -108,8 +147,8 @@ class File():
                     raise
             return s
 
-        mdpath = fpath + self.FILE_SUFFIX
-        htmlpath = fpath + self.CONV_SUFFIX
+        htmlpath = os.path.join(fdir,
+                                self.CACHE_PREFIX + base + self.CONV_SUFFIX)
         if self.__is_file_newer(htmlpath, mdpath):
             # if cache exists use that.
             with open(htmlpath, encoding="utf-8") as f:
@@ -243,6 +282,8 @@ class File():
 
     def load_bak(self, path_, raw=False):
         """Load backed up file.
+
+        Basename of path_ is decided by the return of self.lshist().
 
         Raises:
             dowwner.exc.PageNameError

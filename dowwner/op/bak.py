@@ -12,13 +12,13 @@ class OP_GET(dowwner.op.OP):
 <a href=".list">List</a>
 </p>"""
 
-    def __init__(self, file, path_, orig=None):
+    def __init__(self, file, path_, wikiname, orig=None):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.OP.__init__(self, file, path_)
+        dowwner.op.OP.__init__(self, file, path_, wikiname)
 
         self.content = file.load_bak(path_)
         self.navigation = self.baknav.format(
