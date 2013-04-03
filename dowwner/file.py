@@ -366,22 +366,44 @@ class File():
         oldpwd = os.getcwd()
         try:
             os.chdir(os.path.join(self.__gen_fullpath(path_.path),
-                                      ".."))
+                                  ".."))
             rells = (os.path.relpath(self.__gen_fullpath(f)) for f in ls)
             f = self.__zip_files(rells)
         finally:
             os.chdir(oldpwd)
         return f
 
+    def __zip_files_python(self, files):
+        """Zip given files with builtin python module."""
+        from io import BytesIO
+        from zipfile import ZipFile
+
+        buf = BytesIO()
+        zf = ZipFile(buf, mode="w")
+
+        for f in files:
+            zf.write(f)
+
+        zf.close()
+        b = buf.getvalue()
+        buf.close()
+        return b
+
     def __zip_files(self, files):
         """Zip given files.
 
         Args:
-            files: iterable of file path.
+            files: iterable of relative file path.
 
         Returns:
             Bytes of archive file.
         """
         from subprocess import Popen, PIPE
-        ps = Popen(["zip", "-"] + list(files), stdout=PIPE)
-        return ps.communicate()[0]
+        try:
+            ps = Popen(["zip", "-"] + list(files), stdout=PIPE)
+            return ps.communicate()[0]
+        except EnvironmentError as e:
+            if e.errno == 2:
+                return self.__zip_files_python(files)
+            else:
+                raise
