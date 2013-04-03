@@ -398,12 +398,13 @@ class File():
         Returns:
             Bytes of archive file.
         """
+        l1 = list(files)
         from subprocess import Popen, PIPE
         try:
-            ps = Popen(["zip", "-"] + list(files), stdout=PIPE)
+            ps = Popen(["zip", "-"] + l1, stdout=PIPE)
             return ps.communicate()[0]
         except EnvironmentError as e:
             if e.errno == 2:
-                return self.__zip_files_python(files)
+                return self.__zip_files_python(l1)
             else:
                 raise
