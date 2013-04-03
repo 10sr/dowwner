@@ -34,9 +34,16 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
                 return self.__send_err(500, sys.exc_info(), head_only)
 
     def __compress_body(self, b):
-        # encodings = self.headers["Accept-Encoding"].split(",")
-        # for e in encodings:
+        encodings = (e.strip() for e
+                     in self.headers["Accept-Encoding"].split(","))
+        for e in encodings:
+            if e.startswith("gzip"):
+                return (self.__compress_gzip(b), "gzip")
         return (b, None)
+
+    def __compress_gzip(self, b):
+        from gzip import compress
+        return compress(b)
 
     def __send_location(self, s):
         newpath = os.path.join(os.path.dirname(self.path), s)
