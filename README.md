@@ -5,6 +5,8 @@ Very simple wiki clone.
 Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 
+Dowwner is developed at <https://github.com/10sr/dowwner>.
+
 
 Dependencies
 ------------
@@ -22,7 +24,7 @@ Run:
 
 and command `dowwner` is installed. Or you can just create simlink of
 `bin/dowwner` and put it into your prefered directory like `$HOME/bin` or
-`$HOME/.local/bin`. When you just want to try dowwner, running `bin/dowwner`
+`$HOME/.local/bin`. When you just want a try, running `bin/dowwner`
 directly also works.
 
 
@@ -41,7 +43,7 @@ Wiki Usage
 
 ### Syntax
 
-Dowwner uses [Markdown](http://daringfireball.net/projects/markdown/) for wiki
+[Markdown](http://daringfireball.net/projects/markdown/) is used for wiki
 syntax with one extension: wiki link.
 This extension converts `[[newpage]]` into `<a href="newpage">newpage</a>`.
 It works with spaces and/or slashes so you can use links like `[[dir/page]]`.
@@ -64,7 +66,8 @@ suffix `.css`.
 ### Page Hierarchy
 
 Wiki pages are not flat. When creating pages like `dir/page`, directory named
-`dir` is created automatically and `page` is placed under `dir`.
+`dir` is created automatically and `page` is placed under `dir`, and directories
+are hidden when no pages exist in that directories.
 
 ### Index Page
 
@@ -132,7 +135,6 @@ wiki read-only for anonymous access.
 TODOs
 -----
 
-* Provide way to remove directory
 * Search support
 * Menu
 * More usable access control for server mode (currently accesses only from

@@ -89,7 +89,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         data = self.rfile.read(length)
         rt = self.server.dowwner.post(self.path, data)
         if rt:
-            self.send_response(302)
+            self.send_response(303)
             self.__send_location(rt.redirect)
             self.end_headers()
             #self.wfile.write(str(data).encode())
