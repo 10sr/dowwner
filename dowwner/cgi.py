@@ -10,7 +10,9 @@ from dowwner import exc
 
 def print_redirect(p):
     print("Status: 302 Found")
-    print("Location: http://{}{}".format(os.environ["SERVER_NAME"], p))
+    print("Location: http://{}{}{}".format(os.environ["SERVER_NAME"],
+                                         os.environ["SCRIPT_NAME"],
+                                         p))
     return
 
 def main(rootdir, tb=True):
@@ -21,18 +23,20 @@ def main(rootdir, tb=True):
     try:
         path_ = os.environ["PATH_INFO"]
     except KeyError:
-        print_redirect(os.environ["REQUEST_URI"] + "/")
+        print_redirect("/")
         print()
         return
 
-    if path_ == "/" and not os.environ["REQUEST_URI"].endswith("/"):
-        print_redirect(os.environ["REQUEST_URI"] + "/")
+    if path_ == "": # and not os.environ["REQUEST_URI"].endswith("/"):
+        # this is not good because REQUEST_URI is not assured to exist,
+        print_redirect("/")
         print()
         return
 
     try:
         query = os.environ["QUERY_STRING"]
-        path_ = "?".join((path_, query))
+        if query:
+            path_ = "?".join((path_, query))
     except KeyError:
         pass
 
@@ -55,7 +59,7 @@ def main(rootdir, tb=True):
         return
 
     if c.redirect_r:
-        print_redirect(os.path.join(os.path.dirname(os.environ["REQUEST_URI"]),
+        print_redirect(os.path.join(os.path.dirname(path_),
                                     c.redirect))
         print()
         return
@@ -65,10 +69,13 @@ def main(rootdir, tb=True):
     print("", flush=True)
     if met != "HEAD":
         sys.stdout.buffer.write(bytes(c))
-        # _debug()
+        #_debug()
     return
 
 def _debug():
+    print("Status: 200 OK")
+    print("Content-Type: text/html")
+    print()
     cgi.print_environ()
     cgi.print_environ_usage()
     cgi.print_directory()
