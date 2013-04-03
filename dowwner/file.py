@@ -406,7 +406,7 @@ class File():
         l1 = list(files)
         from subprocess import Popen, PIPE
         try:
-            ps = Popen(["zip", "-"] + l1, stdout=PIPE)
+            ps = Popen(["zip", "-"] + l1, stdout=PIPE, stderr=PIPE)
             return ps.communicate()[0]
         except EnvironmentError as e:
             if e.errno == 2:
