@@ -68,9 +68,11 @@ def main(rootdir, tb=True):
     print("Content-Type: " + c.type) # ;charset=utf-8
     if c.filename:
         print("Content-Disposition: attachment; filename={}".format(c.filename))
+    body = bytes(c)
+    print("Content-Length: {}".format(len(body)))
     print("", flush=True)
     if met != "HEAD":
-        sys.stdout.buffer.write(bytes(c))
+        sys.stdout.buffer.write(body)
         #_debug()
     return
 

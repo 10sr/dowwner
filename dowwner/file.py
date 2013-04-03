@@ -377,10 +377,14 @@ class File():
     def __zip_files_python(self, files):
         """Zip given files with builtin python module."""
         from io import BytesIO
-        from zipfile import ZipFile
+        from zipfile import ZipFile, ZIP_DEFLATED
 
         buf = BytesIO()
-        zf = ZipFile(buf, mode="w")
+        try:
+            # use deflate if available
+            zf = ZipFile(buf, mode="w", compression=ZIP_DEFLATED)
+        except RuntimeError:
+            zf = ZipFile(buf, mode="w")
 
         for f in files:
             zf.write(f)
@@ -399,12 +403,13 @@ class File():
         Returns:
             Bytes of archive file.
         """
+        l1 = list(files)
         from subprocess import Popen, PIPE
         try:
-            ps = Popen(["zip", "-"] + list(files), stdout=PIPE)
+            ps = Popen(["zip", "-"] + l1, stdout=PIPE)
             return ps.communicate()[0]
         except EnvironmentError as e:
             if e.errno == 2:
-                return self.__zip_files_python(files)
+                return self.__zip_files_python(l1)
             else:
                 raise
