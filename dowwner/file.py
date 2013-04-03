@@ -14,6 +14,8 @@ class File():
     BAK_SUFFIX = ".bak"
     CONV_SUFFIX = ".html"
     CACHE_PREFIX = ".cache."
+    LIST_FILE = ".list"
+
     __md = None
 
     def __init__(self, rootdir):
@@ -39,23 +41,15 @@ class File():
         fullpath = self.__gen_fullpath(path_.path)
 
         try:
-            ls = os.listdir(fullpath)
+            with open(os.path.join(fullpath, self.LIST_FILE)) as fo:
+                ls = fo.read().splitlines()
         except EnvironmentError as e:
             if e.errno == 2:
-                return items
-            elif e.errno == 20:   # Not a directory
-                raise
+                return []
             else:
                 raise
 
-        for l in ls:
-            if l.startswith("."):
-                continue
-            elif os.path.isdir(os.path.join(fullpath, l)):
-                items.append(l + "/")
-            elif l.endswith(self.FILE_SUFFIX):
-                items.append(os.path.splitext(l)[0])
-        return items
+        return [f for f in ls if f]
 
     def __md2html(self, s):
         if self.__md is None:
@@ -173,10 +167,53 @@ class File():
         else:
             return html
 
+    def __update_list(self, relpath):
+        """Create .list files recursively."""
+        fullpath = self.__gen_fullpath(relpath)
+
+        try:
+            ls = os.listdir(fullpath)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                return self__update_list(self, os.path.join(relpath, ".."))
+            elif e.errno == 20:   # Not a directory
+                raise
+            else:
+                raise
+
+        items = []
+        for f in ls:
+            if f.startswith("."):
+                continue
+            elif os.path.isdir(os.path.join(fullpath, f)):
+                try:
+                    with open(os.path.join(fullpath, f, self.LIST_FILE)) as fo:
+                        if fo.read().strip(" \n"): # list file is not empty
+                            items.append(f + "/")
+                except EnvironmentError as e:
+                    if e.errno == 2: # list file not exists
+                        continue
+                    else:
+                        raise
+            elif f.endswith(self.FILE_SUFFIX):
+                items.append(os.path.splitext(f)[0])
+
+        with open(os.path.join(fullpath, self.LIST_FILE), mode="w") as fo:
+            fo.write("\n".join(items))
+
+        # print(relpath)
+        if relpath == "/":
+            return
+        else:
+            return self.__update_list(os.path.normpath(os.path.join(relpath,
+                                                                    "..")))
+
     def save(self, path_, data):
         """Save file with data.
 
         This method creates all subdirectories if needed to save files.
+        After new file is created this method update ".list" of the directory
+        and parent directories.
 
         Args:
             path_: Path object.
@@ -197,8 +234,9 @@ class File():
         with open(fullpath,
                   mode="w", encoding="utf-8") as f:
             f.write(data)
-            return True
-        return False
+
+        self.__update_list(path_.dir)
+        return True
 
     def rm(self, path_):
         """Remove page. Do nothing if path_ not exists.

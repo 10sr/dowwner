@@ -70,12 +70,14 @@ Not needed when only <link> is used for stylesheets. -->
     type = "text/html"
     filename = None
 
-    def __init__(self, file, path_, wikiname):
+    def __init__(self, file, path_, wikiname, data=None):
         """Initialize.
 
         Args:
             path_: Path object.
             file: File handler object.
+            wikiname: String of name of wiki.
+            data: When posting data this val is used.
         """
         self.path = path_
         self.file = file
