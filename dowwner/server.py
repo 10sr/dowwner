@@ -96,8 +96,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         self.send_error(num)
         self.end_headers()
         if not head_only:
+            self.wfile.write("<pre><code>".encode())
             self.wfile.write(
-                "<br />\n".join(format_exception(*exc_info)).encode())
+                "".join(format_exception(*exc_info)).encode())
+            self.wfile.write("</pre></code>".encode())
         print_exception(*exc_info)
         return
 
