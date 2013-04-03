@@ -22,6 +22,6 @@ class OP_GET(dowwner.op.OP):
         self.filename = basename + ".zip"
 
         self.content_bytes = file.zip(path_)
-        self.type = "application/octet-stream"
+        self.type = "application/zip"
         # self.redirect_raw = "."
         return
