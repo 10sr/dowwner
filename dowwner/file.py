@@ -353,7 +353,8 @@ class File():
             fpath = os.path.join(base, f)
             if os.path.isdir(fpath):
                 l.extend(self.__ls_recursive(os.path.join(pathstr, f)))
-            elif not f.startswith(".") and f.endswith(self.FILE_SUFFIX):
+            elif ((not f.startswith(".") and f.endswith(self.FILE_SUFFIX)) or
+                  f.endswith(".css")):
                 l.append(os.path.join(pathstr, f))
         return l
 
