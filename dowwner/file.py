@@ -305,3 +305,44 @@ class File():
         else:
             return self.__md2html(s)
         return
+
+    def __ls_recursive(self, pathstr):
+        l = []
+        base = self.__gen_fullpath(pathstr)
+        ls = os.listdir(base)
+        for f in ls:
+            fpath = os.path.join(base, f)
+            if os.path.isdir(fpath):
+                l.extend(self.__ls_recursive(os.path.join(pathstr, f)))
+            elif not f.startswith(".") and f.endswith(self.FILE_SUFFIX):
+                l.append(os.path.join(pathstr, f))
+        return l
+
+    def zip(self, path_):
+        """Create zip archive for dir path_ and return archive file as bytes."""
+        if not self.isdir(path_):
+            raise PageNameError("Not a directory name: {}".format(path_.path))
+        ls = self.__ls_recursive(path_.path)
+        # print(ls)
+        oldpwd = os.getcwd()
+        try:
+            os.chdir(os.path.join(self.__gen_fullpath(path_.path),
+                                      ".."))
+            rells = (os.path.relpath(self.__gen_fullpath(f)) for f in ls)
+            f = self.__zip_files(rells)
+        finally:
+            os.chdir(oldpwd)
+        return f
+
+    def __zip_files(self, files):
+        """Zip given files.
+
+        Args:
+            files: iterable of file path.
+
+        Returns:
+            Bytes of archive file.
+        """
+        from subprocess import Popen, PIPE
+        ps = Popen(["zip", "-"] + list(files), stdout=PIPE)
+        return ps.communicate()[0]

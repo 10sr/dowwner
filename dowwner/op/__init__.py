@@ -25,7 +25,10 @@ class OP():
         pagename: Name used for title of page.
         content: Content of page.
         content_raw: If not None, string of raw content.
+        content_bytes: If not None, bytes of content.
         type: MIME Type of content. Default to "text/html".
+        filename: Filename. Should be used when type ==
+            "application/octet-stream"
         navigation: Navigation menu.
     """
 
@@ -62,7 +65,10 @@ Not needed when only <link> is used for stylesheets. -->
     navigation = ""
 
     content_raw = None
+    content_bytes = None
+
     type = "text/html"
+    filename = None
 
     def __init__(self, file, path_, wikiname):
         """Initialize.
@@ -85,7 +91,10 @@ Not needed when only <link> is used for stylesheets. -->
             return urllib.parse.quote(self.redirect_r, encoding="utf-8")
 
     def __bytes__(self):
-        return str(self).encode("utf-8")
+        if self.content_bytes is None:
+            return str(self).encode("utf-8")
+        else:
+            return self.content_bytes
 
     def __str__(self):
         if self.content_raw is None:
@@ -116,14 +125,13 @@ class NO_OP(OP):
 <a href=".list">List</a>
 </p>"""
 
-    dirnav = """<p>
-<form action=".go" method="get">
+    dirnav = """ <form action=".go" method="get">
 <a href=".hist">History</a>
 <a href=".edit.style.css">EditStyle</a>
+<a href=".arch">Archive</a>
 |
 Go <input type="text" name="name" value="" />
-</form>
-</p>"""
+</form>"""
 
     def __init__(self, file, path_, wikiname):
         OP.__init__(self, file, path_, wikiname)
@@ -182,7 +190,7 @@ def get(file, path_, wikiname):
         try:
             return op.OP_GET(file, path_, wikiname)
         except AttributeError:
-            raise exc.OperatorError
+            raise exc.OperatorError("Invalid operator: {}".format(op))
 
 def post(file, path_, wikiname, data):
     """Post data.

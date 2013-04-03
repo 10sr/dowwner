@@ -57,7 +57,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
         else:
             self.send_response(200)
-            self.send_header("Content-type", c.type)
+            self.send_header("Content-Type", c.type)
+            if c.filename:
+                self.send_header("Content-Disposition",
+                                 "attachment; filename={}".format(c.filename))
             body, encoding = self.__compress_body(bytes(c))
             self.send_header("Content-Length", str(len(body)))
             if encoding:
