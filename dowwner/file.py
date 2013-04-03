@@ -252,6 +252,7 @@ class File():
                 pass
             else:
                 raise
+        self.__update_list(path_.dir)
         return path_.dir
 
     # methods for history handling
