@@ -17,16 +17,29 @@ class File():
     LIST_FILE = ".list"
 
     __md = None
+    common_files = tuple()
 
-    def __init__(self, rootdir):
+    def __init__(self, rootdir, common_files):
+        """Initialize File.
+
+        Args:
+            rootdir: Root directory of files.
+            common_files: Tuple of filenames. Paths whose basename is in
+                common_files are always treated as same paths.
+        """
         self.rootdir = os.path.realpath(rootdir)
+        self.common_files = common_files
         return
 
     def __gen_fullpath(self, pathstr):
         """Return fullpath from path string."""
         # note: normpath always strip last "/"
-        fpath = os.path.normpath(os.path.join(self.rootdir,
-                                              pathstr.lstrip("/")))
+        base = os.path.basename(pathstr)
+        if base in self.common_files:
+            fpath = os.path.join(self.rootdir, base)
+        else:
+            fpath = os.path.normpath(os.path.join(self.rootdir,
+                                                  pathstr.lstrip("/")))
         # fpath must be under rootdir for security reason.
         assert fpath.startswith(self.rootdir)
         return fpath
