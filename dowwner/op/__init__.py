@@ -19,7 +19,7 @@ class OP():
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
 
-    Internal attributes: Subclasses should overwrite these ones
+    Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
         content: Content of page.
