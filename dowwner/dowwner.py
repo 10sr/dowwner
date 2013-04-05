@@ -24,7 +24,11 @@ class Dowwner():
         Args:
             rpath: Path queried.
         """
-        p = Path(rpath)
+        if rpath.endswith("/common.css"):
+            p = Path("/common.css")
+        else:
+            p = Path(rpath)
+
         try:
             return dop.get(self.file, p, self.name)
         except ImportError:

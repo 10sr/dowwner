@@ -15,7 +15,6 @@ class OP():
     """OP Base class.
 
     str(op) and bytes(op) can be used to get contents as html.
-    Path ends with ".css" is treated specially.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -27,8 +26,7 @@ class OP():
         content_raw: If not None, string of raw content.
         content_bytes: If not None, bytes of content.
         type: MIME Type of content. Default to "text/html".
-        filename: Filename. Should be used when type ==
-            "application/octet-stream"
+        filename: Filename. Should be set when type == "application/*"
         navigation: Navigation menu.
     """
 
@@ -162,7 +160,10 @@ Go <input type="text" name="name" value="" />
         return
 
     def init_as_style(self):
-        self.content_raw = self.file.load_style(self.path)
+        try:
+            self.content_raw = self.file.load(self.path)
+        except exc.PageNotFoundError:
+            self.content_raw = ""
         self.type = "text/css"
         return
 

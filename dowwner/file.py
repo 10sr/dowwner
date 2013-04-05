@@ -57,41 +57,6 @@ class File():
             self.__md = Markdown()
         return self.__md.convert(s)
 
-    def load_style(self, path_):
-        """Load css file and return as string.
-
-        If css file not found, return empty string.
-        If path_.base == "common.css", always return same content regardless of
-        path_.dir .
-        """
-
-        assert path_.isstyle
-
-        if path_.base == "common.css":
-            fpath = self.__gen_fullpath("common.css")
-        else:
-            fpath = self.__gen_fullpath(path_.path)
-
-        try:
-            with open(fpath, encoding="utf-8") as f:
-                c = f.read()
-        except EnvironmentError as e:
-            if e.errno == 2:
-                c = ""
-            else:
-                raise
-
-        return c
-
-    def save_style(self, path_, data):
-        """Save stylesheet."""
-        assert path_.isstyle
-        fpath = self.__gen_fullpath(path_.path)
-        # todo: backup previous content
-        with open(fpath, encoding="utf-8", mode="w") as f:
-            f.write(data)
-        return
-
     @staticmethod
     def __is_file_newer(f1, f2):
         """Return True if f1 exists and is newer than f2."""
@@ -112,6 +77,8 @@ class File():
     def load(self, path_, raw=False):
         """Load file.
 
+        If path_.isstyle == True, always return raw contents of path_,
+        otherwise return contents as html if raw == False.
         If path_.path ends with slash, try to load "index" page.
 
         Args:
@@ -119,9 +86,24 @@ class File():
             raw: False to convert to html. Used to get original text for edit
                 page.
 
+        Returns:
+            String of content.
+
         Raises:
              dowwner.exc.PageNotFoundError
         """
+        if path_.isstyle:
+            fpath = self.__gen_fullpath(path_.path)
+            try:
+                with open(fpath, encoding="utf-8") as f:
+                    s = f.read()
+            except EnvironmentError as e:
+                if e.errno == 2:
+                    raise exc.PageNotFoundError
+                else:
+                    raise
+            return s
+
         if path_.path.endswith("/"):
             fdir = self.__gen_fullpath(path_.dir)
             base = "index"
@@ -130,6 +112,7 @@ class File():
             base = path_.base
 
         mdpath = os.path.join(fdir, base + self.FILE_SUFFIX)
+
         if raw:
             try:
                 with open(mdpath, encoding="utf-8") as f:
@@ -221,6 +204,8 @@ class File():
         """
         if self.isdir(path_):
             pathstr = os.path.join(path_.path, "index" + self.FILE_SUFFIX)
+        elif path_.isstyle:
+            pathstr = path_.path
         else:
             pathstr = path_.path + self.FILE_SUFFIX
         fullpath = self.__gen_fullpath(pathstr)
@@ -231,8 +216,7 @@ class File():
             if e.errno != 17: # 17 means file exists
                 raise
         self.__backup(path_)
-        with open(fullpath,
-                  mode="w", encoding="utf-8") as f:
+        with open(fullpath, mode="w", encoding="utf-8") as f:
             f.write(data)
 
         self.__update_list(path_.dir)

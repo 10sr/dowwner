@@ -29,9 +29,7 @@ class OP_GET(dowwner.op.OP):
         """
         dowwner.op.OP.__init__(self, file, path_, wikiname)
 
-        if path_.isstyle:
-            orig = file.load_style(path_)
-        elif orig is None:
+        if orig is None or paty_.isstyle:
             try:
                 orig = file.load(path_, True)
             except exc.PageNotFoundError:
