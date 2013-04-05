@@ -13,6 +13,9 @@ from dowwner import exc
 
 class Dowwner():
     """Dowwner main class."""
+
+    COMMON_FILES = ("common.css",)
+
     def __init__(self, rootdir):
         self.file = File(rootdir)
         self.name = os.path.basename(rootdir)
@@ -24,8 +27,9 @@ class Dowwner():
         Args:
             rpath: Path queried.
         """
-        if rpath.endswith("/common.css"):
-            p = Path("/common.css")
+        base = os.path.basename(rpath)
+        if base in self.COMMON_FILES:
+            p = Path("/" + base)
         else:
             p = Path(rpath)
 
