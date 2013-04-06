@@ -11,7 +11,7 @@ from __future__ import absolute_import
 import os
 # import locale
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 
 def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
     def f():

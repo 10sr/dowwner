@@ -4,6 +4,7 @@ import urllib
 from cgi import FieldStorage
 
 import dowwner.op
+from dowwner import exc
 
 class OP_POST(dowwner.op.OP):
     def __init__(self, file, path_, wikiname, data):
@@ -16,7 +17,10 @@ class OP_POST(dowwner.op.OP):
             content = data2["content"][0].replace("\r", "")
 
         if content == "":
-            file.rm(path_)
+            try:
+                file.rm(path_)
+            except exc.PageNameError:
+                pass
             self.redirect_r = ".list"
         else:
             file.save(path_, content)
