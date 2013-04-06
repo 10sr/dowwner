@@ -11,8 +11,8 @@ import urllib
 
 from dowwner import exc
 
-class OP():
-    """OP Base class.
+class BaseContent():
+    """Content Base class.
 
     str(op) and bytes(op) can be used to get contents as html.
 
@@ -22,12 +22,14 @@ class OP():
     Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
-        content: Content of page.
-        content_raw: If not None, string of raw content.
-        content_bytes: If not None, bytes of content.
+        content: Html of content of page.
+        navigation: Html of navigation menu.
+        content_raw: If not None, string of raw content. In this case, content
+            and navigation are ignored.
+        content_bytes: If not None, bytes of content. In this case, content,
+            navigation and content_raw are ignored by __bytes__().
         type: MIME Type of content. Default to "text/html".
         filename: Filename. Should be set when type == "application/*"
-        navigation: Navigation menu.
     """
 
     redirect_r = None
@@ -117,7 +119,7 @@ Not needed when only <link> is used for stylesheets. -->
                           self.__navigation_base.format(nav=self.navigation),
                           "</body>"))
 
-class NO_OP(OP):
+class DefContent(BaseContent):
     """Class used when path has no operator."""
 
     pagenav = """<p>
@@ -136,7 +138,7 @@ Go <input type="text" name="name" value="" />
 </form>"""
 
     def __init__(self, file, path_, wikiname):
-        OP.__init__(self, file, path_, wikiname)
+        BaseContent.__init__(self, file, path_, wikiname)
 
         if path_.isstyle:
             self.init_as_style()
@@ -186,14 +188,14 @@ Go <input type="text" name="name" value="" />
 
 def get(file, path_, wikiname):
     if path_.op == "":
-        return NO_OP(file, path_, wikiname)
+        return DefContent(file, path_, wikiname)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError
         try:
-            return op.OP_GET(file, path_, wikiname)
+            return op.ContentGET(file, path_, wikiname)
         except AttributeError:
             raise exc.OperatorError("Invalid operator: {}".format(op))
 
@@ -208,6 +210,6 @@ def post(file, path_, wikiname, data):
     except ImportError:
         raise exc.OperatorError
     try:
-        return op.OP_POST(file, path_, wikiname, data)
+        return op.ContentPOST(file, path_, wikiname, data)
     except AttributeError:
         raise exc.OperatorError

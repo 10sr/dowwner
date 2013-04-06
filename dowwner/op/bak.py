@@ -2,7 +2,7 @@
 
 import dowwner.op
 
-class OP_GET(dowwner.op.OP):
+class ContentGET(dowwner.op.BaseContent):
     """bak class."""
 
     baknav = """<p>
@@ -18,7 +18,7 @@ class OP_GET(dowwner.op.OP):
             file: File object.
             path_: Path object.
         """
-        dowwner.op.OP.__init__(self, file, path_, wikiname)
+        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
 
         self.content = file.load_bak(path_)
         self.navigation = self.baknav.format(

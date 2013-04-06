@@ -4,12 +4,12 @@
 
 import dowwner.op
 
-class OP_GET(dowwner.op.OP):
+class ContentGET(dowwner.op.BaseContent):
     histfooter = """<a href="{name}">{name}</a>"""
     baklink = """<a href=".bak.{name}">{name}</a><br />\n"""
 
     def __init__(self, file, path_, wikiname):
-        dowwner.op.OP.__init__(self, file, path_, wikiname)
+        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
 
         ls = file.lshist(path_)
         self.content = ("<h1>hist: {path}</h1>\n".format(path=path_.path) +

@@ -6,9 +6,9 @@ from cgi import FieldStorage
 import dowwner.op
 from dowwner import exc
 
-class OP_POST(dowwner.op.OP):
+class ContentPOST(dowwner.op.BaseContent):
     def __init__(self, file, path_, wikiname, data):
-        dowwner.op.OP.__init__(self, file, path_, wikiname)
+        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
 
         if isinstance(data, FieldStorage):
             content = data.getfirst("content").replace("\r", "")
