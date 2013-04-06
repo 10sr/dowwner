@@ -29,7 +29,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return self.__try_do_GET(head_only)
         except Exception as e:
             if isinstance(e, exc.PageNameError):
-                return self.__send_err(403, sys.exc_info(), head_only)
+                return self.__send_err(404, sys.exc_info(), head_only)
             else:
                 return self.__send_err(500, sys.exc_info(), head_only)
 
@@ -82,7 +82,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return self.__try_do_POST()
         except Exception as e:
             if isinstance(e, exc.PageNameError):
-                return self.__send_err(403, sys.exc_info())
+                return self.__send_err(404, sys.exc_info())
             else:
                 return self.__send_err(500, sys.exc_info())
 
