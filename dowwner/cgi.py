@@ -57,7 +57,7 @@ def main(rootdir, tb=True):
     if status == 200:
         print("Status: 200 OK")
     elif status == 303:
-        print("Status: 300 See Other")
+        print("Status: 303 See Other")
     elif status == 404:
         print("Status: 404 Not Found")
     elif status == 500:

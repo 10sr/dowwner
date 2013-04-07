@@ -36,6 +36,7 @@ class Dowwner():
         Returns:
             Tuple of (status, message, redirect, headers, content).
         """
+        # todo: use correct http status code for redirect
         message = None
 
         try:
