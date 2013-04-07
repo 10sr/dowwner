@@ -62,9 +62,9 @@ class Path():
 
         self.path = posixpath.join(self.dir, self.base)
         if self.STYLE_SUFFIX + "/" in self.path:
-            raise exc.PageNameError("Stylesheet suffix in dirname.")
+            raise exc.PageNameError("Stylesheet suffix in dirname")
         if "/." in self.path:
-            raise exc.PageNameError("Dot file or directory in path.")
+            raise exc.PageNameError("Dot file or directory in path")
         self.isstyle = self.base.endswith(self.STYLE_SUFFIX)
         return
 

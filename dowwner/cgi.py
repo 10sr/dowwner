@@ -54,6 +54,7 @@ def main(rootdir, tb=True):
     headers = c[3]
     content = c[4]
 
+    print("Status: {} {}".format(status, message))
     if status == 200:
         print("Status: 200 OK")
     elif status == 303:

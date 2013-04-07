@@ -55,7 +55,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         if encoding:
             headers["Content-Encoding"] = encoding
 
-        self.send_response(status)
+        self.send_response(status, message)
         for k, v in headers.items():
             self.send_header(k, v)
         if redirect is not None:

@@ -207,11 +207,11 @@ def get(file, path_, wikiname):
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
-            raise exc.OperatorError
+            raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
             return op.ContentGET(file, path_, wikiname)
         except AttributeError:
-            raise exc.OperatorError("Invalid operator: {}".format(op))
+            raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 
 def post(file, path_, wikiname, data):
     """Post data.
@@ -222,8 +222,8 @@ def post(file, path_, wikiname, data):
     try:
         op = importlib.import_module("dowwner.op." + path_.op)
     except ImportError:
-        raise exc.OperatorError
+        raise exc.OperatorError("{}: Invalid operator".format(path_.op))
     try:
         return op.ContentPOST(file, path_, wikiname, data)
     except AttributeError:
-        raise exc.OperatorError
+        raise exc.OperatorError("{}: Invalid operator".format(path_.op))

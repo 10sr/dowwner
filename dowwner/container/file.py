@@ -77,7 +77,7 @@ class File():
             t2 = os.path.getmtime(f2)
         except EnvironmentError as e:
             if e.errno == 2:
-                raise exc.PageNotFoundError("Invalid file name: {}".format(f2))
+                raise exc.PageNotFoundError("{}: No such file".format(f2))
         try:
             t1 = os.path.getmtime(f1)
         except EnvironmentError as e:
@@ -112,7 +112,8 @@ class File():
                     s = f.read()
             except EnvironmentError as e:
                 if e.errno == 2:
-                    raise exc.PageNotFoundError
+                    raise exc.PageNotFoundError(
+                        "{}: No such page".format(path_.path))
                 else:
                     raise
             return s
@@ -132,7 +133,8 @@ class File():
                     s = f.read()
             except EnvironmentError as e:
                 if e.errno == 2:
-                    raise exc.PageNotFoundError
+                    raise exc.PageNotFoundError(
+                        "{}: No such page".format(path_.path))
                 else:
                     raise
             return s
@@ -150,7 +152,8 @@ class File():
                 md = f.read()
         except EnvironmentError as e:
             if e.errno == 2:
-                raise exc.PageNotFoundError
+                raise exc.PageNotFoundError(
+                    "{}: No such page".format(path_.path))
             else:
                 raise
         html = self.__md2html(md)
@@ -250,7 +253,7 @@ class File():
             os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
             self.__update_list(path_.dir)
         else:
-            raise exc.PageNotFoundError
+            raise exc.PageNotFoundError("{}: No such page".format(path_.path))
         return path_.dir
 
     # methods for history handling
@@ -346,7 +349,7 @@ class File():
                 s = f.read()
         except EnvironmentError as e:
             if e.errno == 2:
-                raise exc.PageNameError
+                raise exc.PageNameError("{}: No such page".format(path_.path))
             else:
                 raise
         if raw:
@@ -371,7 +374,7 @@ class File():
     def zip(self, path_):
         """Create zip archive for dir path_ and return archive file as bytes."""
         if not self.isdir(path_):
-            raise PageNameError("Not a directory name: {}".format(path_.path))
+            raise PageNameError("{}: Not a directory name".format(path_.path))
         ls = self.__ls_recursive(path_.path)
         # print(ls)
         oldpwd = os.getcwd()

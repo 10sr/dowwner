@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import os
 import sys
+from traceback import format_exception
 
 from dowwner.path import Path
 from dowwner.container.file import File
@@ -37,32 +38,42 @@ class Dowwner():
             Tuple of (status, message, redirect, headers, content).
         """
         # todo: use correct http status code for redirect
-        message = None
-
+        headers = dict()
         try:
             c = getattr(self, met.lower())(*args, **kargs)
+
         except Exception as e:
             if isinstance(e, exc.PageNameError):
                 status = 404
             else:
                 status = 500
+            try:
+                message = e.args[0]
+            except IndexError:
+                message = "Unknown Error"
             content = b"".join((
                 b"<pre><code>",
                 "".join(format_exception(*sys.exc_info())).encode(),
                 b"</code></pre>"))
+            headers["Content-Type"] = "text/html"
+            redirect = None
+
         else:
             content = bytes(c)
             redirect = c.redirect
             if redirect:
                 status = 303
+                message = "See Other"
             else:
                 status = 200
+                message = "OK"
 
-        headers = dict()
-        headers["Content-Type"] = c.type
-        if c.filename:
-            headers["Content-Disposition"] = ("attachment;" +
-                                              "filename={}".format(c.filename))
+            headers["Content-Type"] = c.type
+            if c.filename:
+                headers["Content-Disposition"] = (
+                    "attachment;" +
+                    "filename={}".format(c.filename))
+
         headers["Content-Length"] = str(len(content))
         return (status, message, redirect, headers, content)
 
