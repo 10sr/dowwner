@@ -9,10 +9,9 @@ import cgi
 from dowwner import exc
 
 def print_redirect(p):
-    print("Status: 302 Found")
     print("Location: http://{}{}{}".format(os.environ["SERVER_NAME"],
-                                         os.environ["SCRIPT_NAME"],
-                                         p))
+                                           os.environ["SCRIPT_NAME"],
+                                           p))
     return
 
 def main(rootdir, tb=True):
@@ -43,33 +42,35 @@ def main(rootdir, tb=True):
     from dowwner.dowwner import Dowwner
     d = Dowwner(rootdir)
 
-    try:
-        if met == "GET" or met == "HEAD":
-            c = d.get(pathstr, query)
-            pass
-        elif met == "POST":
-            form = cgi.FieldStorage(keep_blank_values=True)
-            c = d.post(pathstr, query, form)
-    except exc.PageNameError as e:
-        print("Status: 403 Forbidden")
-        print("")
-        print(str(e))
-        return
+    if met == "GET" or met == "HEAD":
+        c = d.req_http("get", pathstr, query)
+    elif met == "POST":
+        form = cgi.FieldStorage(keep_blank_values=True)
+        c = d.req_http("post", pathstr, query, form)
 
-    if c.redirect_r:
+    status = c[0]
+    message = c[1]
+    redirect = c[2]
+    headers = c[3]
+    content = c[4]
+
+    if status == 200:
+        print("Status: 200 OK")
+    elif status == 303:
+        print("Status: 300 See Other")
+    elif status == 404:
+        print("Status: 404 Not Found")
+    elif status == 500:
+        print("Status: 500 Internal Server Error")
+
+    for k, v in headers.items():
+        print("{}: {}".format(k, v))
+    if recirect:
         print_redirect(os.path.join(os.path.dirname(pathstr),
-                                    c.redirect))
-        print()
-        return
-
-    print("Status: 200 OK")
-    print("Content-Type: " + c.type) # ;charset=utf-8
-    if c.filename:
-        print("Content-Disposition: attachment; filename={}".format(c.filename))
-    body = bytes(c)
-    print("Content-Length: {}".format(len(body)))
+                                    redirect))
     print("", flush=True)
-    if met != "HEAD":
+
+    if met.lower() != "head":
         sys.stdout.buffer.write(body)
         #_debug()
     return

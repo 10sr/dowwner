@@ -1,3 +1,5 @@
+.cache.*
 .bak.*
+*.bak
 __pycache__
 build/
