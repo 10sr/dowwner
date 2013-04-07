@@ -12,17 +12,15 @@ class ContentGET(dowwner.op.BaseContent):
 <a href=".list">List</a>
 </p>"""
 
-    def __init__(self, file, path_, wikiname, orig=None):
+    def main(self):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
-
-        self.content = file.load_bak(path_)
+        self.content = self.file.load_bak(self.path)
         self.navigation = self.baknav.format(
-            basename=path_.base.rpartition(".")[2],
-            name=path_.base)
-        self.pagename = "bak: " + path_.path
+            basename=self.path.base.rpartition(".")[2],
+            name=self.path.base)
+        self.pagename = "bak: " + self.path.path
         return

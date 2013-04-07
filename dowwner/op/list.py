@@ -4,12 +4,11 @@ import dowwner.op
 
 class ContentGET(dowwner.op.DefContent):
     """List class."""
-    def __init__(self, file, path_, wikiname):
+    def main(self):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
         self.init_as_list()
         return

@@ -30,6 +30,11 @@ class BaseContent():
             navigation and content_raw are ignored by __bytes__().
         type: MIME Type of content. Default to "text/html".
         filename: Filename. Should be set when type == "application/*"
+
+    Internal readonly attributes:
+        path
+        file:
+        data: Used for POST.
     """
 
     redirect_r = None
@@ -79,11 +84,22 @@ Not needed when only <link> is used for stylesheets. -->
             wikiname: String of name of wiki.
             data: When posting data this val is used.
         """
-        self.path = path_
         self.file = file
-        self.pagename = path_.path
+        self.path = path_
         self.wikiname = wikiname
+        self.data = data
+
+        self.pagename = path_.path
+        self.main()
         return
+
+    def main(self):
+        """Method to generate content from Path object.
+
+        This method is called at the end of __init__().
+        Subclasses must overwrite this method.
+        """
+        raise NotImplementedError
 
     @property
     def redirect(self):
@@ -137,14 +153,12 @@ class DefContent(BaseContent):
 Go <input type="text" name="name" value="" />
 </form>"""
 
-    def __init__(self, file, path_, wikiname):
-        BaseContent.__init__(self, file, path_, wikiname)
-
-        if path_.isstyle:
+    def main(self):
+        if self.path.isstyle:
             self.init_as_style()
             return
 
-        if path_.path.endswith("/"):
+        if self.path.path.endswith("/"):
             try:
                 self.init_as_page("index")
             except exc.PageNameError:
@@ -152,13 +166,13 @@ Go <input type="text" name="name" value="" />
             return
 
         try:
-            self.init_as_page(path_.base)
+            self.init_as_page(self.path.base)
         except exc.PageNameError:
-            if file.isdir(path_):
-                self.redirect_r = path_.base + "/"
+            if self.file.isdir(path_):
+                self.redirect_r = self.path.base + "/"
                 return
             else:
-                self.redirect_r = ".edit." + path_.base
+                self.redirect_r = ".edit." + self.path.base
         return
 
     def init_as_style(self):

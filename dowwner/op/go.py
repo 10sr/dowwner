@@ -4,16 +4,14 @@ import dowwner.op
 
 class ContentGET(dowwner.op.BaseContent):
     """Go class."""
-    def __init__(self, file, path_, wikiname):
+    def main(self):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.BaseContent.__init__(self, file, path_, wikiname)
-
         try:
-            self.redirect_r = path_.query["name"][0]
+            self.redirect_r = self.path.query["name"][0]
         except KeyError:
             self.redirect_r = None
         return
