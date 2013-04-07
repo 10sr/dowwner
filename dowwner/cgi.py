@@ -65,13 +65,13 @@ def main(rootdir, tb=True):
 
     for k, v in headers.items():
         print("{}: {}".format(k, v))
-    if recirect:
+    if redirect:
         print_redirect(os.path.join(os.path.dirname(pathstr),
                                     redirect))
     print("", flush=True)
 
     if met.lower() != "head":
-        sys.stdout.buffer.write(body)
+        sys.stdout.buffer.write(content)
         #_debug()
     return
 
