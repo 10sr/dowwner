@@ -63,7 +63,7 @@ class Dowwner():
         if c.filename:
             headers["Content-Disposition"] = ("attachment;" +
                                               "filename={}".format(c.filename))
-        headers["Content-Length"] = len(content)
+        headers["Content-Length"] = str(len(content))
         return (status, message, redirect, headers, content)
 
     def verify_addr(self, addr):

@@ -50,6 +50,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         headers = c[3]
         content = c[4]
 
+        content, encoding = self.__compress_body(content)
+        headers["Content-Length"] = str(len(content))
+        if encoding:
+            headers["Content-Encoding"] = encoding
+
         self.send_response(status)
         for k, v in headers.items():
             self.send_header(k, v)
