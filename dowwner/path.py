@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+import posixpath
 try:
     from urllib import parse as urlparse
 except ImportError:
@@ -52,7 +52,7 @@ class Path():
         self.origpath = urlparse.unquote(pathstr, encoding="utf-8")
         self.query = urlparse.parse_qs(query, encoding="utf-8")
 
-        self.dir, self.base_orig = os.path.split(self.origpath)
+        self.dir, self.base_orig = posixpath.split(self.origpath)
 
         if self.base_orig.startswith("."):
             self.op, dotsep, self.base = self.base_orig[1:].partition(".")
@@ -60,7 +60,7 @@ class Path():
             self.op = ""
             self.base = self.base_orig
 
-        self.path = os.path.join(self.dir, self.base)
+        self.path = posixpath.join(self.dir, self.base)
         if self.STYLE_SUFFIX + "/" in self.path:
             raise exc.PageNameError("Stylesheet suffix in dirname.")
         if "/." in self.path:
