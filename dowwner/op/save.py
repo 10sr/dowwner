@@ -17,7 +17,7 @@ class ContentPOST(dowwner.op.BaseContent):
 
         if content == "":
             try:
-                self.file.rm(path_)
+                self.file.rm(self.path)
             except exc.PageNameError:
                 pass
             self.redirect_r = ".list"

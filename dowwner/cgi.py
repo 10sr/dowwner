@@ -57,7 +57,7 @@ def main(rootdir, tb=True):
         return
 
     if c.redirect_r:
-        print_redirect(os.path.join(os.path.dirname(path_),
+        print_redirect(os.path.join(os.path.dirname(pathstr),
                                     c.redirect))
         print()
         return
