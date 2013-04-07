@@ -21,13 +21,13 @@ def main(rootdir, tb=True):
         cgitb.enable()
 
     try:
-        path_ = os.environ["PATH_INFO"]
+        pathstr = os.environ["PATH_INFO"]
     except KeyError:
         print_redirect("/")
         print()
         return
 
-    if path_ == "": # and not os.environ["REQUEST_URI"].endswith("/"):
+    if pathstr == "": # and not os.environ["REQUEST_URI"].endswith("/"):
         # this is not good because REQUEST_URI is not assured to exist,
         print_redirect("/")
         print()
@@ -35,10 +35,8 @@ def main(rootdir, tb=True):
 
     try:
         query = os.environ["QUERY_STRING"]
-        if query:
-            path_ = "?".join((path_, query))
     except KeyError:
-        pass
+        query = ""
 
     met = os.environ["REQUEST_METHOD"]
 
@@ -47,11 +45,11 @@ def main(rootdir, tb=True):
 
     try:
         if met == "GET" or met == "HEAD":
-            c = d.get(path_)
+            c = d.get(pathstr, query)
             pass
         elif met == "POST":
             form = cgi.FieldStorage(keep_blank_values=True)
-            c = d.post(path_, form)
+            c = d.post(pathstr, query, form)
     except exc.PageNameError as e:
         print("Status: 403 Forbidden")
         print("")

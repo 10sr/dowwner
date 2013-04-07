@@ -18,22 +18,22 @@ class Dowwner():
         self.name = os.path.basename(rootdir)
         return
 
-    def get(self, rpath):
+    def get(self, pathstr, query):
         """Return OP object for request handler.
 
         Args:
             rpath: Path queried.
         """
-        p = Path(rpath)
+        p = Path(pathstr, query)
         return dowwner.op.get(self.container, p, self.name)
 
-    def post(self, rpath, data):
+    def post(self, pathstr, query, data):
         """Return OP object for request handler.
 
         Args:
             rpath: Path queried.
         """
-        p = Path(rpath)
+        p = Path(pathstr, query)
         return dowwner.op.post(self.container, p, self.name, data)
 
     def verify_addr(self, addr):

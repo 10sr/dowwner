@@ -57,7 +57,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
-        c = self.server.dowwner.get(self.path)
+        pathstr, q, query = self.path.partition("?")
+        c = self.server.dowwner.get(pathstr, query)
         if c.redirect is not None:
             self.send_response(302)
             self.__send_location(c.redirect)
@@ -92,9 +93,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.end_headers()
             return
 
+        pathstr, q, query = self.path.partition("?")
         length = int(self.headers["Content-Length"])
         data = self.rfile.read(length)
-        rt = self.server.dowwner.post(self.path, data)
+        rt = self.server.dowwner.post(pathstr, query, data)
         if rt:
             self.send_response(303)
             self.__send_location(rt.redirect)

@@ -34,21 +34,25 @@ class Path():
 
     STYLE_SUFFIX = ".css"
 
-    def __init__(self, path_):
+    def __init__(self, pathstr, query):
         """
         Args:
-            path_: Path relative to root directory. Starts with "/" and quoted
+            pathstr: Path relative to root directory. Starts with "/" and quoted
                 with parse.quote().
+            query: String of query. Passed to patse_qs
         """
-        o = urlparse.urlparse(path_)
-        path_ = o.path
-        self.origpath_quoted = path_
-        self.origpath = urlparse.unquote(path_, encoding="utf-8")
+        # o = urlparse.urlparse(path_)
+        # path_ = o.path
+        # self.origpath_quoted = path_
+        # self.origpath = urlparse.unquote(path_, encoding="utf-8")
 
-        query_r = o.query
-        self.query = urlparse.parse_qs(query_r)
+        # query_r = o.query
+        # self.query = urlparse.parse_qs(query_r)
+        self.origpath_quoted = pathstr
+        self.origpath = urlparse.unquote(pathstr, encoding="utf-8")
+        self.query = urlparse.parse_qs(query, encoding="utf-8")
 
-        self.dir, self.base_orig = os.path.split(path_)
+        self.dir, self.base_orig = os.path.split(self.origpath)
 
         if self.base_orig.startswith("."):
             self.op, dotsep, self.base = self.base_orig[1:].partition(".")

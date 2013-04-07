@@ -168,7 +168,7 @@ Go <input type="text" name="name" value="" />
         try:
             self.init_as_page(self.path.base)
         except exc.PageNameError:
-            if self.file.isdir(path_):
+            if self.file.isdir(self.path):
                 self.redirect_r = self.path.base + "/"
                 return
             else:
