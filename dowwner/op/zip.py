@@ -13,14 +13,14 @@ class ContentGET(dowwner.op.BaseContent):
             file: File object.
             path_: Path object.
         """
-        if path_.path == "/":
+        if self.path.path == "/":
             basename = self.wikiname
         else:
             basename = (self.wikiname + "-" +
                         os.path.basename(self.path.path.rstrip("/")))
         self.filename = basename + ".zip"
 
-        self.content_bytes = file.zip(self.path)
+        self.content_bytes = self.file.zip(self.path)
         self.type = "application/zip"
         # self.redirect_raw = "."
         return
