@@ -2,16 +2,16 @@
 
 import dowwner.op.edit
 
-class OP_GET(dowwner.op.edit.OP_GET):
+class ContentGET(dowwner.op.edit.ContentGET):
     """Revert class."""
-    def __init__(self, file, path_, wikiname):
+    def main(self):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        orig = file.load_bak(path_, raw=True)
-        dowwner.op.edit.OP_GET.__init__(self, file, path_, wikiname, orig,
-                                        target=path_.base.partition(".")[2])
-        self.pagename = "revert: " + path_.path
+        orig = self.file.load_bak(self.path, raw=True)
+        dowwner.op.edit.ContentGET.main(self, orig=orig,
+                                        target=self.path.base.partition(".")[2])
+        self.pagename = "revert: " + self.path.path
         return

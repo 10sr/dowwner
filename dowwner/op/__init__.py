@@ -11,22 +11,30 @@ import urllib
 
 from dowwner import exc
 
-class OP():
-    """OP Base class.
+class BaseContent():
+    """Content Base class.
 
     str(op) and bytes(op) can be used to get contents as html.
-    Path ends with ".css" is treated specially.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
 
-    Internal attributes: Subclasses should overwrite these ones
+    Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
-        content: Content of page.
-        content_raw: If not None, string of raw content.
+        content: Html of content of page.
+        navigation: Html of navigation menu.
+        content_raw: If not None, string of raw content. In this case, content
+            and navigation are ignored.
+        content_bytes: If not None, bytes of content. In this case, content,
+            navigation and content_raw are ignored by __bytes__().
         type: MIME Type of content. Default to "text/html".
-        navigation: Navigation menu.
+        filename: Filename. Should be set when type == "application/*"
+
+    Internal readonly attributes:
+        path
+        file:
+        data: Used for POST.
     """
 
     redirect_r = None
@@ -62,23 +70,36 @@ Not needed when only <link> is used for stylesheets. -->
     navigation = ""
 
     content_raw = None
+    content_bytes = None
+
     type = "text/html"
+    filename = None
 
-    # todo: where this const should be set?
-    STYLE_SUFFIX = ".css"
-
-    def __init__(self, file, path_, wikiname):
+    def __init__(self, file, path_, wikiname, data=None):
         """Initialize.
 
         Args:
             path_: Path object.
             file: File handler object.
+            wikiname: String of name of wiki.
+            data: When posting data this val is used.
         """
-        self.path = path_
         self.file = file
-        self.pagename = path_.path
+        self.path = path_
         self.wikiname = wikiname
+        self.data = data
+
+        self.pagename = path_.path
+        self.main()
         return
+
+    def main(self):
+        """Method to generate content from Path object.
+
+        This method is called at the end of __init__().
+        Subclasses must overwrite this method.
+        """
+        raise NotImplementedError
 
     @property
     def redirect(self):
@@ -88,7 +109,10 @@ Not needed when only <link> is used for stylesheets. -->
             return urllib.parse.quote(self.redirect_r, encoding="utf-8")
 
     def __bytes__(self):
-        return str(self).encode("utf-8")
+        if self.content_bytes is None:
+            return str(self).encode("utf-8")
+        else:
+            return self.content_bytes
 
     def __str__(self):
         if self.content_raw is None:
@@ -99,7 +123,9 @@ Not needed when only <link> is used for stylesheets. -->
 
     @property
     def __head(self):
-        return self.__head_base.format(name=self.wikiname + ":" + self.pagename)
+        return self.__head_base.format(name=self.wikiname +
+                                       " :: "
+                                       + self.pagename)
 
     @property
     def __body(self):
@@ -109,7 +135,7 @@ Not needed when only <link> is used for stylesheets. -->
                           self.__navigation_base.format(nav=self.navigation),
                           "</body>"))
 
-class NO_OP(OP):
+class DefContent(BaseContent):
     """Class used when path has no operator."""
 
     pagenav = """<p>
@@ -119,23 +145,20 @@ class NO_OP(OP):
 <a href=".list">List</a>
 </p>"""
 
-    dirnav = """<p>
-<form action=".go" method="get">
+    dirnav = """ <form action=".go" method="get">
 <a href=".hist">History</a>
 <a href=".edit.style.css">EditStyle</a>
+<a href=".zip">Zip</a>
 |
 Go <input type="text" name="name" value="" />
-</form>
-</p>"""
+</form>"""
 
-    def __init__(self, file, path_, wikiname):
-        OP.__init__(self, file, path_, wikiname)
-
-        if path_.base.endswith(self.STYLE_SUFFIX):
+    def main(self):
+        if self.path.isstyle:
             self.init_as_style()
             return
 
-        if path_.path.endswith("/"):
+        if self.path.path.endswith("/"):
             try:
                 self.init_as_page("index")
             except exc.PageNameError:
@@ -143,17 +166,20 @@ Go <input type="text" name="name" value="" />
             return
 
         try:
-            self.init_as_page(path_.base)
-        except exc.PageNotFoundError:
-            if file.isdir(path_):
-                self.redirect_r = path_.base + "/"
+            self.init_as_page(self.path.base)
+        except exc.PageNameError:
+            if self.file.isdir(self.path):
+                self.redirect_r = self.path.base + "/"
                 return
             else:
-                self.redirect_r = ".edit." + path_.base
+                self.redirect_r = ".edit." + self.path.base
         return
 
     def init_as_style(self):
-        self.content_raw = self.file.load_style(self.path)
+        try:
+            self.content_raw = self.file.load(self.path)
+        except exc.PageNotFoundError:
+            self.content_raw = ""
         self.type = "text/css"
         return
 
@@ -176,16 +202,16 @@ Go <input type="text" name="name" value="" />
 
 def get(file, path_, wikiname):
     if path_.op == "":
-        return NO_OP(file, path_, wikiname)
+        return DefContent(file, path_, wikiname)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
-            raise exc.OperatorError
+            raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
-            return op.OP_GET(file, path_, wikiname)
+            return op.ContentGET(file, path_, wikiname)
         except AttributeError:
-            raise exc.OperatorError
+            raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 
 def post(file, path_, wikiname, data):
     """Post data.
@@ -196,8 +222,8 @@ def post(file, path_, wikiname, data):
     try:
         op = importlib.import_module("dowwner.op." + path_.op)
     except ImportError:
-        raise exc.OperatorError
+        raise exc.OperatorError("{}: Invalid operator".format(path_.op))
     try:
-        return op.OP_POST(file, path_, wikiname, data)
+        return op.ContentPOST(file, path_, wikiname, data)
     except AttributeError:
-        raise exc.OperatorError
+        raise exc.OperatorError("{}: Invalid operator".format(path_.op))

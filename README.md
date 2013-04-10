@@ -5,6 +5,8 @@ Very simple wiki clone.
 Uses Markdown for markup and pages are stored as plain markdown files.
 Works both as a cgi program and as a server.
 
+Dowwner is developed at <https://github.com/10sr/dowwner>.
+
 
 Dependencies
 ------------
@@ -22,7 +24,7 @@ Run:
 
 and command `dowwner` is installed. Or you can just create simlink of
 `bin/dowwner` and put it into your prefered directory like `$HOME/bin` or
-`$HOME/.local/bin`. When you just want to try dowwner, running `bin/dowwner`
+`$HOME/.local/bin`. When you just want a try, running `bin/dowwner`
 directly also works.
 
 
@@ -41,7 +43,7 @@ Wiki Usage
 
 ### Syntax
 
-Dowwner uses [Markdown](http://daringfireball.net/projects/markdown/) for wiki
+[Markdown](http://daringfireball.net/projects/markdown/) is used for wiki
 syntax with one extension: wiki link.
 This extension converts `[[newpage]]` into `<a href="newpage">newpage</a>`.
 It works with spaces and/or slashes so you can use links like `[[dir/page]]`.
@@ -57,12 +59,15 @@ To remove pages, access edit pages and submit empty contents.
 
 You cannot create directories or pages that start with `.`. These names are all
 reserved for special porpose. For example, if a page name is prefixed by
-`.edit.`, dowwner shows the edit page.
+`.edit.`, dowwner shows the edit page. Additionally, all pages with suffix
+`.css` are treated as stylesheet files, and you cannot create directories with
+suffix `.css`.
 
 ### Page Hierarchy
 
 Wiki pages are not flat. When creating pages like `dir/page`, directory named
-`dir` is created automatically and `page` is placed under `dir`.
+`dir` is created automatically and `page` is placed under `dir`, and directories
+are hidden when no pages exist in that directories.
 
 ### Index Page
 
@@ -78,9 +83,10 @@ revert to these backups.
 
 ### StyleSheet
 
-Currently stylesheet support in under development, and may not work correctly.
-Do not create directories or pages ending with `".css"` (this will return error
-in the future).
+You can create and edit `style.css` from `.list` page. Additionally, you can
+create `common.css` in the root directory. `common.css` is same for all
+directories, whereas `style.css`s are different for each directory. You cannot
+create or edit `common.css` from the web interface.
 
 
 Commandline Options
@@ -129,14 +135,13 @@ wiki read-only for anonymous access.
 TODOs
 -----
 
-* Provide way to remove directory
 * Search support
 * Menu
 * More usable access control for server mode (currently accesses only from
 127.0.0.1 are allowed)
 * Fix http headers if needed
 * Handle errors properly and return correct http status
-* Use logger when -d option used
+* Use logger
 
 
 License

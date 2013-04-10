@@ -10,8 +10,6 @@ class ContentGET(dowwner.op.BaseContent):
             file: File object.
             path_: Path object.
         """
-        try:
-            self.redirect_r = self.path.query["name"][0]
-        except KeyError:
-            self.redirect_r = None
+        self.content_raw = self.file.load(self.path, raw=True)
+        self.type = "text/plain"
         return

@@ -13,6 +13,7 @@ except ImportError:
 
 from dowwner import __version__
 from dowwner.dowwner import Dowwner
+from dowwner import exc
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
@@ -20,64 +21,81 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
     server_version = "Dowwner/" + __version__
 
     def do_HEAD(self):
-        self.do_GET(True)
-        return
-
-    def do_GET(self, head_only=False):
-        try:
-            return self.__try_do_GET(head_only)
-        except Exception as e:
-            return self.__send_500(sys.exc_info(), head_only)
-
-    def __try_do_GET(self, head_only=False):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
             return
 
-        c = self.server.dowwner.get(self.path)
-        if c.redirect is not None:
-            self.send_response(302)
-            self.send_header("Location", c.redirect)
+        pathstr, q, query = self.path.partition("?")
+        return self.__do("HEAD", pathstr, query)
+
+    def do_GET(self):
+        if not self.server.dowwner_verify(self.client_address[0]):
+            self.send_error(403)
             self.end_headers()
+            return
+
+        pathstr, q, query = self.path.partition("?")
+        return self.__do("GET", pathstr, query)
+
+    def __do(self, met, *args, **kargs):
+        if met.lower() == "head":
+            c = self.server.dowwner.req_http("get", *args, **kargs)
         else:
-            self.send_response(200)
-            self.send_header("Content-type", c.type)
-            self.end_headers()
-            if not head_only:
-                self.wfile.write(bytes(c))
+            c = self.server.dowwner.req_http(met, *args, **kargs)
+
+        status = c[0]
+        message = c[1]
+        redirect = c[2]
+        headers = c[3]
+        content = c[4]
+
+        content, encoding = self.__compress_body(content)
+        headers["Content-Length"] = str(len(content))
+        if encoding:
+            headers["Content-Encoding"] = encoding
+
+        self.send_response(status, message)
+        for k, v in headers.items():
+            self.send_header(k, v)
+        if redirect is not None:
+            self.__send_location(redirect)
+        self.end_headers()
+
+        if met.lower() != "head":
+            self.wfile.write(content)
+        return
+
+    def __compress_body(self, b):
+        encodings = (e.strip() for e
+                     in self.headers["Accept-Encoding"].split(","))
+        for e in encodings:
+            if e.startswith("gzip"):
+                return (self.__compress_gzip(b), "gzip")
+        return (b, None)
+
+    def __compress_gzip(self, b):
+        from gzip import compress
+        return compress(b)
+
+    def __send_location(self, s):
+        newpath = os.path.join(os.path.dirname(self.path), s)
+        self.send_header("Location",
+                         "http://{}{}".format(self.headers["Host"], newpath))
         return
 
     def do_POST(self):
-        try:
-            return self.__try_do_POST()
-        except Exception as e:
-            return self.__send_500(sys.exc_info())
-
-    def __try_do_POST(self):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
             return
 
+        pathstr, q, query = self.path.partition("?")
         length = int(self.headers["Content-Length"])
         data = self.rfile.read(length)
-        rt = self.server.dowwner.post(self.path, data)
-        if rt:
-            self.send_response(302)
-            self.send_header("Location", rt.redirect)
-            self.end_headers()
-            #self.wfile.write(str(data).encode())
-        return
+        pathstr, q, query = self.path.partition("?")
 
-    def __send_500(self, exc_info, head_only=False):
-        self.send_error(500)
-        self.end_headers()
-        if not head_only:
-            self.wfile.write(
-                "<br />\n".join(format_exception(*exc_info)).encode())
-        print_exception(*exc_info)
-        return
+        return self.__do("POST", pathstr, query, data)
 
 class DowwnerHTTPS(HTTPServer):
     def __init__(self, rootdir, *args, **kargs):

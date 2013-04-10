@@ -45,6 +45,19 @@ def main(argv):
     dowwner.main(**confs)
     return
 
+def _testcgi():
+    import os
+    os.environ["SERVER_NAME"] = "example.com"
+    os.environ["SCRIPT_NAME"] = "cgi.py"
+    os.environ["PATH_INFO"] = "/%E3%81%82"
+    os.environ["QUERY_STRING"] = ""
+    os.environ["REQUEST_METHOD"] = "GET"
+
+    from dowwner import cgi
+    cgi.main(rootdir=os.getcwd())
+    return
+
 if __name__ == "__main__":
     add_path()
     main(sys.argv)
+    # _testcgi()

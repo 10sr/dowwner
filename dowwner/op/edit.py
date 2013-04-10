@@ -5,9 +5,9 @@ from os import path
 from dowwner import exc
 import dowwner.op
 
-# todo: use stylesheet for scale.
+# todo: use stylesheet for scales.
 
-class OP_GET(dowwner.op.OP):
+class ContentGET(dowwner.op.BaseContent):
     """Editor class."""
 
     _content = """<h1>{path}</h1>
@@ -21,27 +21,23 @@ class OP_GET(dowwner.op.OP):
 </p>
 </form>"""
 
-    def __init__(self, file, path_, wikiname, orig=None, target=None):
+    def main(self, orig=None, target=None):
         """
         Args:
             file: File object.
             path_: Path object.
         """
-        dowwner.op.OP.__init__(self, file, path_, wikiname)
-
-        if path_.base.endswith(self.STYLE_SUFFIX):
-            orig = file.load_style(path_)
-        elif orig is None:
+        if orig is None or self.path.isstyle:
             try:
-                orig = file.load(path_, True)
+                orig = self.file.load(self.path, True)
             except exc.PageNotFoundError:
                 orig = ""
 
         if target is None:
-            target = path_.base
+            target = self.path.base
 
-        self.content = self._content.format(path=path_.path,
+        self.content = self._content.format(path=self.path.path,
                                             origtext=orig,
                                             name=target)
-        self.pagename = "edit: " + path_.path
+        self.pagename = "edit: " + self.path.path
         return
