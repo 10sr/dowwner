@@ -103,6 +103,7 @@ class File():
 
         Raises:
              dowwner.exc.PageNotFoundError
+             dowwner.exc.NotADirectoryError
         """
         if path_.isstyle:
             fpath = self.__gen_fullpath(path_.path)
@@ -134,6 +135,8 @@ class File():
                 if e.errno == 2:
                     raise exc.PageNotFoundError(
                         "{}: No such page".format(path_.path))
+                elif e.errno == 20:
+                    raise exc.NotADirectoryError
                 else:
                     raise
             return s

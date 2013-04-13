@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import os
 import sys
 from traceback import format_exception
+import html
 
 from dowwner.path import Path
 from dowwner.container.file import File
@@ -51,7 +52,7 @@ class Dowwner():
                 message = "Internal server error"
             content = b"".join((
                 b"<pre><code>",
-                "".join(format_exception(*sys.exc_info())).encode(),
+                html.escape("".join(format_exception(*sys.exc_info()))).encode(),
                 b"</code></pre>"))
             headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None

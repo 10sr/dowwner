@@ -10,7 +10,7 @@ class PageNotFoundError(PageNameError):
     short = "Page not found"
     pass
 
-class DirNotFoundError(PageNameError):
+class NotADirectoryError(PageNameError):
     short = "Directory not found"
     pass
 
