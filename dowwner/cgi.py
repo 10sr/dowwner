@@ -55,14 +55,6 @@ def main(rootdir, tb=True):
     content = c[4]
 
     print("Status: {} {}".format(status, message))
-    if status == 200:
-        print("Status: 200 OK")
-    elif status == 303:
-        print("Status: 303 See Other")
-    elif status == 404:
-        print("Status: 404 Not Found")
-    elif status == 500:
-        print("Status: 500 Internal Server Error")
 
     for k, v in headers.items():
         print("{}: {}".format(k, v))
