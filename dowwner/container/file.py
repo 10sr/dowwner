@@ -2,7 +2,6 @@
 
 import os
 import os.path
-import shutil
 from time import strftime
 
 from dowwner import exc
@@ -240,7 +239,10 @@ class File():
         if not file_existed:
             self.__update_list(path_.dir)
 
-        self.__backup(path_)
+        pid = os.fork()
+        if pid == 0:            # child
+            self.__backup(path_)
+            os._exit(0)
         return True
 
     def rm(self, path_):
