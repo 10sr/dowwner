@@ -11,5 +11,5 @@ class ContentGET(dowwner.op.BaseContent):
             path_: Path object.
         """
         self.content_raw = self.file.load(self.path, raw=True)
-        self.type = "text/plain"
+        self.type = "text/plain; charset=utf-8"
         return

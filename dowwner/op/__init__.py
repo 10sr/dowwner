@@ -28,7 +28,7 @@ class BaseContent():
             and navigation are ignored.
         content_bytes: If not None, bytes of content. In this case, content,
             navigation and content_raw are ignored by __bytes__().
-        type: MIME Type of content. Default to "text/html".
+        type: MIME Type of content. Default to "text/html; charset=utf-8".
         filename: Filename. Should be set when type == "application/*"
 
     Internal readonly attributes:
@@ -72,7 +72,7 @@ Not needed when only <link> is used for stylesheets. -->
     content_raw = None
     content_bytes = None
 
-    type = "text/html"
+    type = "text/html; charset=utf-8"
     filename = None
 
     def __init__(self, file, path_, wikiname, data=None):
@@ -180,7 +180,7 @@ Go <input type="text" name="name" value="" />
             self.content_raw = self.file.load(self.path)
         except exc.PageNotFoundError:
             self.content_raw = ""
-        self.type = "text/css"
+        self.type = "text/css; charset=utf-8"
         return
 
     def init_as_page(self, name):

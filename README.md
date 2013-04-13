@@ -1,4 +1,4 @@
-Dowwnere
+Dowwner
 =======
 
 Very simple wiki clone.

@@ -45,17 +45,15 @@ class Dowwner():
         except Exception as e:
             if isinstance(e, exc.PageNameError):
                 status = 404
+                message = e.short
             else:
                 status = 500
-            try:
-                message = e.args[0]
-            except IndexError:
-                message = "Unknown Error"
+                message = "Internal server error"
             content = b"".join((
                 b"<pre><code>",
                 "".join(format_exception(*sys.exc_info())).encode(),
                 b"</code></pre>"))
-            headers["Content-Type"] = "text/html"
+            headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None
 
         else:
