@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-"""Dowwner classes for operator.
-
-All classes must inherit OP.
-"""
+"""Dowwner classes for operator."""
 
 import sys
 import importlib

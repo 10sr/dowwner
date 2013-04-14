@@ -18,8 +18,6 @@ from dowwner import exc
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
 
-    server_version = "Dowwner/" + __version__
-
     def do_HEAD(self):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
@@ -98,6 +96,10 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return self.__do("POST", pathstr, query, data)
 
 class DowwnerHTTPS(HTTPServer):
+    server_version = "Dowwner/" + __version__
+    # shoud i use HTTP/1.1 ? but i dont fully understand it...
+    protocol_version  = "HTTP/1.0"
+
     def __init__(self, rootdir, *args, **kargs):
         self.dowwner = Dowwner(rootdir)
         return HTTPServer.__init__(self, *args, **kargs)
