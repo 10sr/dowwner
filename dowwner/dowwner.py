@@ -4,6 +4,7 @@ from __future__ import absolute_import
 
 import os
 import sys
+import time
 from traceback import format_exception
 import html
 
@@ -11,6 +12,11 @@ from dowwner.path import Path
 from dowwner.container.file import File
 import dowwner.op
 from dowwner import exc
+
+import locale
+locale.setlocale(locale.LC_TIME, "C")
+os.environ["TZ"] = "GMT+00"
+time.tzset()
 
 class Dowwner():
     """Dowwner main class."""
@@ -31,6 +37,14 @@ class Dowwner():
         """Return OP object for request handler."""
         p = Path(pathstr, query)
         return dowwner.op.post(self.container, p, self.name, data)
+
+    @staticmethod
+    def __time2str(t):
+        return time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.gmtime(t))
+
+    @staticmethod
+    def __str2time(s):
+        return
 
     def req_http(self, met, *args, **kargs):
         """Handle http request.
@@ -68,6 +82,8 @@ class Dowwner():
                 message = "OK"
 
             headers["Content-Type"] = c.type
+            if c.mtime is not None:
+                headers["Last-Modified"] = self.__time2str(c.mtime)
             if c.filename:
                 headers["Content-Disposition"] = (
                     "attachment;" +

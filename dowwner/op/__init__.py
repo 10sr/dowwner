@@ -19,12 +19,15 @@ class BaseContent():
     Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
+        mtime: Last modified time or None.
+    
         content: Html of content of page.
         navigation: Html of navigation menu.
         content_raw: If not None, string of raw content. In this case, content
             and navigation are ignored.
         content_bytes: If not None, bytes of content. In this case, content,
             navigation and content_raw are ignored by __bytes__().
+    
         type: MIME Type of content. Default to "text/html; charset=utf-8".
         filename: Filename. Should be set when type == "application/*"
 
@@ -35,6 +38,7 @@ class BaseContent():
     """
 
     redirect_r = None
+    mtime = None
 
     __html_header = """<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -177,12 +181,15 @@ Go <input type="text" name="name" value="" />
             self.content_raw = self.file.load(self.path)
         except exc.PageNotFoundError:
             self.content_raw = ""
+        else:
+            self.mtime = self.file.getmtime(self.path)
         self.type = "text/css; charset=utf-8"
         return
 
     def init_as_page(self, name):
         self.content = self.file.load(self.path)
         self.navigation = self.pagenav.format(name=name)
+        self.mtime = self.file.getmtime(self.path)
         return
 
     def init_as_list(self):

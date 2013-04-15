@@ -120,13 +120,12 @@ class File():
             return s
 
         if path_.path.endswith("/"):
-            fdir = self.__gen_fullpath(path_.dir)
-            base = "index"
+            base = "index" + self.FILE_SUFFIX
         else:
-            fdir = self.__gen_fullpath(path_.dir)
-            base = path_.base
+            base = path_.base + self.FILE_SUFFIX
 
-        mdpath = os.path.join(fdir, base + self.FILE_SUFFIX)
+        fdir = self.__gen_fullpath(path_.dir)
+        mdpath = os.path.join(fdir, base)
 
         if raw:
             try:
@@ -268,7 +267,18 @@ class File():
         return
 
     def getmtime(self, path_):
-        fullpath = self.__gen_fullpath(path_) + self.FILE_SUFFIX
+        if path_.isstyle:
+            assert not path_.base.endswith(self.FILE_SUFFIX)
+            fullpath = self.__gen_fullpath(path_.path)
+        else:
+            # it is same logic used in load. should be in content class
+            if path_.path.endswith("/"):
+                base = "index" + self.FILE_SUFFIX
+            else:
+                base = path_.base + self.FILE_SUFFIX
+            fdir = self.__gen_fullpath(path_.dir)
+            fullpath = os.path.join(fdir, base)
+
         try:
             return os.stat(fullpath).st_mtime
         except OSError as e:

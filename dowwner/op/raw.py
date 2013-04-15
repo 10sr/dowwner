@@ -12,4 +12,5 @@ class ContentGET(dowwner.op.BaseContent):
         """
         self.content_raw = self.file.load(self.path, raw=True)
         self.type = "text/plain; charset=utf-8"
+        self.mtime = self.file.getmtime(self.path)
         return
