@@ -106,6 +106,7 @@ class File():
              dowwner.exc.NotADirectoryError
         """
         if path_.isstyle:
+            assert not path_.base.endswith(self.FILE_SUFFIX)
             fpath = self.__gen_fullpath(path_.path)
             try:
                 with open(fpath, encoding="utf-8") as f:
@@ -223,6 +224,7 @@ class File():
         if self.isdir(path_):
             pathstr = os.path.join(path_.path, "index" + self.FILE_SUFFIX)
         elif path_.isstyle:
+            assert not path_.base.endswith(self.FILE_SUFFIX)
             pathstr = path_.path
         else:
             pathstr = path_.path + self.FILE_SUFFIX
@@ -264,6 +266,20 @@ class File():
                 raise
         self.__update_list(path_.dir)
         return
+
+    def getmtime(self, path_):
+        fullpath = self.__gen_fullpath(path_) + self.FILE_SUFFIX
+        try:
+            return os.stat(fullpath).st_mtime
+        except OSError as e:
+            if e.errno == 2:
+                if self.isdir(path_):
+                    return None
+                else:
+                    raise exc.PageNotFoundError(
+                        "{}: Page not found".format(path_.path))
+            else:
+                raise
 
     # methods for history handling
 

@@ -56,6 +56,19 @@ class BaseContainer():
         """
         raise NotImplementedError
 
+    def getmtime(self, path_):
+        """Get last modified time of path_.
+
+        Returns:
+            Time representing mtime of path_ in the same format as time.time()
+            returns. If page does not exists, raise PageNotFoundError. If the
+            time is not available for another reason, return None.
+
+        Raises:
+            dowwner.exc.PageNotFoundError
+        """
+        raise NotImplementedError
+
     # methods for history handling
 
     def lshist(self, path_):
