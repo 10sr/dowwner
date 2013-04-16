@@ -8,6 +8,8 @@ import urllib
 
 from dowwner import exc
 
+# todo: provide way to modify header
+
 class BaseContent():
     """Content Base class.
 
@@ -24,7 +26,7 @@ class BaseContent():
         content: Html of content of page.
         navigation: Html of navigation menu.
         content_raw: If not None, string of raw content. In this case, content
-            and navigation are ignored.
+            and navigation are ignored. Should be used with type != "text/html".
         content_bytes: If not None, bytes of content. In this case, content,
             navigation and content_raw are ignored by __bytes__().
     
