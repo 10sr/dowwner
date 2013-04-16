@@ -97,8 +97,27 @@ class BaseContainer():
         """
         raise NotImplementedError
 
+    # functions for archiving
+
     def zip(self, path_):
         """Create zip archive for dir path_ and return archive file as bytes."""
+        raise NotImplementedError
+
+    # functions for cache
+
+    def save_cache(self, path_, data):
+        """Save data as cache of path_."""
+        raise NotImplementedError
+
+    def load_cache(self, path_):
+        """Load cache of path_.
+
+        Returns:
+            String of cache saved by save_cache() or None.
+
+        Raises:
+            dowwner.exc.PageNotFoundError: Original page for Path_ not found
+        """
         raise NotImplementedError
 
 if __name__ == "__main__":
