@@ -5,6 +5,7 @@
 import sys
 import importlib
 import urllib
+import os
 
 from dowwner import exc
 
@@ -189,8 +190,19 @@ Go <input type="text" name="name" value="" />
         return
 
     def init_as_page(self, name):
-        self.content = self.file.load(self.path)
-        self.navigation = self.pagenav.format(name=name)
+        cache = self.file.load_cache(self.path)
+
+        if cache:
+            self.content_raw = cache
+
+        else:
+            self.content = self.file.load(self.path)
+            self.navigation = self.pagenav.format(name=name)
+            pid = os.fork()
+            if pid == 0:
+                self.file.save_cache(self.path, str(self))
+                os._exit(0)
+
         self.mtime = self.file.getmtime(self.path)
         return
 

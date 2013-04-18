@@ -113,7 +113,8 @@ class BaseContainer():
         """Load cache of path_.
 
         Returns:
-            String of cache saved by save_cache() or None.
+            String of cache saved by save_cache() or None if cache not found
+            or is old.
 
         Raises:
             dowwner.exc.PageNotFoundError: Original page for Path_ not found

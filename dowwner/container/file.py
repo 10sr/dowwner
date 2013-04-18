@@ -69,23 +69,6 @@ class File():
             self.__md = Markdown()
         return self.__md.convert(s)
 
-    @staticmethod
-    def __is_file_newer(f1, f2):
-        """Return True if f1 exists and is newer than f2."""
-        try:
-            t2 = os.path.getmtime(f2)
-        except EnvironmentError as e:
-            if e.errno == 2:
-                raise exc.PageNotFoundError("{}: No such file".format(f2))
-        try:
-            t1 = os.path.getmtime(f1)
-        except EnvironmentError as e:
-            if e.errno == 2:
-                return False
-            else:
-                raise
-        return t1 >= t2
-
     def load(self, path_, raw=False):
         """Load file.
 
@@ -141,14 +124,6 @@ class File():
                     raise
             return s
 
-        htmlpath = os.path.join(fdir,
-                                self.CACHE_PREFIX + base + self.CONV_SUFFIX)
-        if self.__is_file_newer(htmlpath, mdpath):
-            # if cache exists use that.
-            with open(htmlpath, encoding="utf-8") as f:
-                html = f.read()
-            return html
-
         try:
             with open(mdpath, encoding="utf-8") as f:
                 md = f.read()
@@ -158,15 +133,7 @@ class File():
                     "{}: No such page".format(path_.path))
             else:
                 raise
-        html = self.__md2html(md)
-        pid = os.fork()
-        if pid == 0:        # child
-            # cache html
-            with open(htmlpath, encoding="utf-8", mode="w") as f:
-                f.write(html)
-            os._exit(0)
-        else:
-            return html
+        return self.__md2html(md)
 
     def __update_list(self, relpath):
         """Create .list files recursively."""
@@ -488,3 +455,54 @@ class File():
                 return self.__zip_files_python(l1)
             else:
                 raise
+
+    # functions for cache
+
+    def __gen_cachepath(self, path_):
+        if self.isdir(path_):
+            base = "index"
+        else:
+            base = path_.base
+        return os.path.join(self.__gen_fullpath(path_.dir),
+                            self.CACHE_PREFIX + base + self.CONV_SUFFIX)
+
+    def save_cache(self, path_, data):
+        with open(self.__gen_cachepath(path_), mode="w", encoding="utf-8") as f:
+            f.write(data)
+        return
+
+    @staticmethod
+    def __is_file_newer(f1, f2):
+        """Return True if f1 exists and is same age newer than f2.
+
+        Raises:
+            dowwner.exc.PageNotFoundError: f2 not exists"""
+        try:
+            t2 = os.path.getmtime(f2)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                raise exc.PageNotFoundError("{}: No such file".format(f2))
+        try:
+            t1 = os.path.getmtime(f1)
+        except EnvironmentError as e:
+            if e.errno == 2:
+                return False
+            else:
+                raise
+        return t1 >= t2
+
+    def load_cache(self, path_):
+        cachepath = self.__gen_cachepath(path_)
+        if self.isdir(path_):
+            base = "index"
+        else:
+            base = path_.base
+        fullpath = os.path.join(self.__gen_fullpath(path_.dir),
+                                base + self.FILE_SUFFIX)
+
+        if self.__is_file_newer(cachepath, fullpath):
+            with open(cachepath, encoding="utf-8") as f:
+                s = f.read()
+        else:
+            s = None
+        return s
