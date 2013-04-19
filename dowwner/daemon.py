@@ -4,6 +4,7 @@
 
 import os
 import sys
+import signal
 
 def start(pidfile, logfile, func):
     # do the UNIX double-fork magic, see Stevens' "Advanced
@@ -45,6 +46,10 @@ def start(pidfile, logfile, func):
               file=sys.stderr)
         sys.exit(1)
 
+    def _term_hndlr(signum, frame):
+        os.remove(pidfile)
+        return
+
     # start the daemon main loop
 
     sys.stdout.flush()
@@ -52,6 +57,7 @@ def start(pidfile, logfile, func):
     sys.stdin = open(os.devnull, 'r')
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w')
+    signal.signal(signal.SIGTERM, _term_hndlr)
     func()
     return
 
@@ -60,9 +66,9 @@ def stop(pidfile):
     if pid:
         print("Stopping server...", end="")
         # this may be dengerous, i think process name must be ensured
-        os.kill(pid, 15)
+        os.kill(pid, signal.SIGTERM)
         print("done")
-        os.remove(pidfile)
+        # os.remove(pidfile) # done by _term_hndlr() in start()
     return
 
 def status(pidfile):
