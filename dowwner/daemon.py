@@ -8,7 +8,7 @@ import sys
 def start(pidfile, logfile, func):
     # do the UNIX double-fork magic, see Stevens' "Advanced
     # Programming in the UNIX Environment" for details (ISBN 0201563177)
-    if status(pidfile, logfile, func):
+    if status(pidfile):
         print("Exit.")
         sys.exit(0)
 
@@ -55,8 +55,8 @@ def start(pidfile, logfile, func):
     func()
     return
 
-def stop(pidfile, logfile, func):
-    pid = status(pidfile, logfile, func)
+def stop(pidfile):
+    pid = status(pidfile)
     if pid:
         print("Stopping server...", end="")
         # this may be dengerous, i think process name must be ensured
@@ -65,7 +65,7 @@ def stop(pidfile, logfile, func):
         os.remove(pidfile)
     return
 
-def status(pidfile, logfile, func):
+def status(pidfile):
     """
     Returns:
         pidnum if server running, otherwise 0."""
@@ -92,14 +92,5 @@ def status(pidfile, logfile, func):
     return pid
 
 def restart(pidfile, logfile, func):
-    stop(pidfile, logfile, func)
+    stop(pidfile)
     return start(pidfile, logfile, func)
-
-cmds = {"start" : start,
-        "stop" : stop,
-        "status" : status,
-        "restart" : restart}
-
-def main(cmd, pidfile, logfile, func):
-    cmds[cmd](pidfile, logfile, func)
-    return

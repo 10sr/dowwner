@@ -107,12 +107,22 @@ class DowwnerHTTPS(HTTPServer):
     def dowwner_verify(self, addr):
         return self.dowwner.verify_addr(addr)
 
-def start(port=2505, rootdir=os.getcwd()):
-    host = ""
-    httpd = DowwnerHTTPS(rootdir, (host, port), DowwnerHTTPRH)
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    print("Server terminated.")
-    return
+class Server():
+    """Wrapper of DowwnerHTTPS."""
+    def __init__(self, port=2505, rootdir=os.getcwd()):
+        host = ""
+        self.httpd = DowwnerHTTPS(rootdir, (host, port), DowwnerHTTPRH)
+        return
+
+    def start(self):
+        """Start server. This method returns when self.stop() is called."""
+        try:
+            self.httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        print("Server terminated.")
+        return
+
+    def stop(self):
+        self.httpd.shutdown()
+        return

@@ -15,8 +15,9 @@ __version__ = "0.4.1"
 
 def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
     def f():
-        from dowwner.server import start
-        return start(port=port, rootdir=rootdir)
+        from dowwner.server import Server
+        s = Server(port=port, rootdir=rootdir)
+        return s.start()
 
     rootdir = os.path.realpath(rootdir)
     # locale.setlocale(locale.LC_ALL, "ja_JP.UTF-8")
@@ -33,8 +34,16 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
         logfile = os.path.join(rootdir,
                                ".".join((".dowwner", hostname, "log")))
 
-        from dowwner.daemon import main
-        return main(daemon, pidfile, logfile, f)
+        import dowwner.daemon
+
+        if daemon == "start":
+            return dowwner.daemon.start(pidfile, logfile, f)
+        elif daemon == "restart":
+            return dowwner.daemon.restart(pidfile, logfile, f)
+        elif daemon == "status":
+            return dowwner.daemon.status(pidfile)
+        elif daemon == "stop":
+            return dowwner.daemon.stop(pidfile)
 
     else:
         return f()
