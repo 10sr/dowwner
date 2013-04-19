@@ -10,6 +10,7 @@ class File():
     """File and directory handler."""
 
     FILE_SUFFIX = ".md"
+    STYLE_SUFFIX = ".css"
     BAK_SUFFIX = ".bak"
     CONV_SUFFIX = ".html"
     CACHE_PREFIX = ".cache."
@@ -89,8 +90,7 @@ class File():
              dowwner.exc.NotADirectoryError
         """
         if path_.isstyle:
-            assert not path_.base.endswith(self.FILE_SUFFIX)
-            fpath = self.__gen_fullpath(path_.path)
+            fpath = self.__gen_fullpath(path_.path) + self.STYLE_SUFFIX
             try:
                 with open(fpath, encoding="utf-8") as f:
                     s = f.read()
@@ -190,8 +190,7 @@ class File():
         if self.isdir(path_):
             pathstr = os.path.join(path_.path, "index" + self.FILE_SUFFIX)
         elif path_.isstyle:
-            assert not path_.base.endswith(self.FILE_SUFFIX)
-            pathstr = path_.path
+            pathstr = path_.path = self.STYLE_SUFFIX
         else:
             pathstr = path_.path + self.FILE_SUFFIX
         fullpath = self.__gen_fullpath(pathstr)
@@ -235,8 +234,7 @@ class File():
 
     def getmtime(self, path_):
         if path_.isstyle:
-            assert not path_.base.endswith(self.FILE_SUFFIX)
-            fullpath = self.__gen_fullpath(path_.path)
+            fullpath = self.__gen_fullpath(path_.path) + self.STYLE_SUFFIX
         else:
             # it is same logic used in load. should be in content class
             if path_.path.endswith("/"):

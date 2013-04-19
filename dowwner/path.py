@@ -16,6 +16,8 @@ class Path():
     If any elems in self.path starts with ".", raise exc.PageNameError
     If any elems in self.dir ends with self.STYLE_SUFFIX, raise
     exc.PageNameError.
+    If pathstr ends with the suffix ".css", the suffix is removed and isstyle
+    is set to True.
 
     Attributes:
         origpath: Original path. Starts with "/".
@@ -60,12 +62,17 @@ class Path():
             self.op = ""
             self.base = self.base_orig
 
+        self.isstyle = self.base.endswith(self.STYLE_SUFFIX)
+        if self.isstyle:
+            self.base = self.base[:-4] # remove ".css"
+            if self.base == "":
+                raise exc.PageNameError("css suffix with no name")
+
         self.path = posixpath.join(self.dir, self.base)
         if self.STYLE_SUFFIX + "/" in self.path:
             raise exc.PageNameError("Stylesheet suffix in dirname")
         if "/." in self.path:
             raise exc.PageNameError("Dot file or directory in path")
-        self.isstyle = self.base.endswith(self.STYLE_SUFFIX)
         return
 
     def __str__(self):
