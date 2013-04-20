@@ -63,7 +63,7 @@ reserved for special porpose. For example, if a page name is prefixed by
 `.css` are treated as stylesheet files, and you cannot create directories with
 suffix `.css`.
 
-### Page Hierarchy
+### Directory
 
 Wiki pages are not flat. When creating pages like `dir/page`, directory named
 `dir` is created automatically and `page` is placed under `dir`, and directories
@@ -75,6 +75,11 @@ If the page named `index` exists in a directory, dowwner use that when only the
 directory name is specified.
 Otherwise, dowwner shows the list of pages in the directory. This list can be
 accessed explicitly with `.list`.
+
+### Hidden Page
+
+Pages whose names start with `_` are considered "hidden" pages and not listed in
+`.list` pages. Anyone can access these pages if they know the names of pages.
 
 ### Page History
 

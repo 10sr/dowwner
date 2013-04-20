@@ -42,7 +42,7 @@ class File():
         return os.path.isdir(self.__gen_fullpath(path_.path))
 
     def listdir(self, path_):
-        """Return list of files in path_. When dir not found, return []."""
+        """Return list of pages in path_. When dir not found, return []."""
         items = []
         fullpath = self.__gen_fullpath(path_.path)
 
@@ -144,7 +144,7 @@ class File():
 
         items = []
         for f in ls:
-            if f.startswith("."):
+            if f.startswith(".") or f.startswith("_"):
                 continue
             elif os.path.isdir(os.path.join(fullpath, f)):
                 try:
