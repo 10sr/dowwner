@@ -15,7 +15,11 @@ from dowwner import __version__
 class BaseContent():
     """Content Base class.
 
-    str(op) and bytes(op) can be used to get contents as html.
+    str(self) and bytes(self) can be used to get contents as html.
+
+    To subclass this method, you should implement self.main(), not overwrite
+    self.__init__(). self.main() is called at the end of self.__init__()
+    with attributes self.file, self.path, self.wikiname, self.data being set.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -24,20 +28,20 @@ class BaseContent():
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
         mtime: Last modified time or None.
-    
+
         content: Html of content of page.
         navigation: Html of navigation menu.
         content_raw: If not None, string of raw content. In this case, content
             and navigation are ignored. Should be used with type != "text/html".
         content_bytes: If not None, bytes of content. In this case, content,
             navigation and content_raw are ignored by __bytes__().
-    
+
         type: MIME Type of content. Default to "text/html; charset=utf-8".
         filename: Filename. Should be set when type == "application/*"
 
     Internal readonly attributes:
-        path
-        file:
+        path: Path object.
+        file: File object.
         data: Used for POST.
     """
 

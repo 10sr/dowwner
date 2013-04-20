@@ -16,7 +16,7 @@ class ContentGET(dowwner.op.BaseContent):
 <input type="submit" name="submit" value="submit" />
 </p>
 <p>
-<textarea type="content" name="content" value="content" rows="24" cols="80">
+<textarea type="content" name="content" value="content" rows="24" cols="80" style="width:95%;">
 {origtext}</textarea>
 </p>
 </form>"""
