@@ -18,6 +18,7 @@ class Path():
     exc.PageNameError.
     If pathstr ends with the suffix ".css", the suffix is removed and isstyle
     is set to True.
+    If basename of pathstr is in COMMON_SUFFIX, its dirname is always ignored.
 
     Attributes:
         origpath: Original path. Starts with "/".
@@ -34,6 +35,7 @@ class Path():
         dowwner.exc.PageNameError
     """
 
+    COMMON_FILES = ("common.css",)
     STYLE_SUFFIX = ".css"
 
     def __init__(self, pathstr, query):
@@ -61,6 +63,9 @@ class Path():
         else:
             self.op = ""
             self.base = self.base_orig
+
+        if self.base in self.COMMON_FILES:
+            self.dir = "/"
 
         self.isstyle = self.base.endswith(self.STYLE_SUFFIX)
         if self.isstyle:

@@ -4,13 +4,8 @@
 
 class BaseContainer():
     """Container base class."""
-    def __init__(self, common_files):
-        """Initialize File.
-
-        Args:
-            common_files: Tuple of filenames. Paths whose basename is in
-                common_files are always treated as same paths.
-        """
+    def __init__(self):
+        """Initialize Container."""
         raise NotImplementedError
 
     def isdir(self, path_):

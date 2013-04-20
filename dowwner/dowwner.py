@@ -21,20 +21,18 @@ time.tzset()
 class Dowwner():
     """Dowwner main class."""
 
-    COMMON_FILES = ("common.css",)
-
     def __init__(self, rootdir):
-        self.container = File(rootdir, self.COMMON_FILES)
+        self.container = File(rootdir)
         self.name = os.path.basename(rootdir)
         return
 
     def get(self, pathstr, query):
-        """Return OP object for request handler."""
+        """Return content object for request handler."""
         p = Path(pathstr, query)
         return dowwner.op.get(self.container, p, self.name)
 
     def post(self, pathstr, query, data):
-        """Return OP object for request handler."""
+        """Return content object for request handler."""
         p = Path(pathstr, query)
         return dowwner.op.post(self.container, p, self.name, data)
 
@@ -66,7 +64,8 @@ class Dowwner():
                 message = "Internal server error"
             content = b"".join((
                 b"<pre><code>",
-                html.escape("".join(format_exception(*sys.exc_info()))).encode(),
+                html.escape(
+                    "".join(format_exception(*sys.exc_info()))).encode("utf-8"),
                 b"</code></pre>"))
             headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None
