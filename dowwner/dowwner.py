@@ -7,6 +7,7 @@ import sys
 import time
 from traceback import format_exception
 import html
+import logging
 
 from dowwner.path import Path
 from dowwner.container.file import File
@@ -74,6 +75,9 @@ class Dowwner():
                 content = message.encode("utf-8")
             headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None
+
+            logger = logging.getLogger(__name__)
+            logger.exception(message)
 
         else:
             content = bytes(c)

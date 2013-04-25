@@ -5,6 +5,7 @@
 import os
 import sys
 import signal
+import logging
 
 def start(pidfile, logfile, func):
     # do the UNIX double-fork magic, see Stevens' "Advanced
@@ -58,6 +59,7 @@ def start(pidfile, logfile, func):
     sys.stdout = open(os.devnull, 'w')
     sys.stderr = open(os.devnull, 'w')
     signal.signal(signal.SIGTERM, _term_hndlr)
+    # _initialize_logger(logfile)
     func()
     return
 

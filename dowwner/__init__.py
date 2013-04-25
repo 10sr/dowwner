@@ -14,19 +14,28 @@ import logging
 
 __version__ = "0.4.3"
 
-def _initialize_logger(loglevel=-1):
+def _initialize_logger(loglevel=-1, file=None):
     logger = logging.getLogger(__name__)
     if loglevel >= 0:
         logger.setLevel(loglevel)
 
-    handler = logging.StreamHandler()
-    logger.addHandler(handler)
+    return logger
 
+def _initialize_loghandler(filename=None):
+    logger = logging.getLogger(__name__)
+
+    if filename:
+        handler = logging.FileHandler(filename)
+    else:
+        handler = logging.StreamHandler()
+
+    logger.addHandler(handler)
     formatter = logging.Formatter("%(filename)s:%(lineno)d[%(funcName)s]"
                                 "cs%(levelno)s:%(message)s")
     handler.setFormatter(formatter)
 
     return logger
+
 
 def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
     if debug:
@@ -44,7 +53,8 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
 
     if cgi:
         from dowwner.cgi import main
-        return main(rootdir=rootdir, debug)
+        _initialize_loghandler()
+        return main(rootdir=rootdir, debug=debug)
 
     elif daemon:
         from socket import gethostname
@@ -57,6 +67,7 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
         import dowwner.daemon
 
         if daemon == "start":
+            _initialize_loghandler(logfile)
             return dowwner.daemon.start(pidfile, logfile, f)
         elif daemon == "restart":
             return dowwner.daemon.restart(pidfile, logfile, f)
@@ -66,4 +77,5 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
             return dowwner.daemon.stop(pidfile)
 
     else:
+        _initialize_loghandler()
         return f()
