@@ -10,13 +10,33 @@ from __future__ import absolute_import
 
 import os
 # import locale
+import logging
 
 __version__ = "0.4.3"
 
-def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
+def _initialize_logger(loglevel=-1):
+    logger = logging.getLogger(__name__)
+    if loglevel >= 0:
+        logger.setLevel(loglevel)
+
+    handler = logging.StreamHandler()
+    logger.addHandler(handler)
+
+    formatter = logging.Formatter("%(filename)s:%(lineno)d[%(funcName)s]"
+                                "cs%(levelno)s:%(message)s")
+    handler.setFormatter(formatter)
+
+    return logger
+
+def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
+    if debug:
+        _initialize_logger(logging.DEBUG)
+    else:
+        _initialize_logger()
+
     def f():
         from dowwner.server import Server
-        s = Server(port=port, rootdir=rootdir)
+        s = Server(port=port, rootdir=rootdir, debug=debug)
         return s.start()
 
     rootdir = os.path.realpath(rootdir)
@@ -24,7 +44,7 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False):
 
     if cgi:
         from dowwner.cgi import main
-        return main(rootdir)
+        return main(rootdir=rootdir, debug)
 
     elif daemon:
         from socket import gethostname

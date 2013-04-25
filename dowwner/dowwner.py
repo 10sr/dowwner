@@ -21,9 +21,10 @@ time.tzset()
 class Dowwner():
     """Dowwner main class."""
 
-    def __init__(self, rootdir):
+    def __init__(self, rootdir, debug=False):
         self.container = File(rootdir)
         self.name = os.path.basename(rootdir)
+        self.debug = debug
         return
 
     def get(self, pathstr, query):
@@ -62,11 +63,15 @@ class Dowwner():
             else:
                 status = 500
                 message = "Internal server error"
-            content = b"".join((
-                b"<pre><code>",
-                html.escape(
-                    "".join(format_exception(*sys.exc_info()))).encode("utf-8"),
-                b"</code></pre>"))
+            if self.debug:
+                content = b"".join((
+                    b"<pre><code>",
+                    html.escape(
+                        "".join(format_exception(
+                            *sys.exc_info()))).encode("utf-8"),
+                    b"</code></pre>"))
+            else:
+                content = message.encode("utf-8")
             headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None
 

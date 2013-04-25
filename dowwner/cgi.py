@@ -14,8 +14,8 @@ def print_redirect(p):
                                            p))
     return
 
-def main(rootdir, tb=True):
-    if tb:
+def main(rootdir, debug=True):
+    if debug:
         import cgitb
         cgitb.enable()
 
@@ -40,7 +40,7 @@ def main(rootdir, tb=True):
     met = os.environ["REQUEST_METHOD"]
 
     from dowwner.dowwner import Dowwner
-    d = Dowwner(rootdir)
+    d = Dowwner(rootdir=rootdir, debug=debug)
 
     if met == "GET" or met == "HEAD":
         c = d.req_http("get", pathstr, query)

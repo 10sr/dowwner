@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import os
 import sys
 from traceback import format_exception, print_exception
+import logging
 
 try:
     from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -18,6 +19,16 @@ from dowwner import exc
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
 
+    def log_error(self, format, *args):
+        logger = logging.getLogger(__name__)
+        logger.error(format % args)
+        return
+
+    def log_message(self, format, *args):
+        logger = logging.getLogger(__name__)
+        logger.info(format % args)
+        return
+
     def do_HEAD(self):
         if not self.server.dowwner_verify(self.client_address[0]):
             self.send_error(403)
@@ -25,7 +36,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return
 
         pathstr, q, query = self.path.partition("?")
-        return self.__do("HEAD", pathstr, query)
+        return self.__do("head", pathstr, query)
 
     def do_GET(self):
         if not self.server.dowwner_verify(self.client_address[0]):
@@ -100,8 +111,8 @@ class DowwnerHTTPS(HTTPServer):
     # shoud i use HTTP/1.1 ? but i dont fully understand it...
     protocol_version  = "HTTP/1.0"
 
-    def __init__(self, rootdir, *args, **kargs):
-        self.dowwner = Dowwner(rootdir)
+    def __init__(self, rootdir, debug, *args, **kargs):
+        self.dowwner = Dowwner(rootdir, debug)
         return HTTPServer.__init__(self, *args, **kargs)
 
     def dowwner_verify(self, addr):
@@ -109,9 +120,10 @@ class DowwnerHTTPS(HTTPServer):
 
 class Server():
     """Wrapper of DowwnerHTTPS."""
-    def __init__(self, port=2505, rootdir=os.getcwd()):
+    def __init__(self, port=2505, rootdir=os.getcwd(), debug=False):
         host = ""
-        self.httpd = DowwnerHTTPS(rootdir, (host, port), DowwnerHTTPRH)
+        self.httpd = DowwnerHTTPS(rootdir, debug, (host, port), DowwnerHTTPRH)
+        self.debug = debug
         return
 
     def start(self):

@@ -5,8 +5,6 @@ from os import path
 from dowwner import exc
 import dowwner.op
 
-# todo: use stylesheet for scales.
-
 class ContentGET(dowwner.op.BaseContent):
     """Editor class."""
 

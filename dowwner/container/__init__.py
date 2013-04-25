@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# todo: add cache api
-
 class BaseContainer():
     """Container base class."""
     def __init__(self):
