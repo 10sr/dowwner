@@ -12,7 +12,7 @@ import os
 # import locale
 import logging
 
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 def _initialize_logger(loglevel=-1, file=None):
     logger = logging.getLogger(__name__)
