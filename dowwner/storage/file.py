@@ -450,7 +450,7 @@ class File():
     # functions for cache
 
     def __gen_cachepath(self, path_):
-        if self.isdir(path_):
+        if path_.path.endswith("/"):
             base = "index"
         else:
             base = path_.base
