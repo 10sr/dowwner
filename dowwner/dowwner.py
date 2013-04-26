@@ -10,7 +10,7 @@ import html
 import logging
 
 from dowwner.path import Path
-from dowwner.container.file import File
+from dowwner.storage.file import File
 import dowwner.op
 from dowwner import exc
 
@@ -23,7 +23,7 @@ class Dowwner():
     """Dowwner main class."""
 
     def __init__(self, rootdir, debug=False):
-        self.container = File(rootdir)
+        self.storage = File(rootdir)
         self.name = os.path.basename(rootdir)
         self.debug = debug
         return
@@ -31,12 +31,12 @@ class Dowwner():
     def get(self, pathstr, query):
         """Return content object for request handler."""
         p = Path(pathstr, query)
-        return dowwner.op.get(self.container, p, self.name)
+        return dowwner.op.get(self.storage, p, self.name)
 
     def post(self, pathstr, query, data):
         """Return content object for request handler."""
         p = Path(pathstr, query)
-        return dowwner.op.post(self.container, p, self.name, data)
+        return dowwner.op.post(self.storage, p, self.name, data)
 
     @staticmethod
     def __time2str(t):

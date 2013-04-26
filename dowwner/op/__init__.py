@@ -19,7 +19,7 @@ class BaseContent():
 
     To subclass this method, you should implement self.main(), not overwrite
     self.__init__(). self.main() is called at the end of self.__init__()
-    with attributes self.file, self.path, self.wikiname, self.data being set.
+    with attributes self.storage, self.path, self.wikiname, self.data being set.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -41,7 +41,7 @@ class BaseContent():
 
     Internal readonly attributes:
         path: Path object.
-        file: File object.
+        storage: Storage object.
         data: Used for POST.
     """
 
@@ -85,16 +85,16 @@ Not needed when only <link> is used for stylesheets. -->
     type = "text/html; charset=utf-8"
     filename = None
 
-    def __init__(self, file, path_, wikiname, data=None):
+    def __init__(self, storage, path_, wikiname, data=None):
         """Initialize.
 
         Args:
             path_: Path object.
-            file: File handler object.
+            storage: Storage handler object.
             wikiname: String of name of wiki.
             data: When posting data this val is used.
         """
-        self.file = file
+        self.storage = storage
         self.path = path_
         self.wikiname = wikiname
         self.data = data
@@ -178,7 +178,7 @@ Go <input type="text" name="name" value="" />
         try:
             self.init_as_page(self.path.base)
         except exc.PageNameError:
-            if self.file.isdir(self.path):
+            if self.storage.isdir(self.path):
                 self.redirect_r = self.path.base + "/"
                 return
             else:
@@ -187,33 +187,33 @@ Go <input type="text" name="name" value="" />
 
     def init_as_style(self):
         try:
-            self.content_raw = self.file.load(self.path)
+            self.content_raw = self.storage.load(self.path)
         except exc.PageNotFoundError:
             self.content_raw = ""
         else:
-            self.mtime = self.file.getmtime(self.path)
+            self.mtime = self.storage.getmtime(self.path)
         self.type = "text/css; charset=utf-8"
         return
 
     def init_as_page(self, name):
-        cache = self.file.load_cache(self.path)
+        cache = self.storage.load_cache(self.path)
 
         if cache:
             self.content_raw = cache
 
         else:
-            self.content = self.file.load(self.path)
+            self.content = self.storage.load(self.path)
             self.navigation = self.pagenav.format(name=name)
             pid = os.fork()
             if pid == 0:
-                self.file.save_cache(self.path, str(self))
+                self.storage.save_cache(self.path, str(self))
                 os._exit(0)
 
-        self.mtime = self.file.getmtime(self.path)
+        self.mtime = self.storage.getmtime(self.path)
         return
 
     def init_as_list(self):
-        ls = self.file.listdir(self.path)
+        ls = self.storage.listdir(self.path)
         self.content = (
             "<h1>{path}</h1>\n".format(path=self.path.path) +
             "".join(
@@ -224,20 +224,20 @@ Go <input type="text" name="name" value="" />
         self.pagename = "list: " + self.path.path
         return
 
-def get(file, path_, wikiname):
+def get(storage, path_, wikiname):
     if path_.op == "":
-        return DefContent(file, path_, wikiname)
+        return DefContent(storage, path_, wikiname)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
-            return op.ContentGET(file, path_, wikiname)
+            return op.ContentGET(storage, path_, wikiname)
         except AttributeError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 
-def post(file, path_, wikiname, data):
+def post(storage, path_, wikiname, data):
     """Post data.
 
     Args:
@@ -248,6 +248,6 @@ def post(file, path_, wikiname, data):
     except ImportError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))
     try:
-        return op.ContentPOST(file, path_, wikiname, data)
+        return op.ContentPOST(storage, path_, wikiname, data)
     except AttributeError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))

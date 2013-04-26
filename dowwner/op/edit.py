@@ -22,12 +22,12 @@ class ContentGET(dowwner.op.BaseContent):
     def main(self, orig=None, target=None):
         """
         Args:
-            file: File object.
+            storage: Storage object.
             path_: Path object.
         """
         if orig is None or self.path.isstyle:
             try:
-                orig = self.file.load(self.path, True)
+                orig = self.storage.load(self.path, True)
             except exc.PageNotFoundError:
                 orig = ""
 

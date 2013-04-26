@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-class BaseContainer():
-    """Container base class."""
+class BaseStorage():
+    """Storage base class."""
     def __init__(self):
-        """Initialize Container."""
+        """Initialize Storage."""
         raise NotImplementedError
 
     def isdir(self, path_):

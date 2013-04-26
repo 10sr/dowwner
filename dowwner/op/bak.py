@@ -15,10 +15,10 @@ class ContentGET(dowwner.op.BaseContent):
     def main(self):
         """
         Args:
-            file: File object.
+            storage: Storage object.
             path_: Path object.
         """
-        self.content = self.file.load_bak(self.path)
+        self.content = self.storage.load_bak(self.path)
         self.navigation = self.baknav.format(
             basename=self.path.base.rpartition(".")[2],
             name=self.path.base)

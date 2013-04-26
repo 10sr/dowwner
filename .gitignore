@@ -1,5 +1,9 @@
 .cache.*
 .bak.*
 *.bak
+.list
+.dowwner.*
 __pycache__
 build/
+files.txt
+

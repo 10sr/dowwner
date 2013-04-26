@@ -7,7 +7,7 @@ class ContentGET(dowwner.op.BaseContent):
     def main(self):
         """
         Args:
-            file: File object.
+            storage: Storage object.
             path_: Path object.
         """
         try:

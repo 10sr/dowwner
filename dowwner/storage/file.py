@@ -7,7 +7,7 @@ from time import strftime
 from dowwner import exc
 
 class File():
-    """File and directory handler."""
+    """File and directory Storage handler."""
 
     FILE_SUFFIX = ".md"
     STYLE_SUFFIX = ".css"

@@ -17,12 +17,12 @@ class ContentPOST(dowwner.op.BaseContent):
 
         if content == "":
             try:
-                self.file.rm(self.path)
+                self.storage.rm(self.path)
             except exc.PageNameError:
                 pass
             self.redirect_r = ".list"
         else:
-            self.file.save(self.path, content)
+            self.storage.save(self.path, content)
             if self.path.isstyle:
                 self.redirect_r = "./"
             else:

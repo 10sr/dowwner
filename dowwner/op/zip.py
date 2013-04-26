@@ -10,7 +10,7 @@ class ContentGET(dowwner.op.BaseContent):
     def main(self):
         """
         Args:
-            file: File object.
+            storage: Storage object.
             path_: Path object.
         """
         if self.path.path == "/":
@@ -20,7 +20,7 @@ class ContentGET(dowwner.op.BaseContent):
                         os.path.basename(self.path.path.rstrip("/")))
         self.filename = basename + ".zip"
 
-        self.content_bytes = self.file.zip(self.path)
+        self.content_bytes = self.storage.zip(self.path)
         self.type = "application/zip"
         # self.redirect_raw = "."
         return
