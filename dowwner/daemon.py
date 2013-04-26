@@ -5,9 +5,9 @@
 import os
 import sys
 import signal
-import logging
+# import logging
 
-def start(pidfile, logfile, func):
+def start(pidfile, func):
     # do the UNIX double-fork magic, see Stevens' "Advanced
     # Programming in the UNIX Environment" for details (ISBN 0201563177)
     if status(pidfile):
@@ -57,7 +57,8 @@ def start(pidfile, logfile, func):
     sys.stderr.flush()
     sys.stdin = open(os.devnull, 'r')
     sys.stdout = open(os.devnull, 'w')
-    sys.stderr = open(os.devnull, 'w')
+    sys.stderr = sys.stdout
+    # sys.stderr = open(os.devnull, 'w')
     signal.signal(signal.SIGTERM, _term_hndlr)
     # _initialize_logger(logfile)
     func()
@@ -99,6 +100,6 @@ def status(pidfile):
     print("Server running on this dir.")
     return pid
 
-def restart(pidfile, logfile, func):
+def restart(pidfile, func):
     stop(pidfile)
-    return start(pidfile, logfile, func)
+    return start(pidfile, func)

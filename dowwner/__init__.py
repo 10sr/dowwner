@@ -12,7 +12,7 @@ import os
 # import locale
 import logging
 
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 
 def _initialize_logger(loglevel=-1, file=None):
     logger = logging.getLogger(__name__)
@@ -68,9 +68,10 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
 
         if daemon == "start":
             _initialize_loghandler(logfile)
-            return dowwner.daemon.start(pidfile, logfile, f)
+            return dowwner.daemon.start(pidfile, f)
         elif daemon == "restart":
-            return dowwner.daemon.restart(pidfile, logfile, f)
+            _initialize_loghandler(logfile)
+            return dowwner.daemon.restart(pidfile, f)
         elif daemon == "status":
             return dowwner.daemon.status(pidfile)
         elif daemon == "stop":
