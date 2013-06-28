@@ -8,11 +8,13 @@ Works both as a cgi program and as a server.
 Dowwner is developed at <https://github.com/10sr/dowwner>.
 
 
+
 Dependencies
 ------------
 
 * Python3 (Tested under python3.2)
 * [Python Markdown](http://pythonhosted.org/Markdown/)
+
 
 
 Installation
@@ -28,6 +30,7 @@ and command `dowwner` is installed. Or you can just create simlink of
 directly also works.
 
 
+
 Quick Start
 -----------
 
@@ -38,8 +41,10 @@ Run:
 and access to `localhost:2505`.
 
 
+
 Wiki Usage
 ----------
+
 
 ### Syntax
 
@@ -48,12 +53,14 @@ syntax with one extension: wiki link.
 This extension converts `[[newpage]]` into `<a href="newpage">newpage</a>`.
 It works with spaces and/or slashes so you can use links like `[[dir/page]]`.
 
+
 ### Creating and Removing Pages
 
 There is no special step for creating new pages. When you access pages that do
 not exist yet, edit pages appear and you can write newly. That all.
 
 To remove pages, access edit pages and submit empty contents.
+
 
 ### Page Name
 
@@ -63,11 +70,13 @@ reserved for special porpose. For example, if a page name is prefixed by
 `.css` are treated as stylesheet files, and you cannot create directories with
 suffix `.css`.
 
+
 ### Directory
 
 Wiki pages are not flat. When creating pages like `dir/page`, directory named
 `dir` is created automatically and `page` is placed under `dir`, and directories
 are hidden when no pages exist in that directories.
+
 
 ### Index Page
 
@@ -76,15 +85,18 @@ directory name is specified.
 Otherwise, dowwner shows the list of pages in the directory. This list can be
 accessed explicitly with `.list`.
 
+
 ### Hidden Page
 
 Pages whose names start with `_` are considered "hidden" pages and not listed in
 `.list` pages. Anyone can access these pages if they know the names of pages.
 
+
 ### Page History
 
 When modifying or removing pages, old contents are backed up. It is possible to
 revert to these backups.
+
 
 ### StyleSheet
 
@@ -94,6 +106,7 @@ directories, whereas `style.css`s are different for each directory. You cannot
 create or edit `common.css` from the web interface.
 
 
+
 Commandline Options
 -------------------
 
@@ -101,13 +114,16 @@ Without `-d` or `-c` option, dowwner run in "server" mode and you can
 terminate dowwner with `C-c`. With `-d start` option, dowwner run in "daemon"
 mode. With `-c` option, dowwner run in "cgi" mode.
 
+
 ### `-h`, `--help`
 
 Show help message.
 
+
 ### `-r|--root-dir <path>`
 
 Change root directory. If omitted current directory is used.
+
 
 ### `-d|--daemon start|status|stop|restart`
 
@@ -117,15 +133,18 @@ starting dowwner program.
 When this option is used, only one instance of dowwner can be run per root
 directory.
 
+
 ### `-p|--port <num>`
 
 Wnen running dowwner as a server, this num is used for port. When omitted `2505`
 is used by default.
 
+
 ### `-c`, `--cgi`
 
 Run dowwner as a cgi program. When this option is used, options `-d` and `-p`
 are ignored. Normally using `tools/cgi.py` is more recommended (see below).
+
 
 
 Run as CGI
@@ -135,6 +154,7 @@ Copy `tools/cgi.py` to where you want to access as a cgi,
 modify the file so that `rootdir` points to your wiki directory, and configure
 http server to run the file as a cgi. You can set auth for `POST` method to make
 wiki read-only for anonymous access.
+
 
 
 TODOs
@@ -147,6 +167,7 @@ TODOs
 * Fix http headers if needed
 * Handle errors properly and return correct http status
 * Use logger
+
 
 
 License
