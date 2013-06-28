@@ -20,14 +20,21 @@ class ContentGET(dowwner.op.BaseContent):
 </form>"""
 
     def main(self, orig=None, target=None):
+        if self.path.isstyle:
+            dtype = "style"
+        else:
+            dtype = None
+
         if orig is None or self.path.isstyle:
             try:
-                orig = self.storage.load((self.path.dir, self.path.base))
+                orig = self.storage.load((self.path.dir, self.path.base), dtype)
             except exc.PageNotFoundError:
                 orig = ""
 
         if target is None:
             target = self.path.base
+        if self.path.isstyle:
+            target = target + ".css"
 
         self.content = self._content.format(path=self.path.path,
                                             origtext=orig,

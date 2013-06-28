@@ -8,6 +8,11 @@ from dowwner import exc
 
 class ContentPOST(dowwner.op.BaseContent):
     def main(self):
+        if self.path.isstyle:
+            dtype = "style"
+        else:
+            dtype = None
+
         if isinstance(self.data, FieldStorage):
             content = self.data.getfirst("content").replace("\r", "")
         else:
@@ -17,12 +22,13 @@ class ContentPOST(dowwner.op.BaseContent):
 
         if content == "":
             try:
-                self.storage.rm((self.path.dir, self.path.base), dtype=None)
+                self.storage.rm((self.path.dir, self.path.base), dtype=dtype)
             except exc.PageNameError:
                 pass
             self.redirect_r = ".list"
         else:
-            self.storage.save((self.path.dir, self.path.base), content, dtype=None)
+            self.storage.save((self.path.dir, self.path.base), content,
+                              dtype=dtype)
             if self.path.isstyle:
                 self.redirect_r = "./"
             else:
