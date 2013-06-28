@@ -162,6 +162,7 @@ class DefContent(BaseContent):
     dirnav = """ <form action=".go" method="get">
 <a href=".hist">History</a>
 <a href=".edit.style.css">EditStyle</a>
+<a href=".xheaders">ExtraHeaders</a>
 <a href=".zip">Zip</a>
 |
 Go <input type="text" name="name" value="" />
