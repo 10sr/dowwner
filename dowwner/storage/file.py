@@ -59,6 +59,23 @@ class File(storage.BaseStorage):
         items = []
         fullpath = self.__gen_fullpath(pathstr)
 
+        if not self.isdir(pathstr):
+            return []
+
+        try:
+            with open(os.path.join(fullpath, self.LIST_FILE)) as fo:
+                ls = fo.read().splitlines()
+        except EnvironmentError as e:
+            if e.errno != 2:
+                raise
+            else:
+                pass
+        else:
+            return [f for f in ls if f]
+
+        # Try again after making list. If failed again, consider directory not
+        # found and return empty list.
+        self.__update_list(pathstr)
         try:
             with open(os.path.join(fullpath, self.LIST_FILE)) as fo:
                 ls = fo.read().splitlines()
@@ -67,8 +84,8 @@ class File(storage.BaseStorage):
                 return []
             else:
                 raise
-
-        return [f for f in ls if f]
+        else:
+            return [f for f in ls if f]
 
     def load(self, patht, dtype=None):
         """Load data.
@@ -106,7 +123,10 @@ class File(storage.BaseStorage):
             ls = os.listdir(fullpath)
         except EnvironmentError as e:
             if e.errno == 2:
-                return self__update_list(self, os.path.join(relpath, ".."))
+                if relpath == "/":
+                    return
+                else:
+                    return self__update_list(self, os.path.join(relpath, ".."))
             elif e.errno == 20:   # Not a directory
                 raise
             else:
