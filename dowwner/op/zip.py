@@ -20,7 +20,7 @@ class ContentGET(dowwner.op.BaseContent):
                         os.path.basename(self.path.path.rstrip("/")))
         self.filename = basename + ".zip"
 
-        self.content_bytes = self.storage.zip(self.path)
+        self.content_bytes = self.storage.zip(self.path.path)
         self.type = "application/zip"
         # self.redirect_raw = "."
         return

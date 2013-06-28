@@ -18,8 +18,9 @@ class BaseContent():
     str(self) and bytes(self) can be used to get contents as html.
 
     To subclass this method, you should implement self.main(), not overwrite
-    self.__init__(). self.main() is called at the end of self.__init__()
-    with attributes self.storage, self.path, self.wikiname, self.data being set.
+    self.__init__() . self.main() is called at the end of self.__init__()
+    with attributes self.storage, self.path, self.wikiname, self.conv, self.data
+    being set.
 
     Attributes:
         redirect: URL encoded path to redirect or None. Relative if not None.
@@ -43,6 +44,7 @@ class BaseContent():
         path: Path object.
         storage: Storage object.
         data: Used for POST.
+        conv: Converter function. conv(s) returns html converted string.
     """
 
     redirect_r = None
@@ -85,7 +87,7 @@ Not needed when only <link> is used for stylesheets. -->
     type = "text/html; charset=utf-8"
     filename = None
 
-    def __init__(self, storage, path_, wikiname, data=None):
+    def __init__(self, storage, path_, wikiname, conv, data=None):
         """Initialize.
 
         Args:
@@ -93,11 +95,13 @@ Not needed when only <link> is used for stylesheets. -->
             storage: Storage handler object.
             wikiname: String of name of wiki.
             data: When posting data this val is used.
+            conv: Function convert md into html.
         """
         self.storage = storage
         self.path = path_
         self.wikiname = wikiname
         self.data = data
+        self.conv = conv
 
         self.pagename = path_.path
         self.main()
@@ -168,7 +172,8 @@ Go <input type="text" name="name" value="" />
             self.init_as_style()
             return
 
-        if self.path.path.endswith("/"):
+        if not self.path.base:
+            # path.path ends with "/".
             try:
                 self.init_as_page("index")
             except exc.PageNameError:
@@ -176,9 +181,9 @@ Go <input type="text" name="name" value="" />
             return
 
         try:
-            self.init_as_page(self.path.base)
+            self.init_as_page()
         except exc.PageNameError:
-            if self.storage.isdir(self.path):
+            if self.storage.isdir(self.path.path):
                 self.redirect_r = self.path.base + "/"
                 return
             else:
@@ -187,33 +192,49 @@ Go <input type="text" name="name" value="" />
 
     def init_as_style(self):
         try:
-            self.content_raw = self.storage.load(self.path)
+            self.content_raw = self.storage.load((self.path.dir,
+                                                  self.path.base),
+                                                 dtype="style")
         except exc.PageNotFoundError:
             self.content_raw = ""
         else:
-            self.mtime = self.storage.getmtime(self.path)
+            self.mtime = self.storage.getmtime((self.path.dir, self.path.base),
+                                               dtype="style")
         self.type = "text/css; charset=utf-8"
         return
 
-    def init_as_page(self, name):
-        cache = self.storage.load_cache(self.path)
+    def init_as_page(self, base=None):
+        if not base:
+            base = self.path.base
 
-        if cache:
+        page_mtime = self.storage.getmtime((self.path.dir, base), dtype=None)
+        cache_mtime = self.storage.getmtime((self.path.dir, base),
+                                            dtype="cache")
+
+        print(page_mtime)
+        print(cache_mtime)
+        if page_mtime and cache_mtime and page_mtime <= cache_mtime:
+            # t1 < t2 means t2 is newer than t1
+            cache = self.storage.load((self.path.dir, base), dtype="cache")
+            assert cache
             self.content_raw = cache
 
         else:
-            self.content = self.storage.load(self.path)
-            self.navigation = self.pagenav.format(name=name)
+            # cache is older
+            mdstr = self.storage.load((self.path.dir, base), dtype=None)
+            self.content = self.conv(mdstr)
+            self.navigation = self.pagenav.format(name=base)
             pid = os.fork()
             if pid == 0:
-                self.storage.save_cache(self.path, str(self))
+                self.storage.save((self.path.dir, base), str(self),
+                                  dtype="cache")
                 os._exit(0)
 
-        self.mtime = self.storage.getmtime(self.path)
+        self.mtime = page_mtime
         return
 
     def init_as_list(self):
-        ls = self.storage.listdir(self.path)
+        ls = self.storage.listdir(os.path.join(self.path.path, self.path.base))
         self.content = (
             "<h1>{path}</h1>\n".format(path=self.path.path) +
             "".join(
@@ -224,20 +245,20 @@ Go <input type="text" name="name" value="" />
         self.pagename = "list: " + self.path.path
         return
 
-def get(storage, path_, wikiname):
+def get(storage, path_, wikiname, conv):
     if path_.op == "":
-        return DefContent(storage, path_, wikiname)
+        return DefContent(storage, path_, wikiname, conv)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
-            return op.ContentGET(storage, path_, wikiname)
+            return op.ContentGET(storage, path_, wikiname, conv)
         except AttributeError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 
-def post(storage, path_, wikiname, data):
+def post(storage, path_, wikiname, conv, data):
     """Post data.
 
     Args:
@@ -248,6 +269,6 @@ def post(storage, path_, wikiname, data):
     except ImportError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))
     try:
-        return op.ContentPOST(storage, path_, wikiname, data)
+        return op.ContentPOST(storage, path_, wikiname, conv, data)
     except AttributeError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))

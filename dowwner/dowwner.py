@@ -26,17 +26,27 @@ class Dowwner():
         self.storage = File(rootdir)
         self.name = os.path.basename(rootdir)
         self.debug = debug
+        self.__md = None
         return
 
     def get(self, pathstr, query):
         """Return content object for request handler."""
         p = Path(pathstr, query)
-        return dowwner.op.get(self.storage, p, self.name)
+        return dowwner.op.get(self.storage, p, self.name, self.md2html)
 
     def post(self, pathstr, query, data):
         """Return content object for request handler."""
         p = Path(pathstr, query)
-        return dowwner.op.post(self.storage, p, self.name, data)
+        return dowwner.op.post(self.storage, p, self.name, self.md2html, data)
+
+    def md2html(self, mdstr):
+        if self.__md is None:
+            from dowwner.markdown import Markdown
+            self.__md = Markdown()
+        else:
+            self.__md.reset()
+        print("conversion occured")
+        return self.__md.convert(mdstr)
 
     @staticmethod
     def __time2str(t):
@@ -52,7 +62,7 @@ class Dowwner():
         Returns:
             Tuple of (status, message, redirect, headers, content).
         """
-        # todo: use correct http status code for redirect
+        # TODO: use correct http status code for redirect
         headers = dict()
         try:
             c = getattr(self, met.lower())(*args, **kargs)

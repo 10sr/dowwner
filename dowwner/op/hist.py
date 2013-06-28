@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Manage history."""
+"""History list."""
 
 import dowwner.op
 
@@ -9,7 +9,7 @@ class ContentGET(dowwner.op.BaseContent):
     baklink = """<a href=".bak.{name}">{name}</a><br />\n"""
 
     def main(self):
-        ls = self.storage.lshist(self.path)
+        ls = self.storage.lshist((self.path.dir, self.path.base))
         self.content = ("<h1>hist: {path}</h1>\n".format(path=self.path.path) +
                         "".join(self.baklink.format(name=i) for i in ls))
 

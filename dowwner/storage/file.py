@@ -5,8 +5,9 @@ import os.path
 from time import strftime
 
 from dowwner import exc
+from dowwner import storage
 
-class File():
+class File(storage.BaseStorage):
     """File and directory Storage handler."""
 
     FILE_SUFFIX = ".md"
@@ -37,14 +38,26 @@ class File():
         assert fpath.startswith(self.rootdir)
         return fpath
 
-    def isdir(self, path_):
+    def isdir(self, pathstr):
         "Return True if directory named path exists."
-        return os.path.isdir(self.__gen_fullpath(path_.path))
+        return os.path.isdir(self.__gen_fullpath(pathstr))
 
-    def listdir(self, path_):
-        """Return list of pages in path_. When dir not found, return []."""
+    def __gen_pagepath(self, patht, dtype=None):
+        """Return string of page path."""
+        if dtype == "style":
+            return os.path.join(self.__gen_fullpath(patht[0]),
+                                patht[1] + self.STYLE_SUFFIX)
+        elif dtype:
+            return os.path.join(self.__gen_fullpath(patht[0]),
+                                ".".join(("", dtype, patht[1])))
+        else:
+            return os.path.join(self.__gen_fullpath(patht[0]),
+                                patht[1] + self.FILE_SUFFIX)
+
+    def listdir(self, pathstr):
+        """Return list of pages in pathstr. When dir not found, return []."""
         items = []
-        fullpath = self.__gen_fullpath(path_.path)
+        fullpath = self.__gen_fullpath(pathstr)
 
         try:
             with open(os.path.join(fullpath, self.LIST_FILE)) as fo:
@@ -57,23 +70,12 @@ class File():
 
         return [f for f in ls if f]
 
-    def __md2html(self, s):
-        if self.__md is None:
-            from dowwner.markdown import Markdown
-            self.__md = Markdown()
-        return self.__md.convert(s)
-
-    def load(self, path_, raw=False):
-        """Load file.
-
-        If path_.isstyle == True, always return raw contents of path_,
-        otherwise return contents as html if raw == False.
-        If path_.path ends with slash, try to load "index" page.
+    def load(self, patht, dtype=None):
+        """Load data.
 
         Args:
-            path_: Path object.
-            raw: False to convert to html. Used to get original text for edit
-                page.
+            patht: Tuple of path like (dir, base).
+            dtype: String of type of data.
 
         Returns:
             String of content.
@@ -82,51 +84,19 @@ class File():
              dowwner.exc.PageNotFoundError
              dowwner.exc.NotADirectoryError
         """
-        if path_.isstyle:
-            fpath = self.__gen_fullpath(path_.path) + self.STYLE_SUFFIX
-            try:
-                with open(fpath, encoding="utf-8") as f:
-                    s = f.read()
-            except EnvironmentError as e:
-                if e.errno == 2:
-                    raise exc.PageNotFoundError(
-                        "{}: No such page".format(path_.path))
-                else:
-                    raise
-            return s
-
-        if path_.path.endswith("/"):
-            base = "index" + self.FILE_SUFFIX
-        else:
-            base = path_.base + self.FILE_SUFFIX
-
-        fdir = self.__gen_fullpath(path_.dir)
-        mdpath = os.path.join(fdir, base)
-
-        if raw:
-            try:
-                with open(mdpath, encoding="utf-8") as f:
-                    s = f.read()
-            except EnvironmentError as e:
-                if e.errno == 2:
-                    raise exc.PageNotFoundError(
-                        "{}: No such page".format(path_.path))
-                elif e.errno == 20:
-                    raise exc.NotADirectoryError
-                else:
-                    raise
-            return s
-
+        fpath = self.__gen_pagepath(patht, dtype)
         try:
-            with open(mdpath, encoding="utf-8") as f:
-                md = f.read()
+            with open(fpath, encoding="utf-8") as f:
+                s = f.read()
         except EnvironmentError as e:
             if e.errno == 2:
                 raise exc.PageNotFoundError(
-                    "{}: No such page".format(path_.path))
+                    "{}/{}: No such page".format(*patht))
+            elif e.errno == 20:
+                raise exc.NotADirectoryError
             else:
                 raise
-        return self.__md2html(md)
+        return s
 
     def __update_list(self, relpath):
         """Create .list files recursively."""
@@ -169,7 +139,7 @@ class File():
             return self.__update_list(os.path.normpath(os.path.join(relpath,
                                                                     "..")))
 
-    def save(self, path_, data):
+    def save(self, patht, data, dtype=None):
         """Save file with data.
 
         This method creates all subdirectories if needed to save files.
@@ -177,75 +147,67 @@ class File():
         and parent directories.
 
         Args:
-            path_: Path object.
+            patht: Tuple of path like (dir, base).
             data: String of data.
+            dtype: String representing type of data.
         """
-        if self.isdir(path_):
-            pathstr = os.path.join(path_.path, "index" + self.FILE_SUFFIX)
-        elif path_.isstyle:
-            pathstr = path_.path = self.STYLE_SUFFIX
-        else:
-            pathstr = path_.path + self.FILE_SUFFIX
-        fullpath = self.__gen_fullpath(pathstr)
+        fpath = self.__gen_pagepath(patht, dtype)
 
         try:
-            os.makedirs(os.path.dirname(fullpath))
+            os.makedirs(os.path.dirname(fpath))
         except OSError as e:
             if e.errno != 17: # 17 means file exists
                 raise
 
-        file_existed = os.access(fullpath, os.F_OK)
+        file_existed = os.access(fpath, os.F_OK)
 
-        with open(fullpath, mode="w", encoding="utf-8") as f:
+        with open(fpath, mode="w", encoding="utf-8") as f:
             f.write(data)
 
+        if dtype:
+            # if not ordinal page
+            return True
+
         if not file_existed:
-            self.__update_list(path_.dir)
+            self.__update_list(patht[0])
 
         pid = os.fork()
         if pid == 0:            # child
-            self.__backup(path_)
+            self.__backup(patht)
             os._exit(0)
         return True
 
-    def rm(self, path_):
+    def rm(self, patht, dtype=None):
         """Remove page.
 
         Raises:
             dowwner.exc.PageNotFoundError
         """
         try:
-            os.remove(self.__gen_fullpath(path_.path) + self.FILE_SUFFIX)
+            os.remove(self.__gen_pagepath(patht, dtype))
         except EnvironmentError as e:
             if e.errno == 2:
                 raise exc.PageNotFoundError(
-                    "{}: No such page".format(path_.path))
+                    "{}/{}: No such page".format(*patht))
             else:
                 raise
-        self.__update_list(path_.dir)
+        self.__update_list(patht[0])
         return
 
-    def getmtime(self, path_):
-        if path_.isstyle:
-            fullpath = self.__gen_fullpath(path_.path) + self.STYLE_SUFFIX
-        else:
-            # it is same logic used in load. should be in content class
-            if path_.path.endswith("/"):
-                base = "index" + self.FILE_SUFFIX
-            else:
-                base = path_.base + self.FILE_SUFFIX
-            fdir = self.__gen_fullpath(path_.dir)
-            fullpath = os.path.join(fdir, base)
+    def getmtime(self, patht, dtype=None):
+        """Get last modified time. If not available return None."""
+        fpath = self.__gen_pagepath(patht, dtype)
 
         try:
-            return os.stat(fullpath).st_mtime
+            return os.stat(fpath).st_mtime
         except OSError as e:
             if e.errno == 2:
-                if self.isdir(path_):
-                    return None
-                else:
-                    raise exc.PageNotFoundError(
-                        "{}: Page not found".format(path_.path))
+                return None
+                # if self.isdir(os.path.join(*patht)):
+                #     return None
+                # else:
+                #     raise exc.PageNotFoundError(
+                #         "{}/{}: Page not found".format(*patht))
             else:
                 raise
 
@@ -255,19 +217,19 @@ class File():
     def __current_time():
         return strftime("%Y%m%d_%H%M%S")
 
-    def __backup_gen_fullpath(self, path_):
+    def __backup_gen_fullpath(self, patht):
         """Generate and return fullpath of target for backup,
         which is like /full/path/.20130216_193548.name.md.bak .
         """
         timestr = self.__current_time()
-        fpath = self.__gen_fullpath(os.path.join(path_.dir,
+        fpath = self.__gen_fullpath(os.path.join(patht[0],
                                                  ("." + timestr + "." +
-                                                  path_.base +
+                                                  patht[1] +
                                                   self.FILE_SUFFIX +
                                                   self.BAK_SUFFIX)))
         return fpath
 
-    def __backup(self, path_):
+    def __backup(self, patht):
         """Backup file.
 
         This should be called everytime files are modified.
@@ -277,14 +239,14 @@ class File():
             Fullpath of backup file or None if no file to backup.
 
         Raises:
-            dowwner.exc.PageNameError: path_ indicates directory.
+            dowwner.exc.PageNameError: patht indicates directory.
         """
         # todo: this method should be operated atomic way
-        if path_.base == "":
+        if patht[1] == "":
             raise exc.PageNameError(
-                "{}: Cannot backup directory".format(path_.path))
+                "{}: Cannot backup directory".format(patht[0]))
 
-        newpath = self.__gen_fullpath(path_.path) + self.FILE_SUFFIX
+        newpath = self.__gen_pagepath(patht)
 
         try:
             with open(newpath, mode="rb") as f:
@@ -292,16 +254,16 @@ class File():
         except EnvironmentError as e:
             if e.errno == 2:
                 raise exc.PageNotFoundError(
-                    "{}: Page not found".format(path_.path))
+                    "{}/{}: Page not found".format(*patht))
             else:
                 raise
 
         try:
-            latestbase = self.lshist(path_)[0]
+            latestbase = self.lshist(patht)[0]
         except IndexError:
             latestpath = None
         else:
-            latestpath = os.path.join(self.__gen_fullpath(path_.dir),
+            latestpath = os.path.join(self.__gen_fullpath(patht[0]),
                                       "".join((".", latestbase,
                                                self.FILE_SUFFIX,
                                                self.BAK_SUFFIX)))
@@ -313,70 +275,66 @@ class File():
             if newb == latestb:
                 return None
 
-        targetpath = self.__backup_gen_fullpath(path_)
+        targetpath = self.__backup_gen_fullpath(patht)
         with open(targetpath, mode="wb") as f:
             f.write(newb)
         return newpath
 
-    def lshist(self, path_):
+    def lshist(self, patht):
         """Return list of history files.
 
         Returns:
-            If path_ indicates directory, returns the list of names of backups
+            If patht indicates directory, returns the list of names of backups
             of all files in that directory. Otherwise, returns those of the
-            file of path_.
+            file of patht.
             Values returned are used to load backup file with self.load_bak().
         """
         l = []
 
         suffix = self.FILE_SUFFIX + self.BAK_SUFFIX
         neg_suffix_len = len(suffix) * (-1)
-        if path_.base:
-            suffix = "." + path_.base + suffix
+        if patht[1]:
+            suffix = "." + patht[1] + suffix
 
         try:
-            ls = os.listdir(self.__gen_fullpath(path_.dir))
+            ls = os.listdir(self.__gen_fullpath(patht[0]))
         except EnvironmentError as e:
             if e.errno == 20:
                 return []
             else:
                 raise
 
-        for f in os.listdir(self.__gen_fullpath(path_.dir)):
+        for f in os.listdir(self.__gen_fullpath(patht[0])):
             if f.endswith(suffix):
                 l.append(f[1:neg_suffix_len]) # remove first dot and suffixes
         l.sort(reverse=True)                  # latest first
 
         return l
 
-    def load_bak(self, path_, raw=False):
+    def load_bak(self, patht):
         """Load backed up file.
 
-        Basename of path_ is decided by the return of self.lshist().
+        patht[1] is decided by the return of self.lshist().
 
         Returns:
-            String of content of path_, as html if raw == True.
+            String of content of patht.
 
         Raises:
             dowwner.exc.PageNameError
         """
-        fulldir = self.__gen_fullpath(path_.dir)
+        fulldir = self.__gen_fullpath(patht[0])
         fullpath = os.path.join(fulldir,
-                                "".join((".", path_.base, self.FILE_SUFFIX,
+                                "".join((".", patht[1], self.FILE_SUFFIX,
                                          self.BAK_SUFFIX)))
         try:
             with open(fullpath, encoding="utf-8") as f:
                 s = f.read()
         except EnvironmentError as e:
             if e.errno == 2:
-                raise exc.PageNameError("{}: No such page".format(path_.path))
+                raise exc.PageNameError("{}/{}: No such page".format(*patht))
             else:
                 raise
-        if raw:
-            return s
-        else:
-            return self.__md2html(s)
-        return
+        return s
 
     def __ls_recursive(self, pathstr):
         l = []
@@ -391,15 +349,15 @@ class File():
                 l.append(os.path.join(pathstr, f))
         return l
 
-    def zip(self, path_):
-        """Create zip archive for dir path_ and return archive file as bytes."""
-        if not self.isdir(path_):
-            raise PageNameError("{}: Not a directory name".format(path_.path))
-        ls = self.__ls_recursive(path_.path)
+    def zip(self, pathstr):
+        """Create zip archive for dir pathstr and return archive file as bytes."""
+        if not self.isdir(pathstr):
+            raise PageNameError("{}: Not a directory name".format(pathstr))
+        ls = self.__ls_recursive(pathstr)
         # print(ls)
         oldpwd = os.getcwd()
         try:
-            os.chdir(os.path.join(self.__gen_fullpath(path_.path),
+            os.chdir(os.path.join(self.__gen_fullpath(pathstr),
                                   ".."))
             rells = (os.path.relpath(self.__gen_fullpath(f)) for f in ls)
             f = self.__zip_files(rells)
@@ -446,54 +404,3 @@ class File():
                 return self.__zip_files_python(l1)
             else:
                 raise
-
-    # functions for cache
-
-    def __gen_cachepath(self, path_):
-        if path_.path.endswith("/"):
-            base = "index"
-        else:
-            base = path_.base
-        return os.path.join(self.__gen_fullpath(path_.dir),
-                            self.CACHE_PREFIX + base + self.CONV_SUFFIX)
-
-    def save_cache(self, path_, data):
-        with open(self.__gen_cachepath(path_), mode="w", encoding="utf-8") as f:
-            f.write(data)
-        return
-
-    @staticmethod
-    def __is_file_newer(f1, f2):
-        """Return True if f1 exists and is same age newer than f2.
-
-        Raises:
-            dowwner.exc.PageNotFoundError: f2 not exists"""
-        try:
-            t2 = os.path.getmtime(f2)
-        except EnvironmentError as e:
-            if e.errno == 2:
-                raise exc.PageNotFoundError("{}: No such file".format(f2))
-        try:
-            t1 = os.path.getmtime(f1)
-        except EnvironmentError as e:
-            if e.errno == 2:
-                return False
-            else:
-                raise
-        return t1 >= t2
-
-    def load_cache(self, path_):
-        cachepath = self.__gen_cachepath(path_)
-        if self.isdir(path_):
-            base = "index"
-        else:
-            base = path_.base
-        fullpath = os.path.join(self.__gen_fullpath(path_.dir),
-                                base + self.FILE_SUFFIX)
-
-        if self.__is_file_newer(cachepath, fullpath):
-            with open(cachepath, encoding="utf-8") as f:
-                s = f.read()
-        else:
-            s = None
-        return s

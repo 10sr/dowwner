@@ -20,14 +20,9 @@ class ContentGET(dowwner.op.BaseContent):
 </form>"""
 
     def main(self, orig=None, target=None):
-        """
-        Args:
-            storage: Storage object.
-            path_: Path object.
-        """
         if orig is None or self.path.isstyle:
             try:
-                orig = self.storage.load(self.path, True)
+                orig = self.storage.load((self.path.dir, self.path.base))
             except exc.PageNotFoundError:
                 orig = ""
 

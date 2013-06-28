@@ -13,12 +13,8 @@ class ContentGET(dowwner.op.BaseContent):
 </p>"""
 
     def main(self):
-        """
-        Args:
-            storage: Storage object.
-            path_: Path object.
-        """
-        self.content = self.storage.load_bak(self.path)
+        self.content = self.conv(self.storage.load_bak((self.path.dir,
+                                                        self.path.base)))
         self.navigation = self.baknav.format(
             basename=self.path.base.rpartition(".")[2],
             name=self.path.base)
