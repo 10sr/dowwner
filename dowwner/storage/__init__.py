@@ -18,8 +18,6 @@ class BaseStorage():
     def load(self, patht, dtype=None):
         """Load page.
 
-        If path_.path ends with slash, try to load "index" page.
-
         Args:
             patht: Tuple of path like (dir, base).
             dtype: String of type of data. Currently possible values are None,
@@ -53,7 +51,7 @@ class BaseStorage():
         raise NotImplementedError
 
     def getmtime(self, patht, dtype=None):
-        """Get last modified time of path_.
+        """Get last modified time of patht.
 
         Returns:
             Time representing mtime of patht in the same format as time.time()
@@ -84,7 +82,7 @@ class BaseStorage():
         Basename of path_ is decided by the return of self.lshist().
 
         Returns:
-            String of content of path_.
+            String of content of patht.
 
         Raises:
             dowwner.exc.PageNameError
@@ -95,6 +93,18 @@ class BaseStorage():
 
     def zip(self, pathstr):
         """Create zip archive for dir pathstr and return archive file as bytes."""
+        raise NotImplementedError
+
+    def search(self, words, pathstr):
+        """Search words from pathstr.
+
+        Args:
+            words: Iterable of word to search
+            pathstr: String of path to search for words
+
+        Returns:
+            Iterable of iterable like (pathstr, matched_line) .
+        """
         raise NotImplementedError
 
     # methods for cache

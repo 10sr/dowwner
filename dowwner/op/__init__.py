@@ -159,14 +159,17 @@ class DefContent(BaseContent):
 <a href=".list">List</a>
 </p>"""
 
-    dirnav = """ <form action=".go" method="get">
+    dirnav = """ <form action=".query" method="get">
 <a href=".hist">History</a>
 <a href=".edit.style.css">EditStyle</a>
 <a href=".xheaders">ExtraHeaders</a>
 <a href=".zip">Zip</a>
 |
-Go <input type="text" name="name" value="" />
-</form>"""
+<input type="text" name="q" value="" />
+<input type="submit" name="t" value="Go" />
+<input type="submit" name="t" value="Search" />
+</form>
+"""
 
     def main(self):
         if self.path.isstyle:
@@ -212,10 +215,9 @@ Go <input type="text" name="name" value="" />
         cache_mtime = self.storage.getmtime((self.path.dir, base),
                                             dtype="cache")
 
-        print(page_mtime)
-        print(cache_mtime)
         if page_mtime and cache_mtime and page_mtime <= cache_mtime:
             # t1 < t2 means t2 is newer than t1
+            # larger time means newer
             cache = self.storage.load((self.path.dir, base), dtype="cache")
             assert cache
             self.content_raw = cache
