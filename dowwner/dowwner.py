@@ -45,7 +45,6 @@ class Dowwner():
             self.__md = Markdown()
         else:
             self.__md.reset()
-        print("conversion occured")
         return self.__md.convert(mdstr)
 
     @staticmethod

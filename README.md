@@ -73,14 +73,14 @@ suffix `.css`.
 
 ### Directory
 
-Wiki pages are not flat. When creating pages like `dir/page`, directory named
-`dir` is created automatically and `page` is placed under `dir`, and directories
-are hidden when no pages exist in that directories.
+Dowwner pages make directory tree. When creating pages like `dir/page`,
+directory named `dir` is created automatically and `page` is placed under `dir`.
+Directories are hidden when no pages and directories exist in that directories.
 
 
 ### Index Page
 
-If the page named `index` exists in a directory, dowwner use that when only the
+If the page named `index` exists in a directory, dowwner shows it when only the
 directory name is specified.
 Otherwise, dowwner shows the list of pages in the directory. This list can be
 accessed explicitly with `.list`.
@@ -104,6 +104,12 @@ You can create and edit `style.css` from `.list` page. Additionally, you can
 create `common.css` in the root directory. `common.css` is same for all
 directories, whereas `style.css`s are different for each directory. You cannot
 create or edit `common.css` from the web interface.
+
+
+### Search
+
+Textbox for searching word is at the bottom of pages and you can search current
+directory for word.
 
 
 

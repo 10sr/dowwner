@@ -152,17 +152,20 @@ Not needed when only <link> is used for stylesheets. -->
 class DefContent(BaseContent):
     """Class used when path has no operator."""
 
-    pagenav = """<p>
+    pagenav = """<form action=".query" method="get">
 <a href=".edit.{name}">Edit</a>
 <a href=".hist.{name}">History</a>
 |
 <a href=".list">List</a>
-</p>"""
+<input type="text" name="q" value="" />
+<input type="submit" name="t" value="Go" />
+<input type="submit" name="t" value="Search" />
+</form>"""
 
     dirnav = """ <form action=".query" method="get">
 <a href=".hist">History</a>
 <a href=".edit.style.css">EditStyle</a>
-<a href=".xheaders">ExtraHeaders</a>
+<!-- a href=".xheaders">ExtraHeaders</a -->
 <a href=".zip">Zip</a>
 |
 <input type="text" name="q" value="" />
