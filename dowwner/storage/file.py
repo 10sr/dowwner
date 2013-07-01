@@ -424,3 +424,23 @@ class File(storage.BaseStorage):
                 return self.__zip_files_python(l1)
             else:
                 raise
+
+    def search(self, word, pathstr):
+        if False and os.system("sh -c 'grep --help' >/dev/null 2>&1") == 0:
+            return self.__search_grep(word, pathstr)
+        else:
+            return self.__search_native(word, pathstr)
+        return [["f", "content"]]
+
+    def __search_native(self, word, pathstr):
+        fulldirpath = self.__gen_fullpath(pathstr)
+        for e in self.listdir(pathstr):
+            if e.endswith("/"):
+                continue
+            fullpath = os.path.join(fulldirpath, e + self.FILE_SUFFIX)
+            with open(fullpath) as f:
+                for line in f:
+                    if word in line:
+                        yield [e, line]
+                        continue
+        raise StopIteration
