@@ -24,7 +24,7 @@ Run:
 
     ./setup.py install
 
-and command `dowwner` is installed. Or you can just create simlink of
+to install command `dowwner`. Or you can just create simlink of
 `bin/dowwner` and put it into your prefered directory like `$HOME/bin` or
 `$HOME/.local/bin`. When you just want a try, running `bin/dowwner`
 directly also works.
@@ -160,12 +160,10 @@ wiki read-only for anonymous access.
 TODOs
 -----
 
-* Search support
 * Menu
 * More usable access control for server mode (currently accesses only from
 127.0.0.1 are allowed)
 * Fix http headers if needed
-* Handle errors properly and return correct http status
 * Use logger
 
 
