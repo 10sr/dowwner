@@ -17,7 +17,7 @@ class File(storage.BaseStorage):
     CACHE_PREFIX = ".cache."
     LIST_FILE = ".list"
 
-    __md = None
+    __search_func = None
 
     def __init__(self, rootdir):
         """Initialize File.
@@ -425,14 +425,33 @@ class File(storage.BaseStorage):
             else:
                 raise
 
-    def search(self, word, pathstr):
-        if False and os.system("sh -c 'grep --help' >/dev/null 2>&1") == 0:
-            return self.__search_grep(word, pathstr)
-        else:
-            return self.__search_native(word, pathstr)
-        return [["f", "content"]]
+    def search(self, word, pathstr, listall=False):
+        if self.__search_func is None:
+            if os.system("sh -c 'grep --help' >/dev/null 2>&1") == 0:
+                self.__search_func = self.__search_grep
+            else:
+                self.__search_func = self.__search_native
+        return self.__search_func(word, pathstr, listall)
 
-    def __search_native(self, word, pathstr):
+    def __search_grep(self, word, pathstr, listall=False):
+        from subprocess import Popen, PIPE
+        fulldirpath = self.__gen_fullpath(pathstr)
+        files = [os.path.join(fulldirpath, e + self.FILE_SUFFIX)
+                 for e in self.listdir(pathstr) if not e.endswith("/")]
+        grep_command = ["grep", "--with-filename", "--line-number"]
+        if not listall:
+            grep_command.append("--max-count=1")
+        grep_p = Popen(grep_command + [word] + files, stdout=PIPE, stderr=PIPE)
+        grep_result = grep_p.communicate()[0].decode("utf-8")
+        for line in grep_result.splitlines():
+            if not line:
+                continue
+            f, sep, line = line.partition(":")
+            num, sep, line = line.partition(":")
+            yield [os.path.basename(f)[:-3], line]
+        raise StopIteration
+
+    def __search_native(self, word, pathstr, listall=False):
         fulldirpath = self.__gen_fullpath(pathstr)
         for e in self.listdir(pathstr):
             if e.endswith("/"):
@@ -442,5 +461,6 @@ class File(storage.BaseStorage):
                 for line in f:
                     if word in line:
                         yield [e, line]
-                        break
+                        if not listall:
+                            break
         raise StopIteration

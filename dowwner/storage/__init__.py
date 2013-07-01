@@ -95,12 +95,13 @@ class BaseStorage():
         """Create zip archive for dir pathstr and return archive file as bytes."""
         raise NotImplementedError
 
-    def search(self, words, pathstr):
+    def search(self, words, pathstr, listall=False):
         """Search words from pathstr.
 
         Args:
             words: Iterable of word to search
             pathstr: String of path to search for words
+            listall: False to list only first matched line for each file
 
         Returns:
             Iterable of iterable like (pathstr, matched_line) .
