@@ -20,11 +20,13 @@ class ContentGET(dowwner.op.BaseContent):
         return
 
     def __query_search(self, query):
+        from html import escape
         search_result = self.storage.search(query, self.path.dir)
         self.content = (
             "<ul>\n" +
             "\n".join(
-                """<li><a href="{0}">{0}</a>: {1}</li>""".format(e[0], e[1])
+                """<li><a href="{0}">{0}</a>: {1}</li>""".format(e[0],
+                                                                 escape(e[1]))
                 for e in search_result
             ) +
             "</ul>\n"

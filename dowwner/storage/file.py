@@ -442,5 +442,5 @@ class File(storage.BaseStorage):
                 for line in f:
                     if word in line:
                         yield [e, line]
-                        continue
+                        break
         raise StopIteration
