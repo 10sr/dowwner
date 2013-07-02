@@ -169,8 +169,8 @@ class DefContent(BaseContent):
 <a href=".zip">Zip</a>
 |
 <input type="text" name="q" value="" />
-<input type="submit" name="t" value="Go" />
 <input type="submit" name="t" value="Search" />
+<input type="submit" name="t" value="Go" />
 </form>
 """
 
