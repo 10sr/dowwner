@@ -29,13 +29,26 @@ class Dowwner():
         self.__md = None
         return
 
-    def get(self, pathstr, query):
-        """Return content object for request handler."""
+    def get(self, pathstr, query, cachetime=None):
+        """Return content object for request handler.
+
+        Args:
+            pathstr: String of path
+            query: String of query
+            cachetime: time string of if-modified-since
+        """
         p = Path(pathstr, query)
-        return dowwner.op.get(self.storage, p, self.name, self.md2html)
+        return dowwner.op.get(self.storage, p, self.name, self.md2html,
+                              (self.__str2time(cachetime) if cachetime else 0))
 
     def post(self, pathstr, query, data):
-        """Return content object for request handler."""
+        """Return content object for request handler.
+
+        Args:
+            pathstr: String of path
+            query: String of query
+            data: data to post
+        """
         p = Path(pathstr, query)
         return dowwner.op.post(self.storage, p, self.name, self.md2html, data)
 
@@ -49,11 +62,13 @@ class Dowwner():
 
     @staticmethod
     def __time2str(t):
+        """Convert epoch time into HTTP time string."""
         return time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.gmtime(t))
 
     @staticmethod
     def __str2time(s):
-        return
+        """Convert HTTP time string into epoch time."""
+        return time.mktime(time.strptime(s, "%a, %d %b %Y %H:%M:%S %Z"))
 
     def req_http(self, met, *args, **kargs):
         """Handle http request.
@@ -66,27 +81,36 @@ class Dowwner():
         try:
             c = getattr(self, met.lower())(*args, **kargs)
 
-        except Exception as e:
-            if isinstance(e, exc.PageNameError):
-                status = 404
-                message = e.short
-            else:
-                status = 500
-                message = "Internal server error"
-            if self.debug:
-                content = b"".join((
-                    b"<pre><code>",
-                    html.escape(
-                        "".join(format_exception(
-                            *sys.exc_info()))).encode("utf-8"),
-                    b"</code></pre>"))
-            else:
-                content = message.encode("utf-8")
+        except (exc.DowwnerBaseException, Exception) as e:
+            if isinstance(e, exc.PageNotModified):
+                status = 304
+                message = "Not modified"
+                content = b""
+
+            else:               # exception is not PageNotModified
+                if isinstance(e, exc.PageNameError):
+                    status = 404
+                    message = e.short
+                else:
+                    status = 500
+                    message = "Internal server error"
+
+                if self.debug:
+                    content = b"".join((
+                        b"<pre><code>",
+                        html.escape(
+                            "".join(format_exception(
+                                *sys.exc_info()))).encode("utf-8"),
+                        b"</code></pre>"))
+                else:           # not self.debug
+                    content = message.encode("utf-8")
+
+                logger = logging.getLogger(__name__)
+                # logger.exception(message)
+
             headers["Content-Type"] = "text/html; charset=utf-8"
             redirect = None
 
-            logger = logging.getLogger(__name__)
-            logger.exception(message)
 
         else:
             content = bytes(c)

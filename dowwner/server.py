@@ -45,7 +45,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             return
 
         pathstr, q, query = self.path.partition("?")
-        return self.__do("GET", pathstr, query)
+        try:
+            cachetime = self.headers["If-Modified-Since"]
+        except KeyError:
+            cachetime = None
+        return self.__do("GET", pathstr, query, cachetime)
 
     def __do(self, met, *args, **kargs):
         if met.lower() == "head":
@@ -104,7 +108,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         data = self.rfile.read(length)
         pathstr, q, query = self.path.partition("?")
 
-        return self.__do("POST", pathstr, query, data)
+        return self.__do("POST", pathstr, query, data=data)
 
 class DowwnerHTTPS(HTTPServer):
     server_version = "Dowwner/" + __version__

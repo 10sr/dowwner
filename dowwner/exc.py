@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-class DowwnerException(Exception):
+class DowwnerBaseException(BaseException):
+    pass
+
+class DowwnerException(DowwnerBaseException):
     pass
 
 
@@ -17,7 +20,11 @@ class OperatorError(PageNameError):
     short = "Invalid operator"
 
 
-class Redirection(DowwnerException):
+class PageNotModified(DowwnerBaseException):
+    pass
+
+
+class Redirection(DowwnerBaseException):
     def __init__(self, url):
         self.url = url
         return

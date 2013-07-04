@@ -28,7 +28,7 @@ class BaseContent():
     Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
-        mtime: Last modified time or None.
+        mtime: Last modified time in epoch format or None.
 
         content: Html of content of page.
         navigation: Html of navigation menu.
@@ -43,6 +43,7 @@ class BaseContent():
     Internal readonly attributes:
         path: Path object.
         storage: Storage object.
+        cachetime: If-Modified-Since value passed from client
         data: Used for POST.
         conv: Converter function. conv(s) returns html converted string.
     """
@@ -87,7 +88,7 @@ Not needed when only <link> is used for stylesheets. -->
     type = "text/html; charset=utf-8"
     filename = None
 
-    def __init__(self, storage, path_, wikiname, conv, data=None):
+    def __init__(self, storage, path_, wikiname, conv, data=None, cachetime=0):
         """Initialize.
 
         Args:
@@ -102,6 +103,7 @@ Not needed when only <link> is used for stylesheets. -->
         self.wikiname = wikiname
         self.data = data
         self.conv = conv
+        self.cachetime = cachetime
 
         self.pagename = path_.path
         self.main()
@@ -198,15 +200,17 @@ class DefContent(BaseContent):
         return
 
     def init_as_style(self):
+        self.mtime = self.storage.getmtime((self.path.dir, self.path.base),
+                                           dtype="style")
+        if self.mtime and self.mtime <= self.cachetime:
+            raise exc.PageNotModified
+
         try:
             self.content_raw = self.storage.load((self.path.dir,
                                                   self.path.base),
                                                  dtype="style")
         except exc.PageNotFoundError:
             self.content_raw = ""
-        else:
-            self.mtime = self.storage.getmtime((self.path.dir, self.path.base),
-                                               dtype="style")
         self.type = "text/css; charset=utf-8"
         return
 
@@ -218,7 +222,9 @@ class DefContent(BaseContent):
         cache_mtime = self.storage.getmtime((self.path.dir, base),
                                             dtype="cache")
 
-        if page_mtime and cache_mtime and page_mtime <= cache_mtime:
+        if page_mtime and page_mtime <= self.cachetime:
+            raise exc.PageNotModified
+        elif page_mtime and cache_mtime and page_mtime <= cache_mtime:
             # t1 < t2 means t2 is newer than t1
             # larger time means newer
             cache = self.storage.load((self.path.dir, base), dtype="cache")
@@ -251,16 +257,16 @@ class DefContent(BaseContent):
         self.pagename = "list: " + self.path.path
         return
 
-def get(storage, path_, wikiname, conv):
+def get(storage, path_, wikiname, conv, cachetime=0):
     if path_.op == "":
-        return DefContent(storage, path_, wikiname, conv)
+        return DefContent(storage, path_, wikiname, conv, cachetime=cachetime)
     else:
         try:
             op = importlib.import_module("dowwner.op." + path_.op)
         except ImportError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
-            return op.ContentGET(storage, path_, wikiname, conv)
+            return op.ContentGET(storage, path_, wikiname, conv, mtime=mtime)
         except AttributeError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 
@@ -275,6 +281,6 @@ def post(storage, path_, wikiname, conv, data):
     except ImportError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))
     try:
-        return op.ContentPOST(storage, path_, wikiname, conv, data)
+        return op.ContentPOST(storage, path_, wikiname, conv, data=data)
     except AttributeError:
         raise exc.OperatorError("{}: Invalid operator".format(path_.op))
