@@ -28,7 +28,7 @@ class BaseContent():
     Internal attributes: Subclasses should overwrite these ones.
         redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
-        mtime: Last modified time or None.
+        mtime: Last modified time in epoch format or None.
 
         content: Html of content of page.
         navigation: Html of navigation menu.
@@ -236,6 +236,9 @@ class DefContent(BaseContent):
                                   dtype="cache")
                 os._exit(0)
 
+        print(page_mtime)
+        print(cache_mtime)
+        print(page_mtime)
         self.mtime = page_mtime
         return
 

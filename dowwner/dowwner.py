@@ -29,13 +29,25 @@ class Dowwner():
         self.__md = None
         return
 
-    def get(self, pathstr, query):
-        """Return content object for request handler."""
+    def get(self, pathstr, query, msince=None):
+        """Return content object for request handler.
+
+        Args:
+            pathstr: String of path
+            query: String of query
+            msince: epoch time of if-modified-since
+        """
         p = Path(pathstr, query)
         return dowwner.op.get(self.storage, p, self.name, self.md2html)
 
     def post(self, pathstr, query, data):
-        """Return content object for request handler."""
+        """Return content object for request handler.
+
+        Args:
+            pathstr: String of path
+            query: String of query
+            data: data to post
+        """
         p = Path(pathstr, query)
         return dowwner.op.post(self.storage, p, self.name, self.md2html, data)
 
@@ -49,11 +61,13 @@ class Dowwner():
 
     @staticmethod
     def __time2str(t):
+        """Convert epoch time into HTTP time string."""
         return time.strftime("%a, %d %b %Y %H:%M:%S %Z", time.gmtime(t))
 
     @staticmethod
     def __str2time(s):
-        return
+        """Convert HTTP time string into epoch time."""
+        return time.mktime(time.strptime(s, "%a, %d %b %Y %H:%M:%S %Z"))
 
     def req_http(self, met, *args, **kargs):
         """Handle http request.
