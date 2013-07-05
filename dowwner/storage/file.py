@@ -10,11 +10,18 @@ from dowwner import storage
 class File(storage.BaseStorage):
     """File and directory Storage handler."""
 
+    # if filename...
+    # starts with "._":
+    #     saved using self.save with dtype is not None
+    # else starts with ".":
+    #     saved by File class
+    # else endswith ".md":
+    #     usual markdown file
+    # else endswith ".css":
+    #     stylesheet file
     FILE_SUFFIX = ".md"
     STYLE_SUFFIX = ".css"
     BAK_SUFFIX = ".bak"
-    CONV_SUFFIX = ".html"
-    CACHE_PREFIX = ".cache."
     LIST_FILE = ".list"
 
     __search_func = None
@@ -49,7 +56,7 @@ class File(storage.BaseStorage):
                                 patht[1] + self.STYLE_SUFFIX)
         elif dtype:
             return os.path.join(self.__gen_fullpath(patht[0]),
-                                ".".join(("", dtype, patht[1])))
+                                ".".join(("", "_" + dtype, patht[1])))
         else:
             return os.path.join(self.__gen_fullpath(patht[0]),
                                 patht[1] + self.FILE_SUFFIX)
