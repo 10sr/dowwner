@@ -14,7 +14,7 @@ def print_redirect(p):
                                            p))
     return
 
-def main(rootdir, debug=True):
+def main(rootdir, debug=False):
     if debug:
         import cgitb
         cgitb.enable()
@@ -37,13 +37,19 @@ def main(rootdir, debug=True):
     except KeyError:
         query = ""
 
+    try:
+        cachetime = os.environ["HTTP_IF_MODIFIED_SINCE"]
+    except KeyError:
+        cachetime = None
+
+
     met = os.environ["REQUEST_METHOD"]
 
     from dowwner.dowwner import Dowwner
     d = Dowwner(rootdir=rootdir, debug=debug)
 
     if met == "GET" or met == "HEAD":
-        c = d.req_http("get", pathstr, query)
+        c = d.req_http("get", pathstr, query, cachetime)
     elif met == "POST":
         form = cgi.FieldStorage(keep_blank_values=True)
         c = d.req_http("post", pathstr, query, form)
@@ -63,15 +69,18 @@ def main(rootdir, debug=True):
                                     redirect))
     print("", flush=True)
 
-    if met.lower() != "head":
+    if content and met.lower() != "head":
         sys.stdout.buffer.write(content)
+        if (debug and "Content-Type" in headers and
+            headers["Content-Type"].startswith("text_html")):
+            _debug()
         #_debug()
     return
 
 def _debug():
-    print("Status: 200 OK")
-    print("Content-Type: text/html")
-    print()
+    # print("Status: 200 OK")
+    # print("Content-Type: text/html")
+    # print()
     cgi.print_environ()
     cgi.print_environ_usage()
     cgi.print_directory()
