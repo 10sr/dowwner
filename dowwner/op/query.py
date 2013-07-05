@@ -9,7 +9,11 @@ class ContentGET(dowwner.op.BaseContent):
             t = self.path.query["t"][0]
         except KeyError:
             t = "Search"
-        query = self.path.query["q"][0]
+        try:
+            query = self.path.query["q"][0]
+        except KeyError:
+            self.content = "No search word given."
+            return
 
         if t == "Go":
             self.redirect_r = query

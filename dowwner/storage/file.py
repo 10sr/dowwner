@@ -436,25 +436,28 @@ class File(storage.BaseStorage):
     def __search_grep(self, word, pathstr, listall=False):
         from subprocess import Popen, PIPE
         fulldirpath = self.__gen_fullpath(pathstr)
-        files1 = self.listdir(pathstr)
+        files_all = [e for e in self.listdir(pathstr) if not e.endswith("/")]
 
         # first check page name
-        files2 = []
-        for f in files1:
+        files_grep = []
+        for f in files_all:
             if word in f:
                 yield [f, ""]
             else:
-                files2.append(f)
+                files_grep.append(f)
 
         if listall:
-            files2 = files1
-        files3 = [os.path.join(fulldirpath, e + self.FILE_SUFFIX)
-                 for e in files2 if not e.endswith("/")]
+            files_grep = files_all
+        if len(files_grep) == 0:
+            raise StopIteration
+        files_grep = [os.path.join(fulldirpath, e + self.FILE_SUFFIX)
+                      for e in files_grep]
 
         grep_command = ["grep", "--with-filename", "--line-number"]
         if not listall:
             grep_command.append("--max-count=1")
-        grep_p = Popen(grep_command + [word] + files3, stdout=PIPE, stderr=PIPE)
+        grep_p = Popen(grep_command + [word] + files_grep,
+                       stdout=PIPE, stderr=PIPE)
         grep_result = grep_p.communicate()[0].decode("utf-8")
         for line in grep_result.splitlines():
             if not line:
