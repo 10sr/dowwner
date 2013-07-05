@@ -22,11 +22,7 @@ class BaseContent():
     with attributes self.storage, self.path, self.wikiname, self.conv, self.data
     being set.
 
-    Attributes:
-        redirect: URL encoded path to redirect or None. Relative if not None.
-
     Internal attributes: Subclasses should overwrite these ones.
-        redirect_r: URL unencoded path to redirect or None.
         pagename: Name used for title of page.
         mtime: Last modified time in epoch format or None.
 
@@ -48,7 +44,6 @@ class BaseContent():
         conv: Converter function. conv(s) returns html converted string.
     """
 
-    redirect_r = None
     mtime = None
 
     __html_header = """<?xml version="1.0" encoding="UTF-8"?>
@@ -116,13 +111,6 @@ Not needed when only <link> is used for stylesheets. -->
         Subclasses must overwrite this method.
         """
         raise NotImplementedError
-
-    @property
-    def redirect(self):
-        if self.redirect_r is None:
-            return None
-        else:
-            return urllib.parse.quote(self.redirect_r, encoding="utf-8")
 
     def __bytes__(self):
         if self.content_bytes is None:
@@ -193,10 +181,10 @@ class DefContent(BaseContent):
             self.init_as_page()
         except exc.PageNameError:
             if self.storage.isdir(self.path.path):
-                self.redirect_r = self.path.base + "/"
+                raise exc.PermanentRedirection(self.path.base + "/")
                 return
             else:
-                self.redirect_r = ".edit." + self.path.base
+                raise exc.SeeOtherRedirection(".edit." + self.path.base)
         return
 
     def init_as_style(self):
@@ -266,7 +254,8 @@ def get(storage, path_, wikiname, conv, cachetime=0):
         except ImportError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
         try:
-            return op.ContentGET(storage, path_, wikiname, conv, mtime=mtime)
+            return op.ContentGET(storage, path_, wikiname, conv,
+                                 cachetime=cachetime)
         except AttributeError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
 

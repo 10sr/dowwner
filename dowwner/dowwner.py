@@ -85,9 +85,16 @@ class Dowwner():
             if isinstance(e, exc.PageNotModified):
                 status = 304
                 message = "Not modified"
-                content = b""
+                content = None
+                redirect = None
 
-            else:               # exception is not PageNotModified
+            elif isinstance(e, exc.Redirection):
+                status = e.status
+                message = e.short
+                redirect = e.url
+                content = bytes(str(e), encoding="utf-8")
+
+            else:
                 if isinstance(e, exc.PageNameError):
                     status = 404
                     message = e.short
@@ -95,6 +102,7 @@ class Dowwner():
                     status = 500
                     message = "Internal server error"
 
+                redirect = None
                 if self.debug:
                     content = b"".join((
                         b"<pre><code>",
@@ -106,21 +114,16 @@ class Dowwner():
                     content = message.encode("utf-8")
 
                 logger = logging.getLogger(__name__)
-                # logger.exception(message)
+                logger.exception(message)
 
-            headers["Content-Type"] = "text/html; charset=utf-8"
-            redirect = None
+                headers["Content-Type"] = "text/html; charset=utf-8"
 
 
-        else:
+        else:                   # no exception
             content = bytes(c)
-            redirect = c.redirect
-            if redirect:
-                status = 303
-                message = "See Other"
-            else:
-                status = 200
-                message = "OK"
+            status = 200
+            message = "OK"
+            redirect = None
 
             headers["Content-Type"] = c.type
             if c.mtime is not None:
@@ -130,7 +133,9 @@ class Dowwner():
                     "attachment;" +
                     "filename={}".format(c.filename))
 
-        headers["Content-Length"] = str(len(content))
+        if content:
+            headers["Content-Length"] = str(len(content))
+        # print((status, message, redirect, headers, content))
         return (status, message, redirect, headers, content)
 
     def verify_addr(self, addr):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import dowwner.op
+from dowwner import exc
 
 class ContentGET(dowwner.op.BaseContent):
     """Go class."""
@@ -16,7 +17,7 @@ class ContentGET(dowwner.op.BaseContent):
             return
 
         if t == "Go":
-            self.redirect_r = query
+            raise exc.PermanentRedirection(query)
         elif t == "Search":
             self.__query_search(query)
         else:

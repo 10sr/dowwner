@@ -25,13 +25,13 @@ class ContentPOST(dowwner.op.BaseContent):
                 self.storage.rm((self.path.dir, self.path.base), dtype=dtype)
             except exc.PageNameError:
                 pass
-            self.redirect_r = ".list"
+            raise exc.SeeOtherRedirection(".list")
         else:
             self.storage.save((self.path.dir, self.path.base), content,
                               dtype=dtype)
             if self.path.isstyle:
-                self.redirect_r = "./"
+                raise exc.SeeOtherRedirection("./")
             else:
-                self.redirect_r = self.path.base
+                raise exc.SeeOtherRedirection(self.path.base)
 
         return

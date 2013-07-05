@@ -63,10 +63,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         headers = c[3]
         content = c[4]
 
-        content, encoding = self.__compress_body(content)
-        headers["Content-Length"] = str(len(content))
-        if encoding:
-            headers["Content-Encoding"] = encoding
+        if content:
+            content, encoding = self.__compress_body(content)
+            headers["Content-Length"] = str(len(content))
+            if encoding:
+                headers["Content-Encoding"] = encoding
 
         self.send_response(status, message)
         for k, v in headers.items():
@@ -75,7 +76,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
             self.__send_location(redirect)
         self.end_headers()
 
-        if met.lower() != "head":
+        if content and met.lower() != "head":
             self.wfile.write(content)
         return
 
