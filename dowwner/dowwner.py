@@ -89,6 +89,7 @@ class Dowwner():
                 redirect = None
 
             elif isinstance(e, exc.Redirection):
+                headers["Content-Type"] = "text/html; charset=utf-8"
                 status = e.status
                 message = e.short
                 redirect = e.url
@@ -103,6 +104,7 @@ class Dowwner():
                     message = "Internal server error"
 
                 redirect = None
+                headers["Content-Type"] = "text/html; charset=utf-8"
                 if self.debug:
                     content = b"".join((
                         b"<pre><code>",
@@ -116,7 +118,6 @@ class Dowwner():
                 logger = logging.getLogger(__name__)
                 logger.exception(message)
 
-                headers["Content-Type"] = "text/html; charset=utf-8"
 
 
         else:                   # no exception
@@ -133,8 +134,6 @@ class Dowwner():
                     "attachment;" +
                     "filename={}".format(c.filename))
 
-        if content:
-            headers["Content-Length"] = str(len(content))
         # print((status, message, redirect, headers, content))
         return (status, message, redirect, headers, content)
 

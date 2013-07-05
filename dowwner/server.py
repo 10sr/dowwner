@@ -63,7 +63,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         headers = c[3]
         content = c[4]
 
-        if content:
+        if content is not None:
             content, encoding = self.__compress_body(content)
             headers["Content-Length"] = str(len(content))
             if encoding:
@@ -81,6 +81,9 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def __compress_body(self, b):
+        if len(b) == 0:
+            return (b, None)
+
         encodings = (e.strip() for e
                      in self.headers["Accept-Encoding"].split(","))
         for e in encodings:
