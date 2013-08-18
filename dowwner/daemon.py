@@ -77,13 +77,17 @@ def stop(pidfile):
 def status(pidfile):
     """
     Returns:
-        pidnum if server running, otherwise 0."""
+        pidnum if server running, otherwise 0.
+    """
+    msg_yes = "Server running."
+    msg_no = "Server not running."
+
     try:
         with open(pidfile) as f:
             pid = int(f.read())
     except IOError as e:
         if e.errno == 2:
-            print("Server not running on this dir.")
+            print(msg_no)
             return 0
         else:
             raise
@@ -92,13 +96,29 @@ def status(pidfile):
         os.getsid(pid)
     except OSError as e:
         if e.errno == 3:        # not such process
-            print("Server not running on this dir.")
+            print(msg_no)
             return 0
         else:
             raise
 
-    print("Server running on this dir.")
-    return pid
+    import subprocess
+    try:
+        cmdline = subprocess.check_output(["ps", "-p", str(pid), "-o", "command="])
+    except OSError as e:
+        if e.errno == 2:
+            print("Command 'ps' not found.")
+            print(("Process {} is running " +
+                   "but I cannot guess if it is the server.").format(pid))
+            return 0
+        else:
+            raise
+
+    if b"dowwner" in cmdline:
+        print(msg_yes)
+        return pid
+    else:
+        print(msg_no)
+        return 0
 
 def restart(pidfile, func):
     stop(pidfile)
