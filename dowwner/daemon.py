@@ -49,6 +49,7 @@ def start(pidfile, func):
 
     def _term_hndlr(signum, frame):
         os.remove(pidfile)
+        os.exit(0)
         return
 
     # start the daemon main loop
