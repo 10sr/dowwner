@@ -39,7 +39,6 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return self.__do("head", pathstr, query)
 
     def do_GET(self):
-        print(self.client_address)
         if not self.server.dowwner_is_get_allowed(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
