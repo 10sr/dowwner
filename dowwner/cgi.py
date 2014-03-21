@@ -14,7 +14,9 @@ def print_redirect(p):
                                            p))
     return
 
-def main(rootdir, debug=False):
+def main(rootdir, debug=False, client_re=".*"):
+    # NOTE: client_re matches all strings
+    # access control is thought to be done by http server.
     if debug:
         import cgitb
         cgitb.enable()
@@ -46,7 +48,7 @@ def main(rootdir, debug=False):
     met = os.environ["REQUEST_METHOD"]
 
     from dowwner.dowwner import Dowwner
-    d = Dowwner(rootdir=rootdir, debug=debug)
+    d = Dowwner(rootdir=rootdir, debug=debug, client_re=client_re)
 
     if met == "GET" or met == "HEAD":
         c = d.req_http("get", pathstr, query, cachetime)

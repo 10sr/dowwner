@@ -30,7 +30,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def do_HEAD(self):
-        if not self.server.dowwner_verify(self.client_address[0]):
+        if not self.server.dowwner_is_get_allowed(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
             return
@@ -39,7 +39,8 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return self.__do("head", pathstr, query)
 
     def do_GET(self):
-        if not self.server.dowwner_verify(self.client_address[0]):
+        print(self.client_address)
+        if not self.server.dowwner_is_get_allowed(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
             return
@@ -102,7 +103,7 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
         return
 
     def do_POST(self):
-        if not self.server.dowwner_verify(self.client_address[0]):
+        if not self.server.dowwner_is_post_allowed(self.client_address[0]):
             self.send_error(403)
             self.end_headers()
             return
@@ -123,8 +124,11 @@ class DowwnerHTTPS(HTTPServer):
         self.dowwner = Dowwner(rootdir, debug)
         return HTTPServer.__init__(self, *args, **kargs)
 
-    def dowwner_verify(self, addr):
-        return self.dowwner.verify_addr(addr)
+    def dowwner_is_get_allowed(self, addr):
+        return self.dowwner.is_get_allowed(addr)
+
+    def dowwner_is_post_allowed(self, addr):
+        return self.dowwner.is_post_allowed(addr)
 
 class Server():
     """Wrapper of DowwnerHTTPS."""

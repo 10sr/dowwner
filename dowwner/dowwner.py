@@ -22,11 +22,19 @@ time.tzset()
 class Dowwner():
     """Dowwner main class."""
 
-    def __init__(self, rootdir, debug=False):
+    def __init__(self, rootdir, debug=False, client_re="127\.0\.0\.1",
+                 client_get_re=None, client_post_re=None):
         self.storage = File(rootdir)
         self.name = os.path.basename(rootdir)
         self.debug = debug
         self.__md = None
+
+        # NOTE: by default access from localhost is allowed
+        # When used as CGI, client_re is set to be ".*" (see cgi.py)
+        import re
+        self.client_get_re = re.compile(client_get_re or client_re)
+        self.client_post_re = re.compile(client_post_re or client_re)
+
         return
 
     def get(self, pathstr, query, cachetime=None):
@@ -137,5 +145,10 @@ class Dowwner():
         # print((status, message, redirect, headers, content))
         return (status, message, redirect, headers, content)
 
-    def verify_addr(self, addr):
-        return addr == "127.0.0.1"
+    def is_get_allowed(self, client_addr):
+        """Return True if clinet is allowed to use GET method"""
+        return bool(self.client_get_re.match(client_addr))
+
+    def is_post_allowed(self, client_addr):
+        """Return True if clinet is allowed to use POST method"""
+        return bool(self.client_post_re.match(client_addr))
