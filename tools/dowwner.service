@@ -1,0 +1,11 @@
+[Unit]
+Description=Dowwner personal wiki
+
+[Service]
+Type=simple
+User=yuk
+Group=users
+ExecStart=/usr/bin/dowwner -r /home/yuk/dbx/note -p 2505
+
+[Install]
+WantedBy=multi-user.target
