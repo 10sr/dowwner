@@ -6,6 +6,7 @@ from cgi import FieldStorage
 import dowwner.op
 from dowwner import exc
 
+
 class ContentPOST(dowwner.op.BaseContent):
     def main(self):
         if self.path.isstyle:

@@ -7,6 +7,7 @@ from time import strftime
 from dowwner import exc
 from dowwner import storage
 
+
 class File(storage.BaseStorage):
     """File and directory Storage handler."""
 
@@ -146,10 +147,10 @@ class File(storage.BaseStorage):
             elif os.path.isdir(os.path.join(fullpath, f)):
                 try:
                     with open(os.path.join(fullpath, f, self.LIST_FILE)) as fo:
-                        if fo.read().strip(" \n"): # list file is not empty
+                        if fo.read().strip(" \n"):  # list file is not empty
                             items.append(f + "/")
                 except EnvironmentError as e:
-                    if e.errno == 2: # list file not exists
+                    if e.errno == 2:  # list file not exists
                         continue
                     else:
                         raise
@@ -183,7 +184,7 @@ class File(storage.BaseStorage):
         try:
             os.makedirs(os.path.dirname(fpath))
         except OSError as e:
-            if e.errno != 17: # 17 means file exists
+            if e.errno != 17:  # 17 means file exists
                 raise
 
         file_existed = os.access(fpath, os.F_OK)
@@ -333,7 +334,7 @@ class File(storage.BaseStorage):
 
         for f in os.listdir(self.__gen_fullpath(patht[0])):
             if f.endswith(suffix):
-                l.append(f[1:neg_suffix_len]) # remove first dot and suffixes
+                l.append(f[1:neg_suffix_len])  # remove first dot and suffixes
         l.sort(reverse=True)                  # latest first
 
         return l
@@ -377,7 +378,8 @@ class File(storage.BaseStorage):
         return l
 
     def zip(self, pathstr):
-        """Create zip archive for dir pathstr and return archive file as bytes."""
+        """Create zip archive for dir pathstr and return archive file as bytes.
+        """
         if not self.isdir(pathstr):
             raise PageNameError("{}: Not a directory name".format(pathstr))
         ls = self.__ls_recursive(pathstr)

@@ -7,6 +7,7 @@ import sys
 import signal
 # import logging
 
+
 def start(pidfile, func):
     # do the UNIX double-fork magic, see Stevens' "Advanced
     # Programming in the UNIX Environment" for details (ISBN 0201563177)
@@ -28,7 +29,7 @@ def start(pidfile, func):
         sys.exit(1)
 
     # decouple from parent environment
-    os.chdir("/")   #don't prevent unmounting....
+    os.chdir("/")   # don't prevent unmounting....
     os.setsid()
     os.umask(0)
 
@@ -37,7 +38,7 @@ def start(pidfile, func):
         pid = os.fork()
         if pid > 0:
             # exit from second parent, print eventual PID before
-            #print "Daemon PID %d" % pid
+            # print "Daemon PID %d" % pid
             with open(pidfile, mode='w') as f:
                 f.write("{}".format(pid))
             print("done")
@@ -65,6 +66,7 @@ def start(pidfile, func):
     func()
     return
 
+
 def stop(pidfile):
     pid = status(pidfile)
     if pid:
@@ -74,6 +76,7 @@ def stop(pidfile):
         print("done")
         # os.remove(pidfile) # done by _term_hndlr() in start()
     return
+
 
 def status(pidfile):
     """
@@ -104,7 +107,8 @@ def status(pidfile):
 
     import subprocess
     try:
-        cmdline = subprocess.check_output(["ps", "-p", str(pid), "-o", "command="])
+        cmdline = subprocess.check_output(["ps", "-p", str(pid),
+                                           "-o", "command="])
     except OSError as e:
         if e.errno == 2:
             print("Command 'ps' not found.")
@@ -120,6 +124,7 @@ def status(pidfile):
     else:
         print(msg_no)
         return 0
+
 
 def restart(pidfile, func):
     stop(pidfile)

@@ -14,12 +14,14 @@ import logging
 
 __version__ = "0.7.4"
 
+
 def _initialize_logger(loglevel=-1, file=None):
     logger = logging.getLogger(__name__)
     if loglevel >= 0:
         logger.setLevel(loglevel)
 
     return logger
+
 
 def _initialize_loghandler(filename=None):
     logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ def _initialize_loghandler(filename=None):
 
     logger.addHandler(handler)
     formatter = logging.Formatter("%(filename)s:%(lineno)d[%(funcName)s]"
-                                "cs%(levelno)s:%(message)s")
+                                  "cs%(levelno)s:%(message)s")
     handler.setFormatter(formatter)
 
     return logger

@@ -2,6 +2,7 @@
 
 import dowwner.op
 
+
 class ContentGET(dowwner.op.DefContent):
     """List class."""
     def main(self):

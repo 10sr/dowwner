@@ -5,6 +5,7 @@ from os import path
 from dowwner import exc
 import dowwner.op
 
+
 class ContentGET(dowwner.op.BaseContent):
     """Editor class."""
 
@@ -14,7 +15,8 @@ class ContentGET(dowwner.op.BaseContent):
 <input type="submit" name="submit" value="submit" />
 </p>
 <p>
-<textarea type="content" name="content" value="content" rows="24" cols="80" style="width:95%;">
+<textarea type="content" name="content" value="content" rows="24" cols="80"
+    style="width:95%;">
 {origtext}</textarea>
 </p>
 </form>"""
@@ -27,7 +29,8 @@ class ContentGET(dowwner.op.BaseContent):
 
         if orig is None or self.path.isstyle:
             try:
-                orig = self.storage.load((self.path.dir, self.path.base), dtype)
+                orig = self.storage.load((self.path.dir, self.path.base),
+                                         dtype)
             except exc.PageNotFoundError:
                 orig = ""
 

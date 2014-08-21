@@ -19,6 +19,7 @@ locale.setlocale(locale.LC_TIME, "C")
 os.environ["TZ"] = "GMT+00"
 time.tzset()
 
+
 class Dowwner():
     """Dowwner main class."""
 
@@ -125,8 +126,6 @@ class Dowwner():
 
                 logger = logging.getLogger(__name__)
                 logger.exception(message)
-
-
 
         else:                   # no exception
             content = bytes(c)

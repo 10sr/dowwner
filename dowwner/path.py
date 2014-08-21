@@ -8,6 +8,7 @@ except ImportError:
 
 from dowwner import exc
 
+
 class Path():
     """
     Path object.
@@ -41,8 +42,8 @@ class Path():
     def __init__(self, pathstr, query):
         """
         Args:
-            pathstr: Path relative to root directory. Starts with "/" and quoted
-                with parse.quote().
+            pathstr: Path relative to root directory. Starts with "/" and
+                quoted with parse.quote().
             query: String of query. Passed to patse_qs
         """
         # o = urlparse.urlparse(path_)
@@ -69,7 +70,7 @@ class Path():
 
         self.isstyle = self.base.endswith(self.STYLE_SUFFIX)
         if self.isstyle:
-            self.base = self.base[:-4] # remove ".css"
+            self.base = self.base[:-4]  # remove ".css"
             if self.base == "":
                 raise exc.PageNameError("css suffix with no name")
 

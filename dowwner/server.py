@@ -16,6 +16,7 @@ from dowwner import __version__
 from dowwner.dowwner import Dowwner
 from dowwner import exc
 
+
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
 
@@ -114,10 +115,11 @@ class DowwnerHTTPRH(BaseHTTPRequestHandler):
 
         return self.__do("POST", pathstr, query, data=data)
 
+
 class DowwnerHTTPS(HTTPServer):
     server_version = "Dowwner/" + __version__
     # shoud i use HTTP/1.1 ? but i dont fully understand it...
-    protocol_version  = "HTTP/1.0"
+    protocol_version = "HTTP/1.0"
 
     def __init__(self, rootdir, debug, *args, **kargs):
         self.dowwner = Dowwner(rootdir, debug)
@@ -128,6 +130,7 @@ class DowwnerHTTPS(HTTPServer):
 
     def dowwner_is_post_allowed(self, addr):
         return self.dowwner.is_post_allowed(addr)
+
 
 class Server():
     """Wrapper of DowwnerHTTPS."""

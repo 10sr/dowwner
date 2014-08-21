@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 class BaseStorage():
     """Storage base class."""
 
@@ -92,7 +93,8 @@ class BaseStorage():
     # methods for archiving
 
     def zip(self, pathstr):
-        """Create zip archive for dir pathstr and return archive file as bytes."""
+        """Create zip archive for dir pathstr and return archive file as bytes.
+        """
         raise NotImplementedError
 
     def search(self, words, pathstr, listall=False):
@@ -146,7 +148,8 @@ class BaseStorage():
     #     Load extra tags saved by self.save_extra_tags() .
 
     #     Returns:
-    #         String of data saved by self.save_extra_tags() or None if not found.
+    #         String of data saved by self.save_extra_tags() or None if not
+    #         found.
     #     """
     #     raise NotImplementedError
 

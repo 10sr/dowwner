@@ -8,11 +8,13 @@ import cgi
 
 from dowwner import exc
 
+
 def print_redirect(p):
     print("Location: http://{}{}{}".format(os.environ["SERVER_NAME"],
                                            os.environ["SCRIPT_NAME"],
                                            p))
     return
+
 
 def main(rootdir, debug=False, client_re=".*"):
     # NOTE: client_re matches all strings
@@ -28,7 +30,7 @@ def main(rootdir, debug=False, client_re=".*"):
         print()
         return
 
-    if pathstr == "": # and not os.environ["REQUEST_URI"].endswith("/"):
+    if pathstr == "":  # and not os.environ["REQUEST_URI"].endswith("/"):
         # this is not good because REQUEST_URI is not assured to exist,
         print_redirect("/")
         print()
@@ -43,7 +45,6 @@ def main(rootdir, debug=False, client_re=".*"):
         cachetime = os.environ["HTTP_IF_MODIFIED_SINCE"]
     except KeyError:
         cachetime = None
-
 
     met = os.environ["REQUEST_METHOD"]
 
@@ -74,10 +75,11 @@ def main(rootdir, debug=False, client_re=".*"):
     if content and met.lower() != "head":
         sys.stdout.buffer.write(content)
         if (debug and "Content-Type" in headers and
-            headers["Content-Type"].startswith("text_html")):
+                headers["Content-Type"].startswith("text_html")):
             _debug()
-        #_debug()
+        # _debug()
     return
+
 
 def _debug():
     # print("Status: 200 OK")

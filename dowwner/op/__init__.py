@@ -12,6 +12,7 @@ from dowwner import __version__
 
 # todo: provide way to modify header
 
+
 class BaseContent():
     """Content Base class.
 
@@ -19,8 +20,8 @@ class BaseContent():
 
     To subclass this method, you should implement self.main(), not overwrite
     self.__init__() . self.main() is called at the end of self.__init__()
-    with attributes self.storage, self.path, self.wikiname, self.conv, self.data
-    being set.
+    with attributes self.storage, self.path, self.wikiname, self.conv,
+    self.data being set.
 
     Internal attributes: Subclasses should overwrite these ones.
         pagename: Name used for title of page.
@@ -29,7 +30,8 @@ class BaseContent():
         content: Html of content of page.
         navigation: Html of navigation menu.
         content_raw: If not None, string of raw content. In this case, content
-            and navigation are ignored. Should be used with type != "text/html".
+            and navigation are ignored. Should be used with type !=
+            "text/html".
         content_bytes: If not None, bytes of content. In this case, content,
             navigation and content_raw are ignored by __bytes__().
 
@@ -139,6 +141,7 @@ Not needed when only <link> is used for stylesheets. -->
                           self.__navigation_base.format(nav=self.navigation),
                           "</body>"))
 
+
 class DefContent(BaseContent):
     """Class used when path has no operator."""
 
@@ -245,6 +248,7 @@ class DefContent(BaseContent):
         self.pagename = "list: " + self.path.path
         return
 
+
 def get(storage, path_, wikiname, conv, cachetime=0):
     if path_.op == "":
         return DefContent(storage, path_, wikiname, conv, cachetime=cachetime)
@@ -258,6 +262,7 @@ def get(storage, path_, wikiname, conv, cachetime=0):
                                  cachetime=cachetime)
         except AttributeError:
             raise exc.OperatorError("{}: Invalid operator".format(path_.op))
+
 
 def post(storage, path_, wikiname, conv, data):
     """Post data.

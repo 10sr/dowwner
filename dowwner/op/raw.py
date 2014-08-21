@@ -2,6 +2,7 @@
 
 import dowwner.op
 
+
 class ContentGET(dowwner.op.BaseContent):
     """Go class."""
     def main(self):

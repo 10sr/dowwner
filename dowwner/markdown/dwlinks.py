@@ -2,11 +2,13 @@
 
 import markdown
 
+
 class DWLinkExtension(markdown.Extension):
     def extendMarkdown(self, md, md_globals):
         pat = DWLinks(r"\[\[([\w0-9_ -/.]+)\]\]")
         md.inlinePatterns.add("dwlink", pat, "<not_strong")
         return
+
 
 class DWLinks(markdown.inlinepatterns.Pattern):
     def handleMatch(self, m):
@@ -19,5 +21,6 @@ class DWLinks(markdown.inlinepatterns.Pattern):
             a = ''
         return a
 
-def makeExtension(configs=None) :
+
+def makeExtension(configs=None):
     return DWLinkExtension(configs=configs)

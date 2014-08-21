@@ -7,6 +7,7 @@ import markdown
 
 from dowwner.markdown import dwlinks
 
+
 class Markdown(markdown.Markdown):
     def __init__(self):
         dwl = dwlinks.makeExtension()

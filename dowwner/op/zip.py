@@ -4,6 +4,7 @@ import os.path
 
 import dowwner.op
 
+
 class ContentGET(dowwner.op.BaseContent):
     """arch class."""
 
