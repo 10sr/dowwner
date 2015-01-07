@@ -47,7 +47,6 @@ class File(storage.BaseStorage):
     def __gen_fullpath(self, pathstr):
         """Return fullpath from path string."""
         # note: normpath always strip last "/"
-        base = os.path.basename(pathstr)
         fpath = os.path.normpath(os.path.join(self.rootdir,
                                               pathstr.lstrip("/")))
         # fpath must be under rootdir for security reason.
@@ -76,7 +75,6 @@ class File(storage.BaseStorage):
 
     def listdir(self, pathstr):
         """Return list of pages in pathstr. When dir not found, return []."""
-        items = []
         fullpath = self.__gen_fullpath(pathstr)
 
         if not self.isdir(pathstr):
@@ -146,7 +144,7 @@ class File(storage.BaseStorage):
                 if relpath == "/":
                     return
                 else:
-                    return self__update_list(self, os.path.join(relpath, ".."))
+                    return self.__update_list(os.path.join(relpath, ".."))
             elif e.errno == 20:   # Not a directory
                 raise
             else:
@@ -344,7 +342,7 @@ class File(storage.BaseStorage):
             else:
                 raise
 
-        for f in os.listdir(self.__gen_fullpath(patht[0])):
+        for f in ls:
             if f.endswith(suffix):
                 l.append(f[1:neg_suffix_len])  # remove first dot and suffixes
         l.sort(reverse=True)                  # latest first
@@ -393,7 +391,7 @@ class File(storage.BaseStorage):
         """Create zip archive for dir pathstr and return archive file as bytes.
         """
         if not self.isdir(pathstr):
-            raise PageNameError("{}: Not a directory name".format(pathstr))
+            raise exc.PageNameError("{}: Not a directory name".format(pathstr))
         ls = self.__ls_recursive(pathstr)
         # print(ls)
         oldpwd = os.getcwd()

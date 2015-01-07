@@ -2,9 +2,7 @@
 
 """Dowwner classes for operator."""
 
-import sys
 import importlib
-import urllib
 import os
 
 from dowwner import exc

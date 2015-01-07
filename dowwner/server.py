@@ -3,8 +3,6 @@
 from __future__ import absolute_import
 
 import os
-import sys
-from traceback import format_exception, print_exception
 import logging
 
 try:
@@ -14,7 +12,6 @@ except ImportError:
 
 from dowwner import __version__
 from dowwner.dowwner import Dowwner
-from dowwner import exc
 
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
