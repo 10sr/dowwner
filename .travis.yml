@@ -1,0 +1,11 @@
+language: python
+python:
+  - 3.3
+  - 3.4
+  - pypy3
+install:
+  - pip install .
+  - pip install flake8
+script: ./test/run.sh
+notifications:
+  email: 8slashes+travis-ci@gmail.com
