@@ -6,8 +6,6 @@ import os
 
 import cgi
 
-from dowwner import exc
-
 
 def print_redirect(p):
     print("Location: http://{}{}{}".format(os.environ["SERVER_NAME"],

@@ -13,6 +13,7 @@ setup(
     author_email="8slashes+pypi@gmail.com",
     url="https://10sr.github.com/dowwner",
     download_url="https://github.com/10sr/dowwner/archive/master.zip",
+    setup_requires=["flake8"],
     packages=["dowwner", "dowwner/storage", "dowwner/op",
               "dowwner/markdown"],
     scripts=["bin/dowwner"],
