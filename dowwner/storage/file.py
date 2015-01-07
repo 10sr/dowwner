@@ -25,6 +25,8 @@ class File(storage.BaseStorage):
     BAK_SUFFIX = ".bak"
     LIST_FILE = ".list"
 
+    cachedir = None
+
     __search_func = None
 
     def __init__(self, rootdir):
@@ -34,6 +36,12 @@ class File(storage.BaseStorage):
             rootdir: Root directory of files.
         """
         self.rootdir = os.path.realpath(rootdir)
+        if "HOME" in os.environ:
+            self.cachedir = os.path.join(os.environ["HOME"],
+                                         ".var/cache/dowwner",
+                                         self.rootdir.lstrip("/"))
+        else:
+            self.cachedir = os.path.join(rootdir, ".cache")
         return
 
     def __gen_fullpath(self, pathstr):
@@ -51,10 +59,14 @@ class File(storage.BaseStorage):
         return os.path.isdir(self.__gen_fullpath(pathstr))
 
     def __gen_pagepath(self, patht, dtype=None):
-        """Return string of page path."""
+        """Return string of fullpath of page path."""
         if dtype == "style":
             return os.path.join(self.__gen_fullpath(patht[0]),
                                 patht[1] + self.STYLE_SUFFIX)
+        elif dtype == "cache":
+            return os.path.join(self.cachedir,
+                                patht[0].lstrip("/"),
+                                patht[1])
         elif dtype:
             return os.path.join(self.__gen_fullpath(patht[0]),
                                 ".".join(("", "_" + dtype, patht[1])))
