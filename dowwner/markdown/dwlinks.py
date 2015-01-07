@@ -22,5 +22,5 @@ class DWLinks(markdown.inlinepatterns.Pattern):
         return a
 
 
-def makeExtension(configs=None):
+def makeExtension(configs=tuple()):
     return DWLinkExtension(configs=configs)
