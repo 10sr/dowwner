@@ -128,8 +128,8 @@ Not needed when only <link> is used for stylesheets. -->
     @property
     def __head(self):
         return self.__head_base.format(name=self.wikiname +
-                                       " :: "
-                                       + self.pagename)
+                                       " :: " +
+                                       self.pagename)
 
     @property
     def __body(self):
