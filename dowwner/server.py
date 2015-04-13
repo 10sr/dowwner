@@ -13,17 +13,17 @@ except ImportError:
 from dowwner import __version__
 from dowwner.dowwner import Dowwner
 
+logger = logging.getLogger(__name__)
+
 
 class DowwnerHTTPRH(BaseHTTPRequestHandler):
     # http://wiki.python.org/moin/BaseHttpServer
 
     def log_error(self, format, *args):
-        logger = logging.getLogger(__name__)
         logger.error(format % args)
         return
 
     def log_message(self, format, *args):
-        logger = logging.getLogger(__name__)
         logger.info(format % args)
         return
 
@@ -135,6 +135,7 @@ class Server():
         host = ""
         self.httpd = DowwnerHTTPS(rootdir, debug, (host, port), DowwnerHTTPRH)
         self.debug = debug
+        self.logger = logger
         return
 
     def start(self):
@@ -143,7 +144,7 @@ class Server():
             self.httpd.serve_forever()
         except KeyboardInterrupt:
             pass
-        print("Server terminated.")
+        self.logger.warning("Server terminated.")
         return
 
     def stop(self):

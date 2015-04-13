@@ -32,7 +32,7 @@ def _initialize_loghandler(filename=None):
         handler = logging.StreamHandler()
 
     logger.addHandler(handler)
-    formatter = logging.Formatter("%(filename)s:%(lineno)d[%(funcName)s]"
+    formatter = logging.Formatter("%(filename)s:%(lineno)d:%(funcName)s:"
                                   "cs%(levelno)s:%(message)s")
     handler.setFormatter(formatter)
 
@@ -48,6 +48,8 @@ def main(port=2505, rootdir=os.getcwd(), daemon=None, cgi=False, debug=False):
     def f():
         from dowwner.server import Server
         s = Server(port=port, rootdir=rootdir, debug=debug)
+        logger = logging.getLogger(__name__)
+        logger.warning("Dowwner running on {}:{}".format("localhost", port))
         return s.start()
 
     rootdir = os.path.realpath(rootdir)
