@@ -8,6 +8,6 @@ python:
 install:
   - pip install pipenv
   - pipenv install --dev
-script: pipenv ./test/run.sh
+script: pipenv run ./test/run.sh
 notifications:
   email: 8slashes+travis-ci@gmail.com
