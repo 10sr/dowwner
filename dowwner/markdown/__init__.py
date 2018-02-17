@@ -15,5 +15,6 @@ class Markdown(markdown.Markdown):
                                           extensions=[dwl],
                                           output_format="xhtml1")
 
+
 if __name__ == "__main__":
     pass

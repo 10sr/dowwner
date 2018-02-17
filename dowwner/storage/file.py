@@ -327,7 +327,7 @@ class File(storage.BaseStorage):
             file of patht.
             Values returned are used to load backup file with self.load_bak().
         """
-        l = []
+        lst = []
 
         suffix = self.FILE_SUFFIX + self.BAK_SUFFIX
         neg_suffix_len = len(suffix) * (-1)
@@ -344,10 +344,10 @@ class File(storage.BaseStorage):
 
         for f in ls:
             if f.endswith(suffix):
-                l.append(f[1:neg_suffix_len])  # remove first dot and suffixes
-        l.sort(reverse=True)                  # latest first
+                lst.append(f[1:neg_suffix_len])  # remove first dot and suffix
+        lst.sort(reverse=True)                  # latest first
 
-        return l
+        return lst
 
     def load_bak(self, patht):
         """Load backed up file.
@@ -375,17 +375,17 @@ class File(storage.BaseStorage):
         return s
 
     def __ls_recursive(self, pathstr):
-        l = []
+        lst = []
         base = self.__gen_fullpath(pathstr)
         ls = os.listdir(base)
         for f in ls:
             fpath = os.path.join(base, f)
             if os.path.isdir(fpath):
-                l.extend(self.__ls_recursive(os.path.join(pathstr, f)))
+                lst.extend(self.__ls_recursive(os.path.join(pathstr, f)))
             elif ((not f.startswith(".") and f.endswith(self.FILE_SUFFIX)) or
                   f.endswith(".css")):
-                l.append(os.path.join(pathstr, f))
-        return l
+                lst.append(os.path.join(pathstr, f))
+        return lst
 
     def zip(self, pathstr):
         """Create zip archive for dir pathstr and return archive file as bytes.
