@@ -1,3 +1,4 @@
+[![PyPi Version](https://img.shields.io/pypi/v/dowwner.svg)](https://pypi.python.org/pypi/dowwner)
 [![Build Status](https://travis-ci.org/10sr/dowwner.svg?branch=master)](https://travis-ci.org/10sr/dowwner)
 
 Dowwner
