@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 
 "flake8" = "*"
+"e1839a8" = {editable = true, path = "."}
 
 
 [dev-packages]
