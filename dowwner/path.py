@@ -84,6 +84,7 @@ class Path():
     def __str__(self):
         return str(self.__dict__)
 
+
 if __name__ == "__main__":
     def test():
         p1 = Path("/dir/file")
