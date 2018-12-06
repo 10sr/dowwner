@@ -1,12 +1,13 @@
 language: python
 python:
-  - 3.3
-  - 3.4
-  - 3.5
   - 3.6
   - pypy3
+
 install:
   - true
-script: true
+
+script:
+  - true
+
 notifications:
   email: 8slashes+travis-ci@gmail.com
