@@ -1,16 +1,16 @@
 """
-WSGI config for dowwner project.
+WSGI config for neru project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
+https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/
 """
 
 import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dowwner.settings')
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "neru.settings")
 
 application = get_wsgi_application()
