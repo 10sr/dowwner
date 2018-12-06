@@ -3,7 +3,7 @@ name = "dowwner"
 version = "0.8.0"
 description = "A Markdown wiki"
 authors = ["10sr <8.slashes@gmail.com>"]
-license = "PSFL"
+license = "Apache-2.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
