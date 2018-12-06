@@ -6,8 +6,7 @@ python:
   - 3.6
   - pypy3
 install:
-  - pip install pipenv
-  - pipenv install --dev
-script: pipenv run ./test/run.sh
+  - true
+script: true
 notifications:
   email: 8slashes+travis-ci@gmail.com
