@@ -59,7 +59,7 @@ poetry-check:
 
 app-test:
 	${manage_py} makemigrations --dry-run --check
-	${python3} -Wa manage.py test
+	${python3} -Wa manage.py test tests/
 
 
 ###########
