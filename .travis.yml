@@ -6,6 +6,9 @@ python:
   # - 3.7
   # - pypy3.6
 
+git:
+  depth: 10
+
 install:
   - python -m pip install poetry
   - make installdeps
