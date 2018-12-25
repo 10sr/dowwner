@@ -1,0 +1,108 @@
+[[package]]
+category = "dev"
+description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+name = "appdirs"
+optional = false
+python-versions = "*"
+version = "1.4.3"
+
+[[package]]
+category = "dev"
+description = "Classes Without Boilerplate"
+name = "attrs"
+optional = false
+python-versions = "*"
+version = "18.2.0"
+
+[[package]]
+category = "dev"
+description = "The uncompromising code formatter."
+name = "black"
+optional = false
+python-versions = ">=3.6"
+version = "18.9b0"
+
+[package.dependencies]
+appdirs = "*"
+attrs = ">=17.4.0"
+click = ">=6.5"
+toml = ">=0.9.4"
+
+[[package]]
+category = "dev"
+description = "Composable command line interface toolkit"
+name = "click"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "7.0"
+
+[[package]]
+category = "main"
+description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+name = "django"
+optional = false
+python-versions = ">=3.5"
+version = "2.1.4"
+
+[package.dependencies]
+pytz = "*"
+
+[[package]]
+category = "dev"
+description = "Optional static typing for Python"
+name = "mypy"
+optional = false
+python-versions = "*"
+version = "0.641"
+
+[package.dependencies]
+mypy-extensions = ">=0.4.0,<0.5.0"
+typed-ast = ">=1.1.0,<1.2.0"
+
+[[package]]
+category = "dev"
+description = "Experimental type system extensions for programs checked with the mypy typechecker."
+name = "mypy-extensions"
+optional = false
+python-versions = "*"
+version = "0.4.1"
+
+[[package]]
+category = "main"
+description = "World timezone definitions, modern and historical"
+name = "pytz"
+optional = false
+python-versions = "*"
+version = "2018.7"
+
+[[package]]
+category = "dev"
+description = "Python Library for Tom's Obvious, Minimal Language"
+name = "toml"
+optional = false
+python-versions = "*"
+version = "0.10.0"
+
+[[package]]
+category = "dev"
+description = "a fork of Python 2 and 3 ast modules with type comment support"
+name = "typed-ast"
+optional = false
+python-versions = "*"
+version = "1.1.0"
+
+[metadata]
+content-hash = "acb7445fd8c4e7b9635692f3d7afe5fb5aa4bbdf29647da36faabe34dee2a9ad"
+python-versions = "^3.6"
+
+[metadata.hashes]
+appdirs = ["9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92", "d8b24664561d0d34ddfaec54636d502d7cea6e29c3eaf68f3df6180863e2166e"]
+attrs = ["10cbf6e27dbce8c30807caf056c8eb50917e0eaafe86347671b57254006c3e69", "ca4be454458f9dec299268d472aaa5a11f67a4ff70093396e1ceae9c76cf4bbb"]
+black = ["817243426042db1d36617910df579a54f1afd659adb96fc5032fcf4b36209739", "e030a9a28f542debc08acceb273f228ac422798e5215ba2a791a6ddeaaca22a5"]
+click = ["2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13", "5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7"]
+django = ["068d51054083d06ceb32ce02b7203f1854256047a0d58682677dd4f81bceabd7", "55409a056b27e6d1246f19ede41c6c610e4cab549c005b62cbeefabc6433356b"]
+mypy = ["8e071ec32cc226e948a34bbb3d196eb0fd96f3ac69b6843a5aff9bd4efa14455", "fb90c804b84cfd8133d3ddfbd630252694d11ccc1eb0166a1b2efb5da37ecab2"]
+mypy-extensions = ["37e0e956f41369209a3d5f34580150bcacfabaa57b33a15c0b25f4b5725e0812", "b16cabe759f55e3409a7d231ebd2841378fb0c27a5d1994719e340e4f429ac3e"]
+pytz = ["31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca", "8e0f8568c118d3077b46be7d654cc8167fa916092e28320cde048e54bfc9f1e6"]
+toml = ["229f81c57791a41d65e399fc06bf0848bab550a9dfd5ed66df18ce5f05e73d5c", "235682dd292d5899d361a811df37e04a8828a5b1da3115886b73cf81ebc9100e", "f1db651f9657708513243e61e6cc67d101a39bad662eaa9b5546f789338e07a3"]
+typed-ast = ["0948004fa228ae071054f5208840a1e88747a357ec1101c17217bfe99b299d58", "10703d3cec8dcd9eef5a630a04056bbc898abc19bac5691612acba7d1325b66d", "1f6c4bd0bdc0f14246fd41262df7dfc018d65bb05f6e16390b7ea26ca454a291", "25d8feefe27eb0303b73545416b13d108c6067b846b543738a25ff304824ed9a", "29464a177d56e4e055b5f7b629935af7f49c196be47528cc94e0a7bf83fbc2b9", "2e214b72168ea0275efd6c884b114ab42e316de3ffa125b267e732ed2abda892", "3e0d5e48e3a23e9a4d1a9f698e32a542a4a288c871d33ed8df1b092a40f3a0f9", "519425deca5c2b2bdac49f77b2c5625781abbaf9a809d727d3a5596b30bb4ded", "57fe287f0cdd9ceaf69e7b71a2e94a24b5d268b35df251a88fef5cc241bf73aa", "668d0cec391d9aed1c6a388b0d5b97cd22e6073eaa5fbaa6d2946603b4871efe", "68ba70684990f59497680ff90d18e756a47bf4863c604098f10de9716b2c0bdd", "6de012d2b166fe7a4cdf505eee3aaa12192f7ba365beeefaca4ec10e31241a85", "79b91ebe5a28d349b6d0d323023350133e927b4de5b651a8aa2db69c761420c6", "8550177fa5d4c1f09b5e5f524411c44633c80ec69b24e0e98906dd761941ca46", "898f818399cafcdb93cbbe15fc83a33d05f18e29fb498ddc09b0214cdfc7cd51", "94b091dc0f19291adcb279a108f5d38de2430411068b219f41b343c03b28fb1f", "a26863198902cda15ab4503991e8cf1ca874219e0118cbf07c126bce7c4db129", "a8034021801bc0440f2e027c354b4eafd95891b573e12ff0418dec385c76785c", "bc978ac17468fe868ee589c795d06777f75496b1ed576d308002c8a5756fb9ea", "c05b41bc1deade9f90ddc5d988fe506208019ebba9f2578c622516fd201f5863", "c9b060bd1e5a26ab6e8267fd46fc9e02b54eb15fffb16d112d4c7b1c12987559", "edb04bdd45bfd76c8292c4d9654568efaedf76fe78eb246dde69bdb13b2dad87", "f19f2a4f547505fe9072e15f6f4ae714af51b5a681a97f187971f50c283193b6"]

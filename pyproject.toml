@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "dowwner"
+version = "0.8.0"
+description = "A Markdown wiki"
+authors = ["10sr <8.slashes@gmail.com>"]
+license = "Apache-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+django = "^2.1"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.641.0"
+black = "^18.3-alpha.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
