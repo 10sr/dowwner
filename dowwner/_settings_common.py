@@ -12,7 +12,7 @@ ROOT_URLCONF = "dowwner.urls"
 WSGI_APPLICATION = "dowwner.wsgi.application"
 
 INSTALLED_APPS = [
-    "dowwner.app.apps.AppConfig",
+    "dowwner.app.apps.DowwnerConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
