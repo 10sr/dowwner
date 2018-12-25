@@ -1,13 +1,17 @@
 language: python
 python:
   - 3.6
-  - pypy3
+  # - 3.7-dev # Fail with:
+  # KeyError: <Task finished coro=<BaseEventLoop.run_in_executor() done, defined at /opt/python/3.7-dev/lib/python3.7/asyncio/base_events.py:653> result=False>
+  # - 3.7
+  # - pypy3.6
 
 install:
-  - true
+  - python -m pip install poetry
+  - make installdeps
 
 script:
-  - true
+  - make check
 
 notifications:
   email: 8slashes+travis-ci@gmail.com

@@ -59,7 +59,7 @@ poetry-check:
 
 app-test:
 	${manage_py} makemigrations --dry-run --check
-	${python3} -Wa manage.py test
+	${python3} -Wa manage.py test tests/
 
 
 ###########
@@ -79,7 +79,7 @@ docker-run:
 mypy:
 	${poetry} run mypy --config-file .mypy.ini -p dowwner
 # TODO: This really works?
-#	${poetry} run mypy --config-file .mypy.ini .
+	${poetry} run mypy --config-file .mypy.ini .
 
 
 #########
