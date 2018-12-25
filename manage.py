@@ -10,7 +10,9 @@ if sys.argv[1] == "test":
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 else:
     os.environ.setdefault("DOWWNER_ENV", "local")
-    os.environ["DJANGO_SETTINGS_MODULE"] = f"dowwner.settings_{os.environ['DOWWNER_ENV']}"
+    os.environ[
+        "DJANGO_SETTINGS_MODULE"
+    ] = f"dowwner.settings_{os.environ['DOWWNER_ENV']}"
 
 os.environ["DOWWNER_BASE_DIR"] = str(Path(__file__).resolve().parent)
 
