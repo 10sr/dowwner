@@ -1,13 +1,15 @@
 language: python
 python:
   - 3.6
+  # - 3.7
   - pypy3
 
 install:
-  - true
+  - python -m pip install poetry
+  - make installdeps
 
 script:
-  - true
+  - make check
 
 notifications:
   email: 8slashes+travis-ci@gmail.com
