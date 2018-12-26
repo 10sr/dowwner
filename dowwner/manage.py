@@ -20,7 +20,7 @@ def main(argv: List[str]) -> int:
 
     # os.environ["DOWWNER_BASE_DIR"] = str(Path(__file__).resolve().parent)
 
-    execute_from_command_line(sys.argv)
+    execute_from_command_line(argv)
     return 0
 
 
