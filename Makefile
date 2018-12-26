@@ -45,7 +45,7 @@ makemigrations:
 sqlmigrate:
 	${manage_py} $@ ${app} ${target}
 
-createsuperuser create_admin_user create_local_user:
+local_addrecords create_admin_user create_local_user:
 	${manage_py} $@
 
 shell:
