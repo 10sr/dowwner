@@ -2,4 +2,5 @@ from django.apps import AppConfig
 
 
 class DowwnerConfig(AppConfig):
-    name = "dowwner"
+    # TODO: This is correct?
+    name = "dowwner.app"
