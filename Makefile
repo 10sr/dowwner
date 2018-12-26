@@ -77,8 +77,6 @@ docker-run:
 # mypy
 
 mypy:
-	${poetry} run mypy --config-file .mypy.ini -p dowwner
-# TODO: This really works?
 	${poetry} run mypy --config-file .mypy.ini .
 
 
