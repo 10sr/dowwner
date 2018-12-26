@@ -18,6 +18,7 @@ project := dowwner
 
 poetry := poetry
 
+# TODO: Remove env from this command
 python3 := ${poetry} run env DOWWNER_ENV=${DOWWNER_ENV} python3
 manage_py := ${python3} -m dowwner
 
