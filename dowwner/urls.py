@@ -16,11 +16,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 
-def _redirect_root(request):
+def _redirect_root(request: HttpRequest) -> HttpResponse:
     return HttpResponseRedirect("dowwner/")
 
 
