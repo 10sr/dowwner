@@ -2,6 +2,8 @@ DOWWNER_ENV ?= local
 DOWWNER_PORT ?= 9900
 DOWWNER_HOST ?= 0.0.0.0
 
+export DOWWNER_BASE_DIR = $(CURDIR)
+
 MAKEFLAGS += --no-builtin-rules --no-builtin-variable
 
 # https://stackoverflow.com/questions/10859916/how-to-treat-a-warning-as-an-error-in-a-makefile/29800774#29800774
@@ -17,7 +19,7 @@ project := dowwner
 poetry := poetry
 
 python3 := ${poetry} run env DOWWNER_ENV=${DOWWNER_ENV} python3
-manage_py := ${python3} manage.py
+manage_py := ${python3} -m dowwner
 
 # Make all targets phony
 .PHONY: $(MAKECMDGOALS)
