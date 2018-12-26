@@ -2,7 +2,7 @@ DOWWNER_ENV ?= local
 DOWWNER_PORT ?= 9900
 DOWWNER_HOST ?= 0.0.0.0
 
-export DOWWNER_BASE_DIR = $(CURDIR)
+export DOWWNER_BASE_DIR := $(CURDIR)
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variable
 
