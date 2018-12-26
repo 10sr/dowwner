@@ -1,3 +1,7 @@
+from argparse import ArgumentParser
+import os
+from typing import Dict, List
+
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
@@ -10,10 +14,10 @@ class Command(BaseCommand):
     __path = "test/page"
     __markdown = "**test page**"
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         return
 
-    def handle(self, *args, **kargs):
+    def handle(self, *args: List[str], **kargs: Dict[str, str]) -> None:
         try:
             p = models.Page.objects.get(path=self.__path)
             self.stdout.write("Page `{}' already exists".format(self.__path))
