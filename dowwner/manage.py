@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-import sys
 from pathlib import Path
 from typing import List
 
@@ -22,7 +21,3 @@ def main(argv: List[str]) -> int:
 
     execute_from_command_line(argv)
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv))
