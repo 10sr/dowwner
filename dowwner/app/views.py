@@ -8,5 +8,7 @@ from . import models
 
 
 def index(request: HttpRequest) -> HttpResponse:
-    return HttpResponse(f"""index {dir(request)}
-    <a href="admin">admin</a>""")
+    return HttpResponse(
+        f"""index {dir(request)}
+    <a href="admin">admin</a>"""
+    )
