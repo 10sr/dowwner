@@ -12,16 +12,20 @@ LINK_PATTERNS = [(re.compile(r"\[\[([\w0-9_ -/.]+)\]\]"), r"\1")]
 
 
 def to_html_markdown2(source: str) -> str:
-    return markdown2.markdown(
+    result = markdown2.markdown(
         source, extras=["link-patterns"], link_patterns=LINK_PATTERNS
     )
+    return str(result)
 
 
 def to_html_Markdown(source: str) -> str:
-    return markdown.markdown(
+    result = markdown.markdown(
         # Cannot have slashes inside of blackets
-        source, extensions=[WikiLinkExtension(base_url="", end_url="")]
+        source,
+        extensions=[WikiLinkExtension(base_url="", end_url="")],
     )
+    # For type checking
+    return str(result)
 
 
 to_html = to_html_Markdown
