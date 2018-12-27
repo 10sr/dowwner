@@ -12,7 +12,7 @@ class Command(BaseCommand):
     help = "Add a test page"
 
     __path = "test/page"
-    __markdown = "**test page**"
+    __markdown = "**test page** [[wikilinktest]] [[spaced link]] [[link/with/slashes]]"
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         return
@@ -20,7 +20,6 @@ class Command(BaseCommand):
     def handle(self, *args: List[str], **kargs: Dict[str, str]) -> None:
         try:
             p = models.Page.objects.get(path=self.__path)
-            self.stdout.write("Page `{}' already exists".format(self.__path))
         except models.Page.DoesNotExist as e:
             self.stdout.write("Page {} not exists, creating".format(self.__path))
             now = timezone.now()
@@ -30,4 +29,8 @@ class Command(BaseCommand):
                 created_at=now,
                 updated_at=now,
             ).save()
+            return
+        self.stdout.write("Page `{}' already exists, updating".format(self.__path))
+        p.markdown = self.__markdown
+        p.save()
         return
