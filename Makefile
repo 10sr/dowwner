@@ -20,7 +20,7 @@ poetry := poetry
 
 # TODO: Remove env from this command
 python3 := ${poetry} run env DOWWNER_ENV=${DOWWNER_ENV} python3
-manage_py := ${python3} -m dowwner
+manage_py := ${python3} ./manage.py
 
 # Make all targets phony
 .PHONY: $(MAKECMDGOALS)
@@ -62,7 +62,7 @@ poetry-check:
 
 app-test:
 	${manage_py} makemigrations --dry-run --check
-	${python3} -Wa -m dowwner test tests/
+	${python3} -Wa ./manage.py test tests/
 
 
 ###########
