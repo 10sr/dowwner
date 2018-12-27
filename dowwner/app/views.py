@@ -4,6 +4,8 @@ from django.http import HttpRequest, HttpResponse
 
 from . import models
 
+from . import markdown
+
 # Create your views here.
 
 
@@ -22,4 +24,5 @@ def v(request: HttpRequest, path_: str) -> HttpResponse:
         p = models.Page.objects.get(path=path_)
     except models.Page.DoesNotExist as e:
         return HttpResponse(f"Not found: {path_}")
-    return HttpResponse(f"Content: {p.markdown}")
+    html = markdown.to_html(p.markdown)
+    return HttpResponse(f"<p>Content</p> {html}")
