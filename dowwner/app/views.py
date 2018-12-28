@@ -1,6 +1,8 @@
 from django.shortcuts import render
 
 from django.http import HttpRequest, HttpResponse
+from django.template import loader
+from django.utils.safestring import mark_safe
 
 from . import models
 
@@ -23,6 +25,13 @@ def v(request: HttpRequest, path_: str) -> HttpResponse:
     try:
         p = models.Page.objects.get(path=path_)
     except models.Page.DoesNotExist as e:
+        # TODO: Redirect to edit page
         return HttpResponse(f"Not found: {path_}")
     html = markdown.to_html(p.markdown)
-    return HttpResponse(f"<p>Content</p> {html}")
+
+    template = loader.get_template("dowwner/v.html.dtl")
+    return HttpResponse(template.render({"content": mark_safe(html)}))
+
+
+def v_root(request: HttpRequest) -> HttpResponse:
+    return v(request, "")
