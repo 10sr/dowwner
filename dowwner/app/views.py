@@ -1,7 +1,8 @@
 from django.shortcuts import render
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.template import loader
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from . import models
@@ -21,7 +22,7 @@ def index(request: HttpRequest) -> HttpResponse:
     )
 
 
-def v(request: HttpRequest, path_: str) -> HttpResponse:
+def v(request: HttpRequest, path_: str = "") -> HttpResponse:
     try:
         p = models.Page.objects.get(path=path_)
     except models.Page.DoesNotExist as e:
@@ -33,5 +34,5 @@ def v(request: HttpRequest, path_: str) -> HttpResponse:
     return HttpResponse(template.render({"content": mark_safe(html)}))
 
 
-def v_root(request: HttpRequest) -> HttpResponse:
-    return v(request, "")
+def v_root_redirect(request: HttpRequest) -> HttpResponse:
+    return HttpResponseRedirect(reverse("dowwner:v_root"))
