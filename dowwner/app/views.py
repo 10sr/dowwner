@@ -31,3 +31,7 @@ def v(request: HttpRequest, path_: str) -> HttpResponse:
 
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(template.render({"content": mark_safe(html)}))
+
+
+def v_root(request: HttpRequest) -> HttpResponse:
+    return v(request, "")

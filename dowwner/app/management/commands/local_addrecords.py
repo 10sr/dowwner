@@ -9,28 +9,32 @@ from dowwner.app import models
 
 
 class Command(BaseCommand):
-    help = "Add a test page"
-
-    __path = "test/page"
-    __markdown = "**test page** [[wikilinktest]] [[spaced link]] [[link/with/slashes]]"
+    help = "Add a test pages"
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         return
 
-    def handle(self, *args: List[str], **kargs: Dict[str, str]) -> None:
+    def _addrecord(self, path_: str, markdown: str) -> None:
         try:
-            p = models.Page.objects.get(path=self.__path)
+            p = models.Page.objects.get(path=path_)
         except models.Page.DoesNotExist as e:
-            self.stdout.write("Page {} not exists, creating".format(self.__path))
+            self.stdout.write("Page {} not exists, creating".format(path_))
             now = timezone.now()
             models.Page(
-                path=self.__path,
-                markdown=self.__markdown,
+                path=path_,
+                markdown=markdown,
                 created_at=now,
                 updated_at=now,
             ).save()
             return
-        self.stdout.write("Page `{}' already exists, updating".format(self.__path))
-        p.markdown = self.__markdown
-        p.save()
+
+        self.stdout.write("Page `{}' already exists, ignoring".format(path_))
+        # p.markdown = markdown
+        # p.save()
+        return
+
+    def handle(self, *args: List[str], **kargs: Dict[str, str]) -> None:
+        self._addrecord("test/page", "**test page** [[wikilinktest]] [[spaced link]] [[link/with/slashes]]")
+        self._addrecord("", "This is root page [[hoe]]")
+        self._addrecord("hoe", "hoehoehoe")
         return
