@@ -21,10 +21,7 @@ class Command(BaseCommand):
             self.stdout.write("Page {} not exists, creating".format(path_))
             now = timezone.now()
             models.Page(
-                path=path_,
-                markdown=markdown,
-                created_at=now,
-                updated_at=now,
+                path=path_, markdown=markdown, created_at=now, updated_at=now
             ).save()
             return
 
@@ -34,7 +31,10 @@ class Command(BaseCommand):
         return
 
     def handle(self, *args: List[str], **kargs: Dict[str, str]) -> None:
-        self._addrecord("test/page", "**test page** [[wikilinktest]] [[spaced link]] [[link/with/slashes]]")
+        self._addrecord(
+            "test/page",
+            "**test page** [[wikilinktest]] [[spaced link]] [[link/with/slashes]]",
+        )
         self._addrecord("", "This is root page [[hoe]]")
         self._addrecord("hoe", "hoehoehoe")
         return
