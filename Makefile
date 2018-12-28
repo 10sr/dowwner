@@ -1,3 +1,4 @@
+# ENV が local, test でないときは make を使うべきでないかもしれない
 DOWWNER_ENV ?= local
 DOWWNER_PORT ?= 9900
 DOWWNER_HOST ?= 0.0.0.0
@@ -13,14 +14,14 @@ fatal-on-warning:
 	@! (${MAKE} -n --warn-undefined-variables ${MAKECMDGOALS} 2>&1 >/dev/null | grep 'warning:')
 
 
-app := app
-project := dowwner
+APP := app
+PROJ := dowwner
 
 poetry := poetry
 
-# TODO: Remove env from this command
-python3 := ${poetry} run env DOWWNER_ENV=${DOWWNER_ENV} python3
+python3 := ${poetry} run python3
 manage_py := ${python3} ./manage.py
+env_dowwner := env DOWWNER_ENV=${DOWWNER_ENV}
 
 # Make all targets phony
 .PHONY: $(MAKECMDGOALS)
@@ -30,39 +31,45 @@ check: poetry-check app-test mypy black-check
 env:
 	env
 
+################
+# Poetry
+
 installdeps:
 	${poetry} install
-
-runserver:
-	${manage_py} $@ '${DOWWNER_HOST}:${DOWWNER_PORT}'
-
-# https://docs.djangoproject.com/en/1.10/intro/tutorial02/#database-setup
-migrate:
-	${manage_py} $@
-
-# https://docs.djangoproject.com/en/1.10/intro/tutorial02/#activating-models
-makemigrations:
-	${manage_py} $@ ${app}
-
-# Print sql query for migration
-sqlmigrate:
-	${manage_py} $@ ${app} ${target}
-
-local_addrecords create_admin_user create_local_user:
-	${manage_py} $@
-
-shell:
-	${manage_py} shell
-
-manage_py:
-	${manage_py} ${command}
 
 poetry-check:
 	${poetry} check
 
+###############
+# Dowwner
+
+runserver:
+	${env_dowwner} ${manage_py} $@ '${DOWWNER_HOST}:${DOWWNER_PORT}'
+
+# https://docs.djangoproject.com/en/1.10/intro/tutorial02/#database-setup
+migrate:
+	${env_dowwner} ${manage_py} $@
+
+# https://docs.djangoproject.com/en/1.10/intro/tutorial02/#activating-models
+makemigrations:
+	${env_dowwner} ${manage_py} $@ ${APP}
+
+# Print sql query for migration
+sqlmigrate:
+	${env_dowwner} ${manage_py} $@ ${APP} ${target}
+
+local_addrecords create_admin_user create_local_user:
+	${env_dowwner} ${manage_py} $@
+
+shell:
+	${env_dowwner} ${manage_py} shell
+
+manage_py:n
+	${env_dowwner} ${manage_py} ${command}
+
 app-test:
-	${manage_py} makemigrations --dry-run --check
-	${python3} -Wa ./manage.py test tests/
+	env DOWWNER_ENV=test ${manage_py} makemigrations --dry-run --check
+	env DOWWNER_ENV=test ${python3} -Wa ./manage.py test tests/
 
 
 ###########
