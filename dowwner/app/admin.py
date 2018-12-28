@@ -11,6 +11,7 @@ admin.AdminSite.site_header = "Dowwner Admin"
 
 # Register all models to admin page
 # https://docs.djangoproject.com/en/1.10/intro/tutorial02/#make-the-poll-app-modifiable-in-the-admin
+# TODO: Use Appconfig.get_modoels()
 for key in dir(models):
     e = getattr(models, key)
     if inspect.isclass(e) and issubclass(e, Model):
