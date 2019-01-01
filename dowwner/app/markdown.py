@@ -15,7 +15,8 @@ def _to_html_markdown2(source: str) -> str:
     result = markdown2.markdown(
         source, extras=["link-patterns"], link_patterns=_LINK_PATTERNS
     )
-    return str(result)
+    assert isinstance(result, str)
+    return result
 
 
 def _to_html_Markdown(source: str) -> str:
@@ -27,8 +28,8 @@ def _to_html_Markdown(source: str) -> str:
         ],
         output_format="html5",
     )
-    # For type checking
-    return str(result)
+    assert isinstance(result, str)
+    return result
 
 
 to_html = _to_html_Markdown
