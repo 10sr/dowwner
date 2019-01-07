@@ -38,12 +38,16 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
         editurl = reverse("dowwner:e", args=[path_])
 
     template = loader.get_template("dowwner/v.html.dtl")
-    return HttpResponse(template.render({
-        "content": mark_safe(html),
-        "pagename": path_,
-        # TODO: OK to generate in template file?
-        "edit_page": editurl,
-    }))
+    return HttpResponse(
+        template.render(
+            {
+                "content": mark_safe(html),
+                "pagename": path_,
+                # TODO: OK to generate in template file?
+                "edit_page": editurl,
+            }
+        )
+    )
 
 
 def e(request: HttpRequest, path_: str = "") -> HttpResponse:
