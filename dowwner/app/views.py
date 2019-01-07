@@ -31,12 +31,18 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
         return HttpResponse(f"Not found: {path_}")
     html = markdown.to_html(p.markdown)
 
+    editurl: str
+    if path_ == "":
+        editurl = reverse("dowwner:e_root")
+    else:
+        editurl = reverse("dowwner:e", args=[path_])
+
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(template.render({
         "content": mark_safe(html),
         "pagename": path_,
         # TODO: OK to generate in template file?
-        "edit_page": reverse("dowwner:e", args=[path_]),
+        "edit_page": editurl,
     }))
 
 
