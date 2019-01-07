@@ -16,6 +16,7 @@ def index(request: HttpRequest) -> HttpResponse:
     return HttpResponse(
         f"""index
         <a href="v/test/page">test/page</a>
+        <a href="v/test2">test2</a>
         <a href="admin">admin</a>
         <p>{dir(request)}</p>
         """
@@ -32,7 +33,3 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
 
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(template.render({"content": mark_safe(html)}))
-
-
-def v_root_redirect(request: HttpRequest) -> HttpResponse:
-    return HttpResponseRedirect(reverse("dowwner:v_root"))
