@@ -1,2 +1,3 @@
 <p>Content</p>
 {{ content }}
+<p><a href="{{ edit_page }}">Edit {{ pagename }}</a></p>

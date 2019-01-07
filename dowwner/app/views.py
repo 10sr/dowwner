@@ -31,5 +31,31 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
         return HttpResponse(f"Not found: {path_}")
     html = markdown.to_html(p.markdown)
 
+    editurl: str
+    if path_ == "":
+        editurl = reverse("dowwner:e_root")
+    else:
+        editurl = reverse("dowwner:e", args=[path_])
+
     template = loader.get_template("dowwner/v.html.dtl")
-    return HttpResponse(template.render({"content": mark_safe(html)}))
+    return HttpResponse(
+        template.render(
+            {
+                "content": mark_safe(html),
+                "pagename": path_,
+                # TODO: OK to generate in template file?
+                "edit_page": editurl,
+            }
+        )
+    )
+
+
+def e(request: HttpRequest, path_: str = "") -> HttpResponse:
+    try:
+        p = models.Page.objects.get(path=path_)
+    except models.Page.DoesNotExist as e:
+        # TODO: Open as empty
+        return HttpResponse(f"Not found: {path_}")
+
+    template = loader.get_template("dowwner/e.html.dtl")
+    return HttpResponse(template.render({"raw": p.markdown}))

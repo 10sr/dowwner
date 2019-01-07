@@ -11,4 +11,7 @@ urlpatterns = [
     re_path(r"v/(?P<path_>[_0-9a-zA-Z/]+)", views.v, name="v"),
     path("v", RedirectView.as_view(url="v/"), name="v_root_redirect"),
     path("v/", views.v, name="v_root"),
+    re_path(r"e/(?P<path_>[_0-9a-zA-Z/]+)", views.e, name="e"),
+    # path("e", RedirectView.as_view(url="e/"), name="e_root_redirect"),
+    path("e/", views.e, name="e_root"),
 ]
