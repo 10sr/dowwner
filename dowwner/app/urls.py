@@ -1,9 +1,11 @@
 # from django.conf.urls import include, url
 from django.urls import include, path, re_path
-from . import views
 from django.views.generic.base import RedirectView
 
-app_name = "dowwner"
+from . import views
+from .apps import DowwnerConfig
+
+app_name = DowwnerConfig.label
 urlpatterns = [
     path("", views.index, name="index"),
     # TODO: These URL are temporal

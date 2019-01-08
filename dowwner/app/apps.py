@@ -9,4 +9,5 @@ class DowwnerConfig(AppConfig):
     # Short name for the application, e.g. 'admin'
     # This attribute allows relabeling an application when two applications have conflicting labels. It defaults to the last component of name. It should be a valid Python identifier.
     # It must be unique across a Django project.
+    # (For dowwner app it is also used urls.py app_name
     label = "dowwner"

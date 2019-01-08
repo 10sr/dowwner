@@ -6,8 +6,11 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from . import models
+from .apps import DowwnerConfig
 
 from . import markdown
+
+_app_name = DowwnerConfig.label
 
 # Create your views here.
 
@@ -33,9 +36,9 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
 
     editurl: str
     if path_ == "":
-        editurl = reverse("dowwner:e_root")
+        editurl = reverse(f"{_app_name}:e_root")
     else:
-        editurl = reverse("dowwner:e", args=[path_])
+        editurl = reverse(f"{_app_name}:e", args=[path_])
 
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(
