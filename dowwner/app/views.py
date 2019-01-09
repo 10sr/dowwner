@@ -92,6 +92,7 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
     now = timezone.now()
     p: models.Page
     try:
+        # TODO: Add history for model
         p = models.Page.objects.get(path=path_)
         p.markdown = content
         p.update_at = now
