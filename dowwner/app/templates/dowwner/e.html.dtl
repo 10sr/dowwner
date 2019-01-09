@@ -1,2 +1,8 @@
 <p>Edit Page</p>
-<pre><code>{{ raw }}<code><pre>
+<pre><code>{{ raw }}</code></pre>
+
+<form action="{{ post_page_path }}" method="post">
+  <p><input type="submit" value="Update" /></p>
+  {% csrf_token %}
+  <textarea name="content">{{raw}}</textarea>
+</form>

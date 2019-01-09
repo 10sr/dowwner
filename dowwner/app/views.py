@@ -1,6 +1,11 @@
 from django.shortcuts import render
 
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseBadRequest,
+)
 from django.template import loader
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -60,5 +65,26 @@ def e(request: HttpRequest, path_: str = "") -> HttpResponse:
         # TODO: Open as empty
         return HttpResponse(f"Not found: {path_}")
 
+    post_page_path: str
+    if path_ == "":
+        post_page_path = reverse(f"{_app_name}:post_page_root")
+    else:
+        post_page_path = reverse(f"{_app_name}:post_page", args=[path_])
+
     template = loader.get_template("dowwner/e.html.dtl")
-    return HttpResponse(template.render({"raw": p.markdown}))
+    return HttpResponse(
+        template.render(
+            {"raw": p.markdown, "post_page_path": post_page_path},
+            # Requred for csrf_token
+            request,
+        )
+    )
+
+
+def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
+    try:
+        content = request.POST["content"]
+    except KeyError:
+        return HttpResponseBadRequest("content not given")
+
+    return HttpResponse(f"content is {content}")
