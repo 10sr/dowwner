@@ -97,9 +97,7 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
         p.markdown = content
         p.update_at = now
     except models.Page.DoesNotExist as e:
-        p = models.Page(
-            path=path_, markdown=content, created_at=now, updated_at=now
-        )
+        p = models.Page(path=path_, markdown=content, created_at=now, updated_at=now)
     p.save()
 
     v: str
