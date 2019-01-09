@@ -1,8 +1,14 @@
 from django.shortcuts import render
 
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import (
+    HttpRequest,
+    HttpResponse,
+    HttpResponseRedirect,
+    HttpResponseBadRequest,
+)
 from django.template import loader
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 from . import models
@@ -60,5 +66,43 @@ def e(request: HttpRequest, path_: str = "") -> HttpResponse:
         # TODO: Open as empty
         return HttpResponse(f"Not found: {path_}")
 
+    post_page_path: str
+    if path_ == "":
+        post_page_path = reverse(f"{_app_name}:post_page_root")
+    else:
+        post_page_path = reverse(f"{_app_name}:post_page", args=[path_])
+
     template = loader.get_template("dowwner/e.html.dtl")
-    return HttpResponse(template.render({"raw": p.markdown}))
+    return HttpResponse(
+        template.render(
+            {"raw": p.markdown, "post_page_path": post_page_path},
+            # Requred for csrf_token
+            request,
+        )
+    )
+
+
+def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
+    try:
+        content = request.POST["content"]
+    except KeyError:
+        # TODO: How to handle this?
+        return HttpResponseBadRequest("content not given")
+
+    now = timezone.now()
+    p: models.Page
+    try:
+        # TODO: Add history for model
+        p = models.Page.objects.get(path=path_)
+        p.markdown = content
+        p.update_at = now
+    except models.Page.DoesNotExist as e:
+        p = models.Page(path=path_, markdown=content, created_at=now, updated_at=now)
+    p.save()
+
+    v: str
+    if path_ == "":
+        v = reverse(f"{_app_name}:v_root")
+    else:
+        v = reverse(f"{_app_name}:v", args=[path_])
+    return HttpResponseRedirect(v)
