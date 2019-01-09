@@ -8,6 +8,7 @@ from django.http import (
 )
 from django.template import loader
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.safestring import mark_safe
 
 from . import models
@@ -85,6 +86,24 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
     try:
         content = request.POST["content"]
     except KeyError:
+        # TODO: How to handle this?
         return HttpResponseBadRequest("content not given")
 
-    return HttpResponse(f"content is {content}")
+    now = timezone.now()
+    p: models.Page
+    try:
+        p = models.Page.objects.get(path=path_)
+        p.markdown = content
+        p.update_at = now
+    except models.Page.DoesNotExist as e:
+        p = models.Page(
+            path=path_, markdown=content, created_at=now, updated_at=now
+        )
+    p.save()
+
+    v: str
+    if path_ == "":
+        v = reverse(f"{_app_name}:v_root")
+    else:
+        v = reverse(f"{_app_name}:v", args=[path_])
+    return HttpResponseRedirect(v)
