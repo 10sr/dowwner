@@ -7,18 +7,22 @@ from django.http import (
     HttpResponseBadRequest,
 )
 from django.template import loader
-from django.urls import reverse
+import django.urls
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+
+from typing import Iterable
 
 from . import models
 from .apps import DowwnerConfig
 
 from . import markdown
 
-_app_name = DowwnerConfig.label
 
-# Create your views here.
+def _reverse(name: str, args: Iterable[str] = ()) -> str:
+    r = django.urls.reverse(f"{DowwnerConfig.label}:{name}", args=args)
+    assert isinstance(r, str)
+    return r
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -42,9 +46,9 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
 
     editurl: str
     if path_ == "":
-        editurl = reverse(f"{_app_name}:e_root")
+        editurl = _reverse("e_root")
     else:
-        editurl = reverse(f"{_app_name}:e", args=[path_])
+        editurl = _reverse("e", args=[path_])
 
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(
@@ -68,9 +72,9 @@ def e(request: HttpRequest, path_: str = "") -> HttpResponse:
 
     post_page_path: str
     if path_ == "":
-        post_page_path = reverse(f"{_app_name}:post_page_root")
+        post_page_path = _reverse("post_page_root")
     else:
-        post_page_path = reverse(f"{_app_name}:post_page", args=[path_])
+        post_page_path = _reverse("post_page", args=[path_])
 
     template = loader.get_template("dowwner/e.html.dtl")
     return HttpResponse(
@@ -102,7 +106,7 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
 
     v: str
     if path_ == "":
-        v = reverse(f"{_app_name}:v_root")
+        v = _reverse("v_root")
     else:
-        v = reverse(f"{_app_name}:v", args=[path_])
+        v = _reverse("v", args=[path_])
     return HttpResponseRedirect(v)
