@@ -1,8 +1,18 @@
 <p>Edit Page</p>
-<pre><code>{{ raw }}</code></pre>
 
 <form action="{{ post_page_path }}" method="post">
   <p><input type="submit" value="Update" /></p>
   {% csrf_token %}
-  <textarea name="content">{{raw}}</textarea>
+  <textarea name="content" id="dowwner-editor">{{raw}}</textarea>
 </form>
+
+<link rel="stylesheet" href="http://lab.lepture.com/editor/editor.css" />
+<script type="text/javascript" src="http://lab.lepture.com/editor/editor.js"></script>
+<script type="text/javascript" src="http://lab.lepture.com/editor/marked.js"></script>
+<script type="text/javascript">
+  new Editor().render(
+      // {
+      // element: document.getElementById('dowwner-editor')
+      // }
+  );
+</script>
