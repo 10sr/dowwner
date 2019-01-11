@@ -6,13 +6,27 @@
   <textarea name="content" id="dowwner-editor">{{raw}}</textarea>
 </form>
 
-<link rel="stylesheet" href="http://lab.lepture.com/editor/editor.css" />
-<script type="text/javascript" src="http://lab.lepture.com/editor/editor.js"></script>
-<script type="text/javascript" src="http://lab.lepture.com/editor/marked.js"></script>
+<!-- https://cdnjs.com/libraries/codemirror -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/codemirror.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/addon/mode/overlay.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/markdown/markdown.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/xml/xml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/gfm/gfm.js"></script>
 <script type="text/javascript">
-  new Editor().render(
-      // {
-      // element: document.getElementById('dowwner-editor')
-      // }
-  );
+  CodeMirror.fromTextArea(document.getElementById("dowwner-editor"), {
+      mode: {
+          name: "gfm",
+          tokenTypeOverrides: {
+              emoji: "emoji"
+          }
+      },
+      lineNumbers: true,
+      theme: "default"
+  })
 </script>
+<style>
+  .CodeMirror {
+      border: 1px solid #ddd;
+  }
+</style>
