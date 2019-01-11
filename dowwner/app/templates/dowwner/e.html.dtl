@@ -24,12 +24,11 @@
       },
       lineNumbers: true,
       theme: "default",
-      keymap: "emacs"
-  })
+      keymap: "emacs",
+  }).setSize(null, "80vh")
 </script>
 <style>
   .CodeMirror {
       border: 1px solid #ddd;
-      height: 80vh;
   }
 </style>
