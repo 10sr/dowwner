@@ -24,7 +24,9 @@ def _to_html_Markdown(source: str) -> str:
         # Cannot have slashes inside of blackets
         source,
         extensions=[
-            WikiLinkExtension(base_url="", end_url="", html_class="dowwner-wikilink")
+            WikiLinkExtension(base_url="", end_url="", html_class="dowwner-wikilink"),
+            "fenced_code",
+            "codehilite"
         ],
         output_format="html5",
     )
