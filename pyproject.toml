@@ -12,6 +12,7 @@ django = "^2.1"
 # TODO: Which is better?
 markdown2 = "^2.3"
 Markdown = "^3.0"
+pygments = "^2.3"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.641.0"
