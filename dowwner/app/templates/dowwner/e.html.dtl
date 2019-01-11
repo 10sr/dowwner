@@ -13,6 +13,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/markdown/markdown.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/xml/xml.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/mode/gfm/gfm.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.2/keymap/emacs.js"></script>
 <script type="text/javascript">
   CodeMirror.fromTextArea(document.getElementById("dowwner-editor"), {
       mode: {
@@ -22,11 +23,13 @@
           }
       },
       lineNumbers: true,
-      theme: "default"
+      theme: "default",
+      keymap: "emacs"
   })
 </script>
 <style>
   .CodeMirror {
       border: 1px solid #ddd;
+      height: 80vh;
   }
 </style>
