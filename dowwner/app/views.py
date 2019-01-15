@@ -17,6 +17,7 @@ from . import models
 from .apps import DowwnerConfig
 
 from . import markdown
+from . import pygments
 
 
 def _reverse(name: str, args: Iterable[str] = ()) -> str:
@@ -58,6 +59,7 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
                 "pagename": path_,
                 # TODO: OK to generate in template file?
                 "edit_page": editurl,
+                "pygments_css": _reverse("pygments_css", args=["default"]),
             }
         )
     )
@@ -110,3 +112,8 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
     else:
         v = _reverse("v", args=[path_])
     return HttpResponseRedirect(v)
+
+
+# TODO: Cache this content: this wont change when version is same
+def pygments_css(request: HttpRequest, style: str) -> HttpResponse:
+    return HttpResponse(pygments.get_css(style), content_type="text/css")

@@ -20,4 +20,5 @@ urlpatterns = [
         r"^post_page/(?P<path_>[_0-9a-zA-Z/]+)$", views.post_page, name="post_page"
     ),
     path("post_page/", views.post_page, name="post_page_root"),
+    path("pygments-css/<style>.css", views.pygments_css, name="pygments_css"),
 ]

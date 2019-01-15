@@ -1,3 +1,5 @@
 <p>Content</p>
 {{ content }}
 <p><a href="{{ edit_page }}">Edit {{ pagename }}</a></p>
+
+<link rel="stylesheet" href="{{ pygments_css }}" />
