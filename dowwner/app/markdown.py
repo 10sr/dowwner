@@ -27,7 +27,7 @@ def _to_html_Markdown(source: str) -> str:
             WikiLinkExtension(base_url="", end_url="", html_class="dowwner-wikilink"),
             "fenced_code",
             # TODO: Add pygment css to .dtl
-            "codehilite"
+            "codehilite",
         ],
         output_format="html5",
     )
