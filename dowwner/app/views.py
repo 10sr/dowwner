@@ -38,18 +38,19 @@ def index(request: HttpRequest) -> HttpResponse:
 
 
 def v(request: HttpRequest, path_: str = "") -> HttpResponse:
-    try:
-        p = models.Page.objects.get(path=path_)
-    except models.Page.DoesNotExist as e:
-        # TODO: Redirect to edit page
-        return HttpResponse(f"Not found: {path_}")
-    html = markdown.to_html(p.markdown)
-
     editurl: str
     if path_ == "":
         editurl = _reverse("e_root")
     else:
         editurl = _reverse("e", args=[path_])
+
+    try:
+        p = models.Page.objects.get(path=path_)
+    except models.Page.DoesNotExist as e:
+        # TODO: Redirect to edit page
+        return HttpResponse(f"""Not found: {path_}
+        <a href="{editurl}">Create new</a>""")
+    html = markdown.to_html(p.markdown)
 
     template = loader.get_template("dowwner/v.html.dtl")
     return HttpResponse(
@@ -66,11 +67,13 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
 
 
 def e(request: HttpRequest, path_: str = "") -> HttpResponse:
+    content: str
     try:
         p = models.Page.objects.get(path=path_)
+        content = p.markdown
     except models.Page.DoesNotExist as e:
-        # TODO: Open as empty
-        return HttpResponse(f"Not found: {path_}")
+        # TODO: Add alert that page does not exist
+        content = ""
 
     post_page_path: str
     if path_ == "":
@@ -81,7 +84,7 @@ def e(request: HttpRequest, path_: str = "") -> HttpResponse:
     template = loader.get_template("dowwner/e.html.dtl")
     return HttpResponse(
         template.render(
-            {"raw": p.markdown, "post_page_path": post_page_path},
+            {"raw": content, "post_page_path": post_page_path},
             # Requred for csrf_token
             request,
         )
