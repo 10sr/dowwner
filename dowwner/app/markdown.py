@@ -31,9 +31,7 @@ def _to_html_Markdown(source: str) -> str:
             "codehilite",
         ],
         extension_configs={
-            "codehilite": {
-                "css_class": DowwnerConfig.dowwner_pygments_class
-            }
+            "codehilite": {"css_class": DowwnerConfig.dowwner_pygments_class}
         },
         output_format="html5",
     )
