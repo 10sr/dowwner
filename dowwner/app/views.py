@@ -114,5 +114,6 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
     return HttpResponseRedirect(v)
 
 
+# TODO: Cache this content: this wont change when version is same
 def pygments_css(request: HttpRequest, style: str) -> HttpResponse:
     return HttpResponse(pygments.get_css(style), content_type="text/css")
