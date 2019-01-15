@@ -1,7 +1,9 @@
 from pygments.formatters import get_formatter_by_name
 
+from .apps import DowwnerConfig
+
 FORMAT = "html"
-classname = "codehilite"
+classname = DowwnerConfig.dowwner_pygments_class
 
 
 def get_css(style: str) -> str:

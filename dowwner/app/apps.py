@@ -11,3 +11,5 @@ class DowwnerConfig(AppConfig):
     # It must be unique across a Django project.
     # (For dowwner app it is also used urls.py app_name
     label = "dowwner"
+
+    dowwner_pygments_class = "dowwner-codehilite-pygments"
