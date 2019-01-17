@@ -10,6 +10,7 @@ from django.template import loader
 import django.urls
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.views.decorators.http import etag
 
 from typing import Iterable
 
@@ -48,8 +49,10 @@ def v(request: HttpRequest, path_: str = "") -> HttpResponse:
         p = models.Page.objects.get(path=path_)
     except models.Page.DoesNotExist as e:
         # TODO: Redirect to edit page
-        return HttpResponse(f"""Not found: {path_}
-        <a href="{editurl}">Create new</a>""")
+        return HttpResponse(
+            f"""Not found: {path_}
+        <a href="{editurl}">Create new</a>"""
+        )
     html = markdown.to_html(p.markdown)
 
     template = loader.get_template("dowwner/v.html.dtl")
@@ -117,6 +120,10 @@ def post_page(request: HttpRequest, path_: str = "") -> HttpResponse:
     return HttpResponseRedirect(v)
 
 
-# TODO: Cache this content: this wont change when version is same
+def _etag_pygments_css(request: HttpRequest, style: str) -> str:
+    return f"PYGMENTS_CSS_{pygments.pygments_version}_{style}"
+
+
+@etag(_etag_pygments_css)
 def pygments_css(request: HttpRequest, style: str) -> HttpResponse:
     return HttpResponse(pygments.get_css(style), content_type="text/css")

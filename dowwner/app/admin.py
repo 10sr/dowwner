@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.db.models import Model
 
 from . import models
+from .apps import DowwnerConfig
 
 
 # Configure site header
