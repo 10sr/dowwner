@@ -17,6 +17,7 @@ pygments = "^2.3"
 [tool.poetry.dev-dependencies]
 mypy = "^0.641.0"
 black = "^18.3-alpha.0"
+coverage = "^4.5"
 
 [tool.black]
 line-length = 88
