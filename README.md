@@ -1,4 +1,5 @@
- [![Build Status](https://travis-ci.org/10sr/dowwner.svg?branch=master)](https://travis-ci.org/10sr/dowwner) 
+[![Build Status](https://travis-ci.org/10sr/dowwner.svg?branch=master)](https://travis-ci.org/10sr/dowwner) 
+[![codecov](https://codecov.io/gh/10sr/dowwner/branch/master/graph/badge.svg)](https://codecov.io/gh/10sr/dowwner)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
