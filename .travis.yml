@@ -16,5 +16,8 @@ install:
 script:
   - make check
 
+after_success:
+  - make codecov
+
 notifications:
   email: 8slashes+travis-ci@gmail.com

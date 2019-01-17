@@ -11,3 +11,7 @@ max_line_length = 88
 
 [{.editorconfig,.gitignore}]
 insert_final_newline = true
+
+[.coveragerc]
+file_type_ext = ini
+indent_size = 4
