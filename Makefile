@@ -71,6 +71,9 @@ app-test:
 	env DOWWNER_ENV=test ${manage_py} makemigrations --dry-run --check
 	env DOWWNER_ENV=test ${poetry} run coverage run --source="." ./manage.py test tests/
 
+codecov:
+	${poetry} run codecov
+
 
 ###########
 # Docker
