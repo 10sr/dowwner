@@ -6,6 +6,7 @@ from pygments.util import ClassNotFound
 
 _FORMAT = "html"
 
+# Or `pkg_resources.get_distribution("pygments").version` ?
 pygments_version = pygments.__version__
 
 
