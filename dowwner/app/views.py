@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import (
     HttpRequest,
     HttpResponse,
+    HttpResponseNotFound,
     HttpResponseRedirect,
     HttpResponseBadRequest,
 )
@@ -126,4 +127,7 @@ def _etag_pygments_css(request: HttpRequest, style: str) -> str:
 
 @etag(_etag_pygments_css)
 def pygments_css(request: HttpRequest, style: str) -> HttpResponse:
-    return HttpResponse(pygments.get_css(style), content_type="text/css")
+    css = pygments.get_css(style)
+    if css is None:
+        return HttpResponseNotFound()
+    return HttpResponse(css, content_type="text/css")
