@@ -17,8 +17,6 @@ def main(argv: List[str]) -> int:
             "DJANGO_SETTINGS_MODULE"
         ] = f"dowwner.settings_{os.environ['DOWWNER_ENV']}"
 
-    # os.environ["DOWWNER_BASE_DIR"] = str(Path(__file__).resolve().parent)
-
     execute_from_command_line(argv)
     return 0
 

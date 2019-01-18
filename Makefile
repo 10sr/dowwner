@@ -3,7 +3,7 @@ DOWWNER_ENV ?= local
 DOWWNER_PORT ?= 9900
 DOWWNER_HOST ?= 0.0.0.0
 
-export DOWWNER_BASE_DIR := $(CURDIR)
+export DOWWNER_LOCAL_SQLITE3 := $(CURDIR)/db.sqlite3
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variable
 
@@ -58,7 +58,7 @@ makemigrations:
 sqlmigrate:
 	${env_dowwner} ${manage_py} $@ ${APP} ${target}
 
-local_addrecords create_admin_user create_local_user:
+local_addrecords create_admin_user create_local_user diffsettings:
 	${env_dowwner} ${manage_py} $@
 
 shell:

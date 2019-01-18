@@ -4,9 +4,6 @@ import os
 
 LOGIN_URL = "/dowwner/login/"
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.environ["DOWWNER_BASE_DIR"]
-
 ROOT_URLCONF = "dowwner.urls"
 
 WSGI_APPLICATION = "dowwner.wsgi.application"

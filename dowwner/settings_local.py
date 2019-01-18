@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-from typing import Dict, List
 
 from dowwner._settings_common import *
 
@@ -24,8 +23,6 @@ SECRET_KEY = "_up*=0su=d#cmn-$u)34z-cn%%6$2h9@*7%z=of&2w*fr5*51)"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS: List[str] = []
 
 
 # Application definition
@@ -46,12 +43,6 @@ MIDDLEWARE = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "NAME": os.environ["DOWWNER_LOCAL_SQLITE3"],
     }
 }
-
-
-# Password validation
-# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS: List[Dict[str, str]] = []
