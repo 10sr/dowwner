@@ -14,8 +14,8 @@ fatal-on-warning:
 	@! (${MAKE} -n --warn-undefined-variables ${MAKECMDGOALS} 2>&1 >/dev/null | grep 'warning:')
 
 
-APP := app
-PROJ := dowwner
+# App label
+APP := dowwner
 
 poetry := poetry
 
