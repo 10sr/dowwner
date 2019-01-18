@@ -69,7 +69,7 @@ manage_py:n
 
 app-test:
 	env DOWWNER_ENV=test ${manage_py} makemigrations --dry-run --check
-	env DOWWNER_ENV=test ${poetry} run coverage run ./manage.py test tests/
+	env DOWWNER_ENV=test ${poetry} run coverage run ./manage.py test tests/ --pattern='*.py'
 
 codecov:
 	${poetry} run codecov
