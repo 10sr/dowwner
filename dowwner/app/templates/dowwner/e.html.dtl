@@ -25,7 +25,9 @@
       lineNumbers: true,
       theme: "default",
       keymap: "emacs",
-  }).setSize(null, "80vh")
+      // Cannot use % for this?
+      // https://stackoverflow.com/questions/23958413/getting-percentages-to-work-in-css-calc-for-firefox-and-safari
+  }).setSize(null, "calc(100vh - 7rem)")
 </script>
 <style>
   .CodeMirror {
