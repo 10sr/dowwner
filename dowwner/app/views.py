@@ -127,7 +127,7 @@ def _etag_pygments_css(request: HttpRequest, style: str) -> str:
 
 @etag(_etag_pygments_css)
 def pygments_css(request: HttpRequest, style: str) -> HttpResponse:
-    css = pygments.get_css(style)
+    css = pygments.get_css(style, DowwnerConfig.dowwner_pygments_class)
     if css is None:
         return HttpResponseNotFound()
     return HttpResponse(css, content_type="text/css")
