@@ -3,6 +3,8 @@ DOWWNER_ENV ?= local
 DOWWNER_PORT ?= 9900
 DOWWNER_HOST ?= 0.0.0.0
 
+ADMIN_USER ?= admin
+
 export DOWWNER_LOCAL_SQLITE3 := $(CURDIR)/db.sqlite3
 
 MAKEFLAGS += --no-builtin-rules --no-builtin-variable
@@ -21,6 +23,7 @@ poetry := poetry
 
 python3 := ${poetry} run python3
 manage_py := ${python3} ./manage.py
+dowwner := ${python3} -m dowwner
 env_dowwner := env DOWWNER_ENV=${DOWWNER_ENV}
 
 # Make all targets phony
@@ -41,7 +44,7 @@ poetry-check:
 	${poetry} check
 
 ###############
-# Dowwner
+# manage.py
 
 runserver:
 	${env_dowwner} ${manage_py} $@ '${DOWWNER_HOST}:${DOWWNER_PORT}'
@@ -70,6 +73,15 @@ manage_py:n
 app-test:
 	env DOWWNER_ENV=test ${manage_py} makemigrations --dry-run --check
 	env DOWWNER_ENV=test ${poetry} run coverage run ./manage.py test tests/ --pattern='*.py'
+
+# -m dowwner
+
+add-admin-user:
+	${env_dowwner} ${dowwner} $@ ${ADMIN_USER}
+
+
+###########3
+# codecov
 
 codecov:
 	${poetry} run codecov
