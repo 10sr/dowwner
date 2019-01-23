@@ -2,7 +2,8 @@
 
 import os
 
-LOGIN_URL = "/dowwner/login/"
+# Named URL Pattern
+LOGIN_URL = "login"
 
 ROOT_URLCONF = "dowwner.urls"
 
