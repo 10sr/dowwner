@@ -61,7 +61,7 @@ makemigrations:
 sqlmigrate:
 	${env_dowwner} ${manage_py} $@ ${APP} ${target}
 
-local_addrecords create_admin_user create_local_user diffsettings:
+local_addrecords create_local_user diffsettings:
 	${env_dowwner} ${manage_py} $@
 
 shell:
