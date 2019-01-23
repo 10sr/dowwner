@@ -7,14 +7,12 @@ import click
 
 @click.group()
 def cli() -> None:
-    # TODO: How to check if going to run tests?
-    if os.environ["DOWWNER_ENV"] == "test":
-        os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
-    else:
-        os.environ.setdefault("DOWWNER_ENV", "local")
-        os.environ[
-            "DJANGO_SETTINGS_MODULE"
-        ] = f"dowwner.settings_{os.environ['DOWWNER_ENV']}"
+    # Manually setup django environment
+    # https://docs.djangoproject.com/en/2.1/topics/settings/
+    os.environ.setdefault("DOWWNER_ENV", "local")
+    os.environ[
+        "DJANGO_SETTINGS_MODULE"
+    ] = f"dowwner.settings_{os.environ['DOWWNER_ENV']}"
 
     import django
 
