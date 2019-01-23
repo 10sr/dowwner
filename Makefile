@@ -65,7 +65,7 @@ local_addrecords create_admin_user create_local_user diffsettings:
 	${env_dowwner} ${manage_py} $@
 
 shell:
-	${env_dowwner} ${manage_py} shell
+	${env_dowwner} ${manage_py} $@ -i ipython
 
 manage_py:n
 	${env_dowwner} ${manage_py} ${command}
