@@ -9,7 +9,7 @@ MAKEFLAGS += --no-builtin-rules --no-builtin-variable
 
 # https://stackoverflow.com/questions/10859916/how-to-treat-a-warning-as-an-error-in-a-makefile/29800774#29800774
 MAKECMDGOALS ?= check
-${MAKECMDGOALS}: fatal-on-warning
+# ${MAKECMDGOALS}: fatal-on-warning
 fatal-on-warning:
 	@! (${MAKE} -n --warn-undefined-variables ${MAKECMDGOALS} 2>&1 >/dev/null | grep 'warning:')
 
